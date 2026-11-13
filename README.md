@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/mirzaahmed20042004-arch/Pass/releases/download/v1.0.0/NoFilter-Ai.apk">
+  <a href="https://github.com/mirzaahmed20042004-arch/Pass/raw/arena/310f8268-pass/release/NoFilter-Ai.apk">
     <strong>⬇️ Direct Download APK (NoFilter-Ai.apk • v1.0.0 • Android 7.0+)</strong>
   </a>
 </p>
@@ -46,7 +46,8 @@ Most mobile AI apps lock conversations behind paid API keys, daily token caps, m
 
 ## Direct APK Download
 
-- **Direct APK URL:** [`https://github.com/mirzaahmed20042004-arch/Pass/releases/download/v1.0.0/NoFilter-Ai.apk`](https://github.com/mirzaahmed20042004-arch/Pass/releases/download/v1.0.0/NoFilter-Ai.apk)
+- **Direct APK URL:** [`https://github.com/mirzaahmed20042004-arch/Pass/raw/arena/310f8268-pass/release/NoFilter-Ai.apk`](https://github.com/mirzaahmed20042004-arch/Pass/raw/arena/310f8268-pass/release/NoFilter-Ai.apk)
+- **Repository APK Path:** [`release/NoFilter-Ai.apk`](release/NoFilter-Ai.apk) (`20.04 MB`, SHA-256 `677900f255bdf45ca452d5578c9ca86a99abc028a5226a3f1abf9aac75e81f07`)
 - **Package Name:** `com.nofilter.ai`
 - **Version:** `1.0.0` (`versionCode 1`)
 - **Compatibility:** Android 7.0 Nougat (`API 24`) through Android 14/15+ (`targetSdk 34`), signed with **APK Signature Scheme v2 & v3**

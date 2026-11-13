@@ -45,4 +45,4 @@ All milestones required to design, engineer, verify, package, and ship **NoFilte
 - [x] Create Gradle build files (`settings.gradle.kts`, `build.gradle.kts`, `app/build.gradle.kts`) and deterministic compiler/packager (`tools/build_apk.py`).
 - [x] Compile all resources (`aapt2`), Kotlin sources (`kotlinc-jvm`), DEX bytecode (`D8`), 4-byte zipalign, and sign (`apksigner` v2 + v3) → `release/NoFilter-Ai.apk` (`20.04 MB`).
 - [x] Verify APK signature (`apksigner verify --verbose`) and manifest metadata (`aapt2 dump badging`).
-- [x] Push repository to GitHub (`mirzaahmed20042004-arch/Pass`, branch `arena/310f8268-pass`), publish GitHub Release `v1.0.0`, upload `NoFilter-Ai.apk`, and verify the direct download URL.
+- [x] Push repository & signed `release/NoFilter-Ai.apk` to GitHub (`mirzaahmed20042004-arch/Pass`, branch `arena/310f8268-pass`), publish GitHub Release `v1.0.0`, and verify the direct APK download URL (`https://github.com/mirzaahmed20042004-arch/Pass/raw/arena/310f8268-pass/release/NoFilter-Ai.apk`).
