@@ -20,6 +20,7 @@ jobs:
           node-version: '22'
       - run: npm ci
       - run: npm test
+      - run: npm run test:ui
       - name: Build Android APK
         run: |
           if ! ./gradlew --no-daemon assembleDebug > "$RUNNER_TEMP/gradle-build.log" 2>&1; then

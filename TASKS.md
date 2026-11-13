@@ -9,7 +9,7 @@
 - [x] User-initiated Android intents for app opening, web search, SMS drafts and sharing.
 - [x] Opt-in speech input and TTS; optional foreground conversation loop.
 - [x] Opt-in draggable HUD and accessibility-based screen snapshot / supervised exact-label tap.
-- [x] Android APK build and signature verification; Android 10 emulator launch/dashboard smoke test; automated parser, gateway and mocked-bridge UI tests.
+- [x] Android APK build and signature verification; Android 10 emulator smoke test for launch, note persistence, and HUD start/stop; automated parser, gateway, native-logic and mocked-bridge UI tests.
 
 ## Important follow-up
 
