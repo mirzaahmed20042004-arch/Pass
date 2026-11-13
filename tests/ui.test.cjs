@@ -118,6 +118,9 @@ async function run() {
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
   await page.locator('.bottom-nav [data-action=more]').click(); await page.locator('.modal [data-nav=connections]').click();
   assert.equal(await page.locator('#page-connections').isVisible(), true);
+  await page.locator('.bottom-nav [data-nav=chat]').click(); await page.locator('#chat-input').focus();
+  assert.equal(await page.locator('.bottom-nav').isVisible(), false);
+  await page.locator('#chat-input').blur(); assert.equal(await page.locator('.bottom-nav').isVisible(), true);
   assert.deepEqual(pageErrors, []);
   console.log('UI tests passed: notes, chat, safe intents, model privacy, permissions, voice, and mobile navigation.');
   await browser.close();

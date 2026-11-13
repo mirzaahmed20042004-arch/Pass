@@ -337,6 +337,8 @@
   $('#voice-replies').addEventListener('change', function () { state.settings.voiceReplies = this.checked; persist(); });
   $('#memory-search').addEventListener('input', renderMemory);
   $('#chat-input').addEventListener('input', function () { this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 110) + 'px'; });
+  $('#chat-input').addEventListener('focus', function () { document.body.classList.add('input-focused'); if (window.innerWidth <= 700) { var input = this; setTimeout(function () { if (document.activeElement === input) input.scrollIntoView({ block: 'center' }); }, 250); } });
+  $('#chat-input').addEventListener('blur', function () { document.body.classList.remove('input-focused'); });
   $('#chat-input').addEventListener('keydown', function (event) { if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) { event.preventDefault(); var form = $('#chat-form'); if (form.requestSubmit) form.requestSubmit(); else form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true })); } });
   document.addEventListener('keydown', function (event) { if (event.key === 'Escape' && $('#modal-root').firstChild) closeModal(); });
   document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') refreshCapabilities(); });
