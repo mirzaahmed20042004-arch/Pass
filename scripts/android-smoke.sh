@@ -50,6 +50,13 @@ fi
 tap_node 'Chat'
 sleep 2
 dump_ui
+python3 - "$UI_FILE" <<'PYCODE'
+import sys, xml.etree.ElementTree as ET
+for n in ET.parse(sys.argv[1]).getroot().iter('node'):
+    a = n.attrib
+    if a.get('class') == 'android.widget.EditText' or a.get('text') in ('Chat', 'Agents', 'Send message'):
+        print('CHAT_CONTROL', a.get('text'), a.get('class'), a.get('bounds'))
+PYCODE
 tap_node '__EDIT__'
 adb shell input text 'remember%sbuy%smilk'
 sleep 1
