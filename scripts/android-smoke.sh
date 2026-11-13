@@ -18,7 +18,9 @@ root = ET.parse(sys.argv[1]).getroot()
 needle = sys.argv[2]
 for node in root.iter('node'):
     attrs = node.attrib
-    if attrs.get('text') == needle or attrs.get('content-desc') == needle or (needle == '__EDIT__' and attrs.get('class') == 'android.widget.EditText'):
+    values = (attrs.get('text', ''), attrs.get('content-desc', ''))
+    matches = any(v == needle or (needle.endswith('*') and v.startswith(needle[:-1])) for v in values)
+    if matches or (needle == '__EDIT__' and attrs.get('class') == 'android.widget.EditText'):
         bounds = list(map(int, re.findall(r'\d+', attrs.get('bounds', ''))))
         if len(bounds) == 4 and bounds[2] > bounds[0] and bounds[3] > bounds[1]:
             print((bounds[0] + bounds[2]) // 2, (bounds[1] + bounds[3]) // 2)
@@ -77,6 +79,29 @@ tap_node 'Memory'
 sleep 2
 dump_ui
 if ! grep -q 'buy milk' "$UI_FILE"; then echo 'Local memory did not persist across restart' >&2; cat "$UI_FILE"; exit 1; fi
+# Grant overlay access only on this disposable emulator, then exercise the HUD via the app UI.
+adb shell appops set com.ultronai.assistant SYSTEM_ALERT_WINDOW allow
+tap_node 'Settings'
+sleep 2
+adb shell input swipe 160 500 160 160 400
+adb shell input swipe 160 500 160 160 400
+sleep 1
+dump_ui
+tap_node 'Floating HUD permission*'
+sleep 1
+dump_ui
+tap_node 'Enable floating HUD*'
+sleep 4
+if ! adb shell dumpsys activity services com.ultronai.assistant | grep -q 'com.ultronai.assistant/.HudService'; then
+  echo 'HUD foreground service did not start' >&2; adb shell dumpsys activity services com.ultronai.assistant; exit 1
+fi
+dump_ui
+tap_node 'Floating HUD permission*'
+sleep 1
+dump_ui
+tap_node 'Turn off HUD'
+sleep 3
+if adb shell dumpsys activity services com.ultronai.assistant | grep -q 'com.ultronai.assistant/.HudService'; then echo 'HUD service did not stop' >&2; exit 1; fi
 LOG="$(adb logcat -d -s AndroidRuntime:E)"
 if grep -q 'Process: com.ultronai.assistant' <<< "$LOG"; then echo "$LOG"; exit 1; fi
-echo 'APK installed, rendered, handled a local chat command, and persisted a note across restart without an AndroidRuntime crash.'
+echo 'APK installed, rendered, persisted a local note, and started/stopped the HUD without an AndroidRuntime crash.'
