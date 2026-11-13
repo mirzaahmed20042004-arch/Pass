@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NoFilter OCR</title>
+<script src="/tesseract.min.js"></script>
+<style>body{background:#0B0F1A;color:#E9EDF9;font-family:sans-serif}</style>
+</head>
+<body>
+<div id="log">loading…</div>
+<script>
+var workerPromise = null;
+function log(s){ var d=document.getElementById('log'); d.textContent=s; if(window.NF) NF.progress(0, s); }
+
+function makeWorker(lang) {
+  // create one worker and keep it for reuse
+  if (!workerPromise) {
+    workerPromise = Tesseract.createWorker(lang, 1, {
+      workerPath: '/worker.min.js',
+      corePath: '/core/tesseract-core-lstm.wasm.js',
+      langPath: '/lang',
+      gzip: false,
+      cacheMethod: 'none',
+      logger: function (m) {
+        if (m && m.status === 'recognizing text') {
+          if (window.NF) NF.progress(Math.round((m.progress || 0) * 100), 'Recognizing… ' + Math.round((m.progress || 0) * 100) + '%');
+        } else if (m && m.status) {
+          log(m.status);
+        }
+      }
+    });
+  }
+  return workerPromise;
+}
+
+window.nfOcr = async function (imageUrl, lang) {
+  try {
+    log('Loading OCR engine (on-device)…');
+    var worker = await makeWorker(lang || 'eng');
+    log('Recognizing…');
+    var res = await worker.recognize(imageUrl);
+    var out = { text: res.data.text || '', confidence: res.data.confidence || 0 };
+    if (window.NF) NF.done(JSON.stringify(out));
+    return out.text;
+  } catch (e) {
+    if (window.NF) NF.error('OCR failed: ' + (e && e.message ? e.message : e));
+    return '';
+  }
+};
+log('ready');
+</script>
+</body>
+</html>

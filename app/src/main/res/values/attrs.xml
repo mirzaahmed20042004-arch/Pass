@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="nfBackground" format="color" />
+    <attr name="nfSurface" format="color" />
+    <attr name="nfSurface2" format="color" />
+    <attr name="nfText" format="color" />
+    <attr name="nfMuted" format="color" />
+    <attr name="nfBorder" format="color" />
+    <attr name="nfAccent" format="color" />
+    <attr name="nfAccent2" format="color" />
+</resources>

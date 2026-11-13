@@ -1,0 +1,373 @@
+[
+  {
+    "c": "self",
+    "k": [
+      "who are you",
+      "what is nofilter ai",
+      "about nofilter",
+      "how do you work",
+      "what models"
+    ],
+    "a": "**NoFilter Ai** is an unlimited, zero-API-key Android AI assistant powered by an on-device **Mixture-of-Experts Ensemble**:\n• 🌐 **Web Research Expert** — live DuckDuckGo, Wikipedia & multi-page synthesis with citations\n• 🧠 **Offline Knowledge Base** — instant TF-IDF retrieval with zero network\n• 🧮 **Symbolic Math & Unit Solver** — exact expressions, trig, logs, percentages, unit & date math\n• 💻 **Code & Stack-Trace Expert** — code templates + error diagnosis\n• 🔬 **Analytical & Creative Reasoner** — comparisons, plans, summaries, brainstorming\n• 💾 **Persistent Memory & Trainable Personas** — remembers anything you teach it and adapts to your chosen tone\n• 📷 **On-Device OCR Studio** — bundled Tesseract LSTM WebAssembly engine with `eng.traineddata`, 100% offline & unlimited."
+  },
+  {
+    "c": "self",
+    "k": [
+      "ocr",
+      "extract text",
+      "image to text",
+      "scan photo",
+      "scan document"
+    ],
+    "a": "To extract text from any photo or screenshot with **zero API keys**:\n1. Tap the **Scanner icon** on the home screen (or the image button inside any chat).\n2. Pick an image from your gallery or snap a photo with your camera.\n3. Tap **Extract Text** — NoFilter Ai runs **Tesseract LSTM (WebAssembly)** locally on your phone using bundled `tessdata_best` weights (`eng.traineddata`). Nothing is uploaded to any server."
+  },
+  {
+    "c": "self",
+    "k": [
+      "train",
+      "persona",
+      "how to behave",
+      "custom instructions",
+      "change tone"
+    ],
+    "a": "You can train how **NoFilter Ai** behaves with you:\n1. Open **Personas** from the home top bar (or tap the persona icon inside a chat).\n2. Pick one of the 10 built-in modes (*General, Boss, Teacher, Coder, Researcher, Creative, Friend, Poet, ELI5, Concise*) or tap **+** to create your own custom persona with exact behavior rules and tone.\n3. You can also tell me in chat: *\"Remember that I prefer concise bullet points\"* and I will store it in long-term memory automatically."
+  },
+  {
+    "c": "ai",
+    "k": [
+      "machine learning",
+      "artificial intelligence",
+      "deep learning",
+      "neural network",
+      "how ai works"
+    ],
+    "a": "**Artificial Intelligence (AI)** builds systems that perform tasks requiring human-like intelligence. **Machine Learning (ML)** learns patterns from data instead of fixed rules, and **Deep Learning** stacks multi-layer neural networks trained via backpropagation and gradient descent.\n• **Supervised learning:** labeled inputs → targets (classification, regression)\n• **Unsupervised / self-supervised:** structure & next-token prediction from raw data (LLMs, clustering)\n• **Reinforcement learning:** maximizing cumulative reward via trial and feedback."
+  },
+  {
+    "c": "ai",
+    "k": [
+      "transformer",
+      "large language model",
+      "llm",
+      "attention mechanism",
+      "gpt"
+    ],
+    "a": "**Transformers** (Vaswani et al., 2017 — *Attention Is All You Need*) process tokens in parallel using **scaled dot-product self-attention**:\n`Attention(Q, K, V) = softmax(QKᵀ / √d_k) V`\nModern **LLMs** stack causal self-attention + feed-forward blocks with RoPE positional embeddings and RMSNorm, pre-trained on trillions of tokens to predict the next token, then aligned via instruction fine-tuning (SFT) and preference optimization (RLHF / DPO)."
+  },
+  {
+    "c": "ai",
+    "k": [
+      "mixture of experts",
+      "moe",
+      "ensemble learning",
+      "combine models"
+    ],
+    "a": "**Ensemble & Mixture-of-Experts (MoE)** systems combine multiple specialized models or solvers so each query is handled by the strongest specialists:\n• **Routing / Gating:** selects or weights experts per input\n• **Variance reduction:** combining independent predictors reduces single-model blind spots\n• **Grounded synthesis:** pairing retrieval/web experts with symbolic math and code analyzers eliminates arithmetic and factual hallucinations."
+  },
+  {
+    "c": "ai",
+    "k": [
+      "rag",
+      "retrieval augmented generation",
+      "vector search",
+      "tfidf",
+      "embeddings"
+    ],
+    "a": "**Retrieval-Augmented Generation (RAG)** grounds answers in external or local documents:\n1. **Index:** split documents into chunks and compute sparse (**BM25 / TF-IDF**) or dense (**vector embedding**) representations.\n2. **Retrieve:** rank top-K chunks most relevant to the user's query.\n3. **Synthesize:** compose an answer citing the retrieved passages, drastically cutting hallucinations and keeping knowledge fresh without retraining."
+  },
+  {
+    "c": "cs",
+    "k": [
+      "big o",
+      "time complexity",
+      "space complexity",
+      "algorithm complexity"
+    ],
+    "a": "**Big-O notation** describes how runtime or memory scales with input size `n`:\n• `O(1)` — hash table lookup, array index\n• `O(log n)` — binary search, balanced BST\n• `O(n)` — single linear scan\n• `O(n log n)` — mergesort, heapsort, timsort\n• `O(n²)` — bubble/insertion sort, nested pairs\n• `O(2ⁿ)` / `O(n!)` — brute-force subsets / permutations."
+  },
+  {
+    "c": "cs",
+    "k": [
+      "sorting algorithms",
+      "quicksort",
+      "mergesort",
+      "timsort",
+      "heapsort"
+    ],
+    "a": "**Key sorting algorithms compared:**\n• **Timsort** (`O(n log n)` worst, `O(n)` best, stable) — default in Python, Java objects, Android/Kotlin; exploits natural runs.\n• **Quicksort** (`O(n log n)` avg, `O(n²)` worst, in-place `O(log n)` stack) — cache-friendly fast partitioning.\n• **Mergesort** (`O(n log n)` guaranteed, stable, `O(n)` extra space) — great for linked lists & external sorting.\n• **Heapsort** (`O(n log n)` guaranteed, `O(1)` extra space, unstable)."
+  },
+  {
+    "c": "cs",
+    "k": [
+      "data structures",
+      "hash map",
+      "binary tree",
+      "graph",
+      "stack",
+      "queue",
+      "linked list"
+    ],
+    "a": "**Core Data Structures:**\n• **Array / ArrayList:** `O(1)` random access, amortized `O(1)` append.\n• **HashMap / HashSet:** `O(1)` average insert/lookup/delete via key hashing.\n• **Stack (LIFO) & Queue (FIFO):** undo history, DFS (`Stack`) vs BFS (`Queue`).\n• **Heap / PriorityQueue:** `O(1)` min/max peek, `O(log n)` push/pop (Dijkstra, scheduling).\n• **Tree / Trie / Graph:** hierarchical indexing, prefix autocomplete (`Trie`), and network routing (`Graph`)."
+  },
+  {
+    "c": "cs",
+    "k": [
+      "sql",
+      "database",
+      "join",
+      "index",
+      "acid",
+      "sqlite",
+      "postgres"
+    ],
+    "a": "**Relational Databases & SQL:**\n• **ACID:** Atomicity, Consistency, Isolation, Durability.\n• **JOINs:** `INNER JOIN` (matching rows in both), `LEFT JOIN` (all left rows + matched right), `FULL OUTER JOIN`.\n• **Indexing:** B-Tree indexes speed `WHERE`, `JOIN`, and `ORDER BY` from `O(n)` full table scans to `O(log n)`, at a small write/storage cost.\n• **SQLite:** serverless single-file ACID SQL engine built directly into Android."
+  },
+  {
+    "c": "cs",
+    "k": [
+      "http",
+      "rest api",
+      "status codes",
+      "https",
+      "tls",
+      "tcp ip",
+      "dns"
+    ],
+    "a": "**How the Web & HTTP Work:**\n1. **DNS** resolves a domain name (`example.com`) to an IP address.\n2. **TCP** establishes a reliable connection (3-way handshake: SYN → SYN-ACK → ACK).\n3. **TLS** negotiates encryption keys via asymmetric crypto, then encrypts traffic with symmetric ciphers (AES-GCM / ChaCha20).\n4. **HTTP methods:** `GET` (read), `POST` (create), `PUT/PATCH` (update), `DELETE` (remove).\n5. **Status codes:** `2xx` success (`200 OK`), `3xx` redirect (`301/302`), `4xx` client error (`400`, `401`, `403`, `404`, `429`), `5xx` server error (`500`, `502`, `503`)."
+  },
+  {
+    "c": "cs",
+    "k": [
+      "git",
+      "github",
+      "branch",
+      "merge",
+      "rebase",
+      "commit",
+      "pull request"
+    ],
+    "a": "**Essential Git Workflow:**\n• `git status` / `git diff` — inspect modified files\n• `git checkout -b feature-x` — create & switch branch\n• `git add -p && git commit -m \"feat: ...\"` — stage & commit atomic changes\n• `git pull --rebase origin main` — replay your commits cleanly atop latest `main`\n• `git push -u origin feature-x` — publish branch and open a Pull Request."
+  },
+  {
+    "c": "cs",
+    "k": [
+      "python",
+      "python tips",
+      "list comprehension",
+      "virtualenv",
+      "pip",
+      "asyncio"
+    ],
+    "a": "**Python Quick Reference:**\n• **Virtual env:** `python3 -m venv .venv && source .venv/bin/activate`\n• **Comprehensions:** `squares = [x*x for x in range(10) if x % 2 == 0]`\n• **Context managers:** `with open('data.json') as f: data = json.load(f)`\n• **Async:** `async def fetch(): ...` run with `asyncio.run(main())`\n• **Data stack:** `numpy` (arrays), `pandas`/`polars` (tables), `scikit-learn`/`pytorch` (ML), `fastapi` (APIs)."
+  },
+  {
+    "c": "cs",
+    "k": [
+      "kotlin",
+      "coroutines",
+      "null safety",
+      "android development",
+      "jetpack"
+    ],
+    "a": "**Kotlin & Android Essentials:**\n• **Null safety:** `val len = name?.length ?: 0` eliminates most `NullPointerException`s.\n• **Data classes:** `data class User(val id: Long, val name: String)` auto-generates `equals`, `hashCode`, `toString`, `copy`.\n• **Coroutines:** lightweight structured concurrency with `suspend fun`, `Dispatchers.IO`, and `StateFlow`.\n• **APK anatomy:** `classes.dex` (Dalvik/ART bytecode), `resources.arsc` (compiled resource table), `AndroidManifest.xml` (binary XML), `assets/`, signed with APK Signature Scheme v2/v3."
+  },
+  {
+    "c": "cs",
+    "k": [
+      "javascript",
+      "typescript",
+      "promise",
+      "async await",
+      "event loop",
+      "dom"
+    ],
+    "a": "**JavaScript & Event Loop:**\nJavaScript runs single-threaded on an **event loop** with a call stack, **microtask queue** (`Promise.then`, `await`), and **macrotask queue** (`setTimeout`, I/O).\n```js\nasync function loadJson(url) {\n  const res = await fetch(url);\n  if (!res.ok) throw new Error(`HTTP ${res.status}`);\n  return await res.json();\n}\n```\nUse **TypeScript** for static types, interfaces, and compile-time safety."
+  },
+  {
+    "c": "cs",
+    "k": [
+      "regex",
+      "regular expression",
+      "pattern matching",
+      "email regex"
+    ],
+    "a": "**Regular Expression (Regex) Cheat Sheet:**\n• `.` any char • `\\d` digit • `\\w` word char • `\\s` whitespace\n• `*` 0+ • `+` 1+ • `?` 0 or 1 • `{m,n}` range\n• `^` start • `$` end • `\\b` word boundary\n• `(...)` capture group • `(?:...)` non-capturing group\n• **Email pattern:** `^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$`\n• **URL pattern:** `https?://[^\\s/$.?#].[^\\s]*`"
+  },
+  {
+    "c": "security",
+    "k": [
+      "cybersecurity",
+      "encryption",
+      "hashing",
+      "sha256",
+      "aes",
+      "rsa",
+      "password security"
+    ],
+    "a": "**Cryptography & Defensive Security Basics:**\n• **Hashing (one-way):** `SHA-256`, `BLAKE3` for integrity; `Argon2id` or `bcrypt` (salted & slow) for passwords.\n• **Symmetric encryption:** `AES-256-GCM` or `ChaCha20-Poly1305` — fast authenticated encryption with a shared key.\n• **Asymmetric crypto:** `RSA`, `X25519` (key exchange), `Ed25519` / `ECDSA` (digital signatures).\n• **Defense checklist:** parameterized SQL queries (stops SQLi), output encoding + CSP (stops XSS), MFA, least privilege, and timely patching."
+  },
+  {
+    "c": "science",
+    "k": [
+      "relativity",
+      "einstein",
+      "speed of light",
+      "spacetime",
+      "black hole",
+      "gravity"
+    ],
+    "a": "**Einstein's Relativity:**\n• **Special Relativity (1905):** the speed of light in vacuum (`c ≈ 299,792,458 m/s`) is constant for all inertial observers, yielding time dilation, length contraction, and mass-energy equivalence `E = mc²`.\n• **General Relativity (1915):** mass and energy curve 4D spacetime; gravity is motion along geodesics in curved spacetime, predicting gravitational lensing, gravitational waves (LIGO, 2015), and **black holes** bounded by an event horizon (`r_s = 2GM/c²`)."
+  },
+  {
+    "c": "science",
+    "k": [
+      "quantum mechanics",
+      "schrodinger",
+      "uncertainty principle",
+      "qubit",
+      "quantum computing"
+    ],
+    "a": "**Quantum Mechanics & Quantum Computing:**\nParticles exhibit wave-particle duality described by a wavefunction `ψ`. **Heisenberg's Uncertainty Principle** (`Δx · Δp ≥ ħ/2`) bounds simultaneous precision of conjugate variables.\n• **Superposition:** a **qubit** can be `α|0⟩ + β|1⟩` with `|α|² + |β|² = 1`.\n• **Entanglement:** correlated multi-qubit states enabling quantum teleportation and speedups like **Shor's** (factoring) and **Grover's** (`O(√N)` search) algorithms."
+  },
+  {
+    "c": "science",
+    "k": [
+      "thermodynamics",
+      "entropy",
+      "laws of thermodynamics",
+      "energy conservation"
+    ],
+    "a": "**The Four Laws of Thermodynamics:**\n• **0th:** Thermal equilibrium is transitive (defines temperature).\n• **1st:** Conservation of energy — `ΔU = Q - W` (energy cannot be created or destroyed).\n• **2nd:** Total **entropy** (`S`) of an isolated system never decreases (`ΔS ≥ 0`), setting the arrow of time and Carnot efficiency limit `η = 1 - T_cold / T_hot`.\n• **3rd:** Entropy approaches a constant minimum as temperature approaches absolute zero (`0 K = -273.15 °C`)."
+  },
+  {
+    "c": "science",
+    "k": [
+      "dna",
+      "genetics",
+      "crispr",
+      "cell",
+      "photosynthesis",
+      "evolution",
+      "biology"
+    ],
+    "a": "**Core Molecular Biology:**\n• **Central Dogma:** `DNA → (transcription) → mRNA → (translation at ribosome) → Protein`.\n• **DNA bases:** Adenine–Thymine (`A–T`) and Guanine–Cytosine (`G–C`) in a double helix.\n• **Photosynthesis:** `6 CO₂ + 6 H₂O + light → C₆H₁₂O₆ + 6 O₂` in chloroplasts.\n• **CRISPR-Cas9:** RNA-guided programmable nuclease that cuts target DNA sequences for precise gene editing.\n• **Evolution:** variation + heritable traits + differential reproductive success (natural selection)."
+  },
+  {
+    "c": "science",
+    "k": [
+      "periodic table",
+      "atoms",
+      "electrons",
+      "chemical bonds",
+      "ph",
+      "acid base"
+    ],
+    "a": "**Chemistry Fundamentals:**\n• **Atom:** nucleus of **protons** (`+`, atomic number `Z`) and **neutrons**, surrounded by **electrons** (`-`) in orbitals.\n• **Bonds:** **Covalent** (shared electron pairs), **Ionic** (electrostatic transfer, e.g. `NaCl`), **Metallic** (delocalized electron sea), and **Hydrogen bonds** (polar attraction giving water its high boiling point).\n• **pH scale:** `pH = -log₁₀[H⁺]` — `< 7` acidic, `7` neutral, `> 7` basic/alkaline."
+  },
+  {
+    "c": "science",
+    "k": [
+      "solar system",
+      "planets",
+      "universe",
+      "big bang",
+      "milky way",
+      "astronomy"
+    ],
+    "a": "**Our Solar System & Universe:**\n• **8 Planets (Sun outward):** Mercury, Venus, Earth, Mars (*rocky*), Jupiter, Saturn (*gas giants*), Uranus, Neptune (*ice giants*).\n• **Scale:** Earth orbits at `1 AU ≈ 149.6 million km` (~8.3 light-minutes). Our Sun is one of ~100–400 billion stars in the **Milky Way**.\n• **Cosmology:** Observable universe began in the **Big Bang ~13.8 billion years ago** (~68% dark energy, ~27% dark matter, ~5% ordinary baryonic matter)."
+  },
+  {
+    "c": "math",
+    "k": [
+      "calculus",
+      "derivative",
+      "integral",
+      "pythagorean",
+      "quadratic formula",
+      "trigonometry"
+    ],
+    "a": "**Essential Math Formulas:**\n• **Quadratic formula** (`ax² + bx + c = 0`): `x = (-b ± √(b² - 4ac)) / (2a)`\n• **Pythagorean theorem:** `a² + b² = c²`\n• **Circle:** circumference `2πr`, area `πr²`; sphere volume `(4/3)πr³`\n• **Euler's identity:** `e^(iπ) + 1 = 0`\n• **Calculus:** power rule `d/dx(xⁿ) = n·xⁿ⁻¹`; Fundamental Theorem `∫ₐᵇ f'(x) dx = f(b) - f(a)`.\n*(Tip: type any math expression directly into chat and NoFilter Ai's symbolic solver computes it instantly!)*"
+  },
+  {
+    "c": "math",
+    "k": [
+      "probability",
+      "statistics",
+      "bayes theorem",
+      "standard deviation",
+      "normal distribution"
+    ],
+    "a": "**Probability & Statistics:**\n• **Bayes' Theorem:** `P(A|B) = P(B|A) · P(A) / P(B)` — updates prior beliefs with new evidence.\n• **Mean (`μ`) & Standard Deviation (`σ`):** `σ = √( (1/N) Σ (xᵢ - μ)² )`.\n• **68–95–99.7 Rule** (normal bell curve): ~68% within `±1σ`, ~95% within `±2σ`, ~99.7% within `±3σ`.\n• **Correlation ≠ Causation:** confounding variables or reverse causality can link two trends without one causing the other."
+  },
+  {
+    "c": "health",
+    "k": [
+      "sleep",
+      "nutrition",
+      "exercise",
+      "fitness",
+      "hydration",
+      "healthy habits"
+    ],
+    "a": "**Evidence-Based Health & Fitness Pillars:**\n• **Sleep:** 7–9 hours nightly with consistent wake times, morning daylight exposure, and dim screens 60 min before bed.\n• **Exercise:** ≥150 min/week moderate aerobic cardio (zone 2 brisk walking/cycling/running) + 2–3 strength-training sessions covering major muscle groups.\n• **Nutrition:** whole minimally processed foods, adequate protein (~1.2–1.8 g/kg for active adults), fiber-rich vegetables/legumes, and mostly unsaturated fats.\n*(Educational info only — consult a qualified clinician for medical concerns.)*"
+  },
+  {
+    "c": "finance",
+    "k": [
+      "compound interest",
+      "investing",
+      "index fund",
+      "budgeting",
+      "inflation",
+      "personal finance"
+    ],
+    "a": "**Personal Finance Principles:**\n1. **50/30/20 Rule:** ~50% needs, ~30% wants, ≥20% savings & debt payoff.\n2. **Emergency Fund:** keep 3–6 months of core living expenses in liquid cash.\n3. **Pay off high-interest debt** (credit cards) before aggressive investing.\n4. **Compound growth:** `A = P(1 + r)ᵗ` — by the **Rule of 72**, money doubles in `~72 / annual_%` years (e.g. 8% ≈ 9 years).\n5. **Diversification:** broad low-cost index funds spread single-company risk."
+  },
+  {
+    "c": "history",
+    "k": [
+      "world history",
+      "ancient civilizations",
+      "industrial revolution",
+      "world war",
+      "renaissance"
+    ],
+    "a": "**Milestones of Human History:**\n• **~10,000 BCE:** Agricultural Revolution (Fertile Crescent, Indus, Yangtze, Mesoamerica).\n• **~3,200 BCE:** Writing emerges (Sumerian cuneiform, Egyptian hieroglyphs); Bronze Age cities.\n• **500 BCE – 500 CE:** Classical antiquity (Greece, Rome, Maurya/Gupta India, Han China, Persian empires).\n• **8th–14th c.:** Islamic Golden Age advances algebra (*al-Khwarizmi*), optics (*Ibn al-Haytham*), and medicine, feeding into the European **Renaissance** & printing press (~1440).\n• **1760s–1900s:** Industrial Revolutions (steam, electricity, rail).\n• **20th–21st c.:** WWI (1914–18), WWII (1939–45), decolonization, transistor (1947), Internet, smartphones, and modern AI."
+  },
+  {
+    "c": "productivity",
+    "k": [
+      "productivity",
+      "pomodoro",
+      "deep work",
+      "study tips",
+      "spaced repetition",
+      "active recall"
+    ],
+    "a": "**High-Leverage Learning & Focus Methods:**\n• **Active Recall:** close the book and test yourself from memory — 2–3× more effective than re-reading.\n• **Spaced Repetition:** review at expanding intervals (`1d → 3d → 7d → 21d`) right before forgetting.\n• **Feynman Technique:** explain a concept in plain words as if teaching a 12-year-old; gaps reveal what to revisit.\n• **Deep Work / Pomodoro:** 25–50 minute single-task blocks with notifications off, followed by a 5–10 minute break."
+  },
+  {
+    "c": "writing",
+    "k": [
+      "writing tips",
+      "resume",
+      "email",
+      "cover letter",
+      "storytelling",
+      "communication"
+    ],
+    "a": "**Clear Writing & Communication Rules:**\n1. **BLUF (Bottom Line Up Front):** put the main point or request in sentence #1.\n2. **Prefer active voice & concrete verbs:** *\"Cut load time by 42%\"* beats *\"Performance improvements were achieved.\"*\n3. **Cut filler words:** trim *very, really, basically, in order to, due to the fact that*.\n4. **Resume bullet formula (XYZ):** *Accomplished [X] as measured by [Y], by doing [Z].*"
+  },
+  {
+    "c": "philosophy",
+    "k": [
+      "philosophy",
+      "stoicism",
+      "logic",
+      "logical fallacies",
+      "ethics",
+      "critical thinking"
+    ],
+    "a": "**Critical Thinking & Classical Philosophy:**\n• **Stoicism** (*Marcus Aurelius, Epictetus, Seneca*): distinguish what is within your control (judgments, actions) from externals; practice courage, temperance, justice, and wisdom.\n• **Ethical lenses:** **Consequentialism** (outcomes/utility), **Deontology** (universal duties & rights), **Virtue Ethics** (character).\n• **Common fallacies to spot:** *Ad hominem* (attacking person), *Straw man* (distorting argument), *Survivorship bias*, *Sunk-cost fallacy*, and *False dichotomy*."
+  }
+]
