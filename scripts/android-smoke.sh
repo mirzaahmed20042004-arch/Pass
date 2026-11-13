@@ -52,7 +52,6 @@ sleep 2
 dump_ui
 tap_node '__EDIT__'
 adb shell input text 'remember%sbuy%smilk'
-adb shell input keyevent 4
 sleep 1
 dump_ui
 tap_node 'Send message'

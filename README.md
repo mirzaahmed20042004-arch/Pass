@@ -9,7 +9,7 @@ A local-first Android assistant prototype with a floating HUD, voice input and r
 1. Download the APK on your Android phone and open it. If Android asks, allow that browser or file manager to install unknown apps, then install Ultron Ai.
 2. Open the app. Notes and the built-in commands work without connecting an AI model. Try **“remember buy milk”**, **“open Camera”**, or **“search the web for astronomy”**.
 3. For open-ended chat and coding help, connect your own Ollama-compatible server in **Settings** (instructions below). No model is bundled in the APK.
-4. To use the floating HUD, choose **Set up HUD** and grant Android's overlay permission. Tap the bubble to return to Ultron; long-press it while another app is visible to capture one accessible-text snapshot. Screen reading also requires enabling **Ultron Ai screen assistance** in Android Accessibility settings.
+4. To use the floating HUD, choose **Set up HUD** and grant Android's overlay permission. Tap the bubble to return to Ultron; long-press it while another app is visible to capture one accessible-text snapshot. Screen reading also requires enabling **Ultron Ai screen assistance** in Android Accessibility settings. On Android 13+, a sideloaded app may first need **Allow restricted settings** in its App info menu; only enable this if you trust the app.
 
 The APK is signed with a **development/debug key**, not a production release key. Treat it as a prototype. A rebuild signed with a different key cannot update this installation; uninstalling first will delete its local data.
 
