@@ -1,0 +1,15 @@
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'com.ultronai.assistant'
+    compileSdk 34
+    defaultConfig {
+        applicationId 'com.ultronai.assistant'
+        minSdk 21
+        targetSdk 34
+        versionCode 1
+        versionName '0.1.0'
+    }
+    buildTypes { release { minifyEnabled false } }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_1_8; targetCompatibility JavaVersion.VERSION_1_8 }
+}

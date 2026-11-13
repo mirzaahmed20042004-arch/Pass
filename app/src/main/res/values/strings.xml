@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Ultron Ai</string>
+    <string name="accessibility_label">Ultron Ai screen assistance</string>
+    <string name="accessibility_description">On your request, read accessible labels from the visible app or perform one supervised tap. Password fields and sensitive actions are skipped. Disable at any time in Accessibility settings.</string>
+</resources>

@@ -1,0 +1,119 @@
+#!/usr/bin/env bash
+# Smoke-test the exact APK on an already-booted emulator/device.
+set -euo pipefail
+APK="${1:-releases/Ultron-Ai-v0.1.0.apk}"
+UI_FILE="${TMPDIR:-/tmp}/ultron-ui-$$.xml"
+trap 'rm -f "$UI_FILE"' EXIT
+
+dump_ui() {
+  adb shell uiautomator dump /sdcard/ultron-window.xml >/dev/null
+  adb exec-out cat /sdcard/ultron-window.xml > "$UI_FILE"
+}
+tap_node() {
+  local label="$1"
+  local coords
+  coords="$(python3 - "$UI_FILE" "$label" <<'PY'
+import re, sys, xml.etree.ElementTree as ET
+root = ET.parse(sys.argv[1]).getroot()
+needle = sys.argv[2]
+for node in root.iter('node'):
+    attrs = node.attrib
+    values = (attrs.get('text', ''), attrs.get('content-desc', ''))
+    matches = any(v == needle or (needle.endswith('*') and v.startswith(needle[:-1])) for v in values)
+    if matches or (needle == '__EDIT__' and attrs.get('class') == 'android.widget.EditText'):
+        bounds = list(map(int, re.findall(r'\d+', attrs.get('bounds', ''))))
+        if len(bounds) == 4 and bounds[2] - bounds[0] >= 8 and bounds[3] - bounds[1] >= 8:
+            print((bounds[0] + bounds[2]) // 2, (bounds[1] + bounds[3]) // 2)
+            break
+else:
+    sys.exit('Could not find visible UI control: ' + needle)
+PY
+)" || { cat "$UI_FILE"; return 1; }
+  adb shell input tap $coords
+}
+
+adb wait-for-device
+adb install -r "$APK"
+adb logcat -c
+adb shell am force-stop com.ultronai.assistant
+adb shell am start -n com.ultronai.assistant/.MainActivity
+sleep 15
+if ! adb shell pidof com.ultronai.assistant | tr -d '\r' | grep -q '[0-9]'; then
+  adb logcat -d -s AndroidRuntime:E; echo 'App process is not running' >&2; exit 1
+fi
+# The first dump can enable WebView accessibility asynchronously; allow it to settle.
+dump_ui
+sleep 3
+dump_ui
+if ! grep -q 'Consider it\|YOUR PERSONAL COMMAND CENTER\|Good morning\|Good afternoon\|Good evening' "$UI_FILE"; then
+  cat "$UI_FILE"; echo 'WebView content did not appear in the accessibility tree' >&2; exit 1
+fi
+# Exercise a real WebView interaction and local note persistence, not a mocked bridge.
+tap_node 'Chat'
+sleep 2
+dump_ui
+python3 - "$UI_FILE" <<'PYCODE'
+import sys, xml.etree.ElementTree as ET
+for n in ET.parse(sys.argv[1]).getroot().iter('node'):
+    a = n.attrib
+    if a.get('class') == 'android.widget.EditText' or a.get('text') in ('Chat', 'Agents', 'Send message'):
+        print('CHAT_CONTROL', a.get('text'), a.get('class'), a.get('bounds'))
+PYCODE
+tap_node '__EDIT__'
+adb shell input text 'remember%sbuy%smilk'
+# Dismiss the soft keyboard after typing so it cannot cover the send control.
+adb shell input keyevent 4
+sleep 1
+dump_ui
+tap_node 'Send message'
+sleep 4
+dump_ui
+if ! grep -q 'Saved to your local memories' "$UI_FILE"; then echo 'Local command did not complete' >&2; cat "$UI_FILE"; exit 1; fi
+adb shell am force-stop com.ultronai.assistant
+adb shell am start -n com.ultronai.assistant/.MainActivity
+sleep 8
+dump_ui
+sleep 2
+dump_ui
+tap_node 'Memory'
+sleep 2
+dump_ui
+if ! grep -q 'buy milk' "$UI_FILE"; then echo 'Local memory did not persist across restart' >&2; cat "$UI_FILE"; exit 1; fi
+# Grant overlay access only on this disposable emulator, then exercise the HUD via the app UI.
+adb shell appops set com.ultronai.assistant SYSTEM_ALERT_WINDOW allow
+tap_node 'Settings'
+sleep 2
+adb shell input swipe 160 500 160 160 400
+adb shell input swipe 160 500 160 160 400
+sleep 1
+dump_ui
+tap_node 'Floating HUD permission*'
+sleep 1
+dump_ui
+tap_node 'Enable floating HUD*'
+sleep 1
+dump_ui
+python3 - "$UI_FILE" <<'PYCODE'
+import sys, xml.etree.ElementTree as ET
+for n in ET.parse(sys.argv[1]).getroot().iter('node'):
+    a = n.attrib
+    if a.get('text') and (a.get('class') == 'android.widget.Button' or a.get('package') != 'com.ultronai.assistant'):
+        print('HUD_UI', a.get('package'), a.get('text'), a.get('bounds'))
+PYCODE
+sleep 3
+if ! adb shell dumpsys activity services com.ultronai.assistant | grep -q 'com.ultronai.assistant/.HudService'; then
+  echo 'HUD foreground service did not start' >&2
+  echo "::error title=HUD diagnostic::$(adb shell appops get com.ultronai.assistant SYSTEM_ALERT_WINDOW | tr '\n' ' ') $(adb logcat -d -v brief -s UltronHUD:E | tail -c 3000 | tr '\n' ' ')"
+  adb shell dumpsys activity services com.ultronai.assistant | grep -i -E 'ultron|hud' | head -30
+  exit 1
+fi
+dump_ui
+tap_node 'Floating HUD permission*'
+sleep 1
+dump_ui
+tap_node 'Turn off HUD'
+sleep 3
+if adb shell dumpsys activity services com.ultronai.assistant | grep -q 'com.ultronai.assistant/.HudService'; then echo 'HUD service did not stop' >&2; exit 1; fi
+LOG="$(adb logcat -d -s AndroidRuntime:E)"
+if grep -q 'Process: com.ultronai.assistant' <<< "$LOG"; then echo "$LOG"; exit 1; fi
+echo 'APK installed, rendered, persisted a local note, and started/stopped the HUD without an AndroidRuntime crash.'

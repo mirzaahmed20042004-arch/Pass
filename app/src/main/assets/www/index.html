@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#07101e">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' data:; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Ultron Ai — your personal intelligence</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="core.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+<svg class="icon-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="m3.5 10 8.5-7 8.5 7v9a1.5 1.5 0 0 1-1.5 1.5h-14A1.5 1.5 0 0 1 3.5 19z"/><path d="M9 20v-6.5h6V20"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M20.5 11.4a8.5 8.5 0 0 1-8.7 8.3 9 9 0 0 1-3.6-.7L4 20l.9-3.8a8 8 0 0 1-1.4-4.8A8.5 8.5 0 0 1 12 3a8.5 8.5 0 0 1 8.5 8.4Z"/><path d="M8.2 11.5h.1m3.7 0h.1m3.7 0h.1" stroke-width="2.5" stroke-linecap="round"/></symbol>
+  <symbol id="i-agents" viewBox="0 0 24 24"><path d="M12 2.8 14 8l5.2-2-2 5.2 4 2.8-5.5.3-.6 5.5-3.1-4.4-4.5 3 1.2-5.3-5.3-1.3L9 9l-.4-5.3z"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13.5 2.8 5.8 13h5l-.3 8.2L18.4 11h-5z"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></symbol>
+  <symbol id="i-memory" viewBox="0 0 24 24"><path d="M6 3.5h12a2 2 0 0 1 2 2v15l-8-4-8 4v-15a2 2 0 0 1 2-2Z"/><path d="M8 8h8m-8 3h5"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><path d="m9.4 3.3.5-1h4.2l.5 1.8 1.5.8 1.8-.5 2.1 3.6-1.3 1.3.1 1.7 1.3 1.3-2.1 3.7-1.8-.5-1.5.8-.5 1.8H9.9l-.5-1.8-1.5-.8-1.8.5L4 12.3 5.3 11l-.1-1.7L4 8l2.1-3.6 1.8.5z" transform="translate(0 2)"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.7" cy="10.7" r="6.5"/><path d="m16 16 4.5 4.5"/></symbol>
+  <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6.3 11.4a5.7 5.7 0 0 0 11.4 0M12 17v4m-3 0h6"/></symbol>
+  <symbol id="i-message" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m4 7 8 6 8-6"/></symbol>
+  <symbol id="i-note" viewBox="0 0 24 24"><path d="M6 3.5h9l4 4v13H6z"/><path d="M14.5 3.5v4.5H19M9 12h7m-7 3.5h7"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-5-5 5 5-5 5"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 2 1.9 6.3L20 10l-6.1 1.9L12 18l-1.9-6.1L4 10l6.1-1.7L12 2Zm6 13 .9 2.5 2.6.9-2.6.8-.9 2.6-.8-2.6-2.6-.8 2.6-.9z"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="m12 2.8 8 3v5.7c0 4.7-3 7.6-8 9.7-5-2.1-8-5-8-9.7V5.8z"/><path d="m8.7 12 2.1 2.1 4.6-4.8"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12s3.3-6.5 9.5-6.5 9.5 6.5 9.5 6.5-3.3 6.5-9.5 6.5S2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-code" viewBox="0 0 24 24"><path d="m8.5 7-5 5 5 5m7-10 5 5-5 5M13.5 4l-3 16"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3.5 12h17M12 3c2.3 2.5 3.5 5.5 3.5 9s-1.2 6.5-3.5 9C9.7 18.5 8.5 15.5 8.5 12S9.7 5.5 12 3Z"/></symbol>
+  <symbol id="i-pen" viewBox="0 0 24 24"><path d="m4 20 4.2-.8L19 8.4 15.6 5 4.8 15.8zM14.3 6.3l3.4 3.4M4 20l2.5-2.5"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="m9.5 14.5 5-5M8 16l-1 1a3.5 3.5 0 0 1-5-5l3-3a3.5 3.5 0 0 1 5 0m4-1 1-1a3.5 3.5 0 0 1 5 5l-3 3a3.5 3.5 0 0 1-5 0" transform="translate(1 1)"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="m21 3-7.5 18-2.7-7.8L3 10.5 21 3ZM10.8 13.2 21 3"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4.5 7h15m-12 0 .8 13h7.4l.8-13M9.5 7V4h5v3m-4 4v5m3-5v5"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M10 5h4m-3 13.5h2"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5zm-9 9 9 5 9-5m-18 4 9 5 9-5"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+  <symbol id="i-volume" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9zm12-1a6 6 0 0 1 0 8m2-11a10 10 0 0 1 0 14"/></symbol>
+</svg>
+<div class="app-shell">
+  <aside class="sidebar" aria-label="Main navigation">
+    <button class="brand" data-nav="home" aria-label="Ultron Ai home">
+      <img src="images/logo.webp" alt="" class="brand-logo">
+      <span class="brand-copy"><strong>ULTRON<span>AI</span></strong><small>YOUR PERSONAL AI</small></span>
+    </button>
+    <div class="nav-label">WORKSPACE</div>
+    <nav class="side-nav">
+      <button class="nav-item active" data-nav="home"><svg class="icon"><use href="#i-home"/></svg><span>Overview</span><span class="nav-active-dot"></span></button>
+      <button class="nav-item" data-nav="chat"><svg class="icon"><use href="#i-chat"/></svg><span>AI Chat</span></button>
+      <button class="nav-item" data-nav="agents"><svg class="icon"><use href="#i-agents"/></svg><span>Agents</span><span class="nav-count">04</span></button>
+      <button class="nav-item" data-nav="automations"><svg class="icon"><use href="#i-bolt"/></svg><span>Automations</span></button>
+      <button class="nav-item" data-nav="connections"><svg class="icon"><use href="#i-grid"/></svg><span>Connections</span></button>
+      <button class="nav-item" data-nav="memory"><svg class="icon"><use href="#i-memory"/></svg><span>Memory</span></button>
+    </nav>
+    <div class="nav-label system-label">PREFERENCES</div>
+    <nav class="side-nav"><button class="nav-item" data-nav="settings"><svg class="icon"><use href="#i-settings"/></svg><span>Settings</span></button></nav>
+    <div class="sidebar-bottom">
+      <div class="sidebar-assist"><div class="sidebar-assist-icon"><svg class="icon"><use href="#i-spark"/></svg></div><div><strong>Here when you need.</strong><span>Ready for your next idea.</span></div></div>
+      <button class="profile-button" data-nav="settings"><span class="profile-avatar">U</span><span><strong>Your space</strong><small>Private by design</small></span><svg class="icon profile-chevron"><use href="#i-chevron"/></svg></button>
+    </div>
+  </aside>
+
+  <div class="app-content">
+    <header class="topbar">
+      <div class="topbar-crumb"><span class="crumb-root">YOUR WORKSPACE</span><span class="crumb-slash">/</span><span id="current-crumb">OVERVIEW</span></div>
+      <div class="top-actions"><span class="privacy-pill"><svg class="icon"><use href="#i-shield"/></svg> LOCAL FIRST</span><button class="model-pill" data-nav="settings"><span class="status-dot" id="top-model-dot"></span><span id="top-model-status">Connect a model</span><svg class="icon"><use href="#i-chevron"/></svg></button></div>
+    </header>
+    <div class="mobile-brand"><button class="brand" data-nav="home"><img src="images/logo.webp" alt="" class="brand-logo"><span class="brand-copy"><strong>ULTRON<span>AI</span></strong><small>YOUR PERSONAL AI</small></span></button><button class="mobile-settings icon-button" data-nav="settings" aria-label="Settings"><svg class="icon"><use href="#i-settings"/></svg></button></div>
+    <div class="workspace-layout">
+      <main id="main-content" class="main-content">
+        <section class="page active" id="page-home" data-page="home">
+          <div class="welcome-row"><div><div class="eyebrow"><span class="eyebrow-line"></span> YOUR PERSONAL COMMAND CENTER</div><h1 id="greeting">Good to see you<span class="greeting-spark"> ✳</span></h1><p>Let's make today a little more extraordinary.</p></div><div class="date-badge"><svg class="icon"><use href="#i-spark"/></svg><span id="today-date"></span></div></div>
+          <section class="hero-card">
+            <div class="hero-copy"><div class="hero-kicker"><span class="pulse-dot"></span> YOUR AI, YOUR WAY</div><h2>Consider it<br><span>taken care of.</span></h2><p>One thoughtful assistant for your ideas, tasks, and everything in between.</p><div class="hero-buttons"><button class="button primary" data-nav="chat">Start a conversation <svg class="icon"><use href="#i-arrow"/></svg></button><button class="hero-link" data-nav="agents">Meet your agents <svg class="icon"><use href="#i-chevron"/></svg></button></div></div>
+            <div class="hero-art" aria-hidden="true"><div class="orbit orbit-a"></div><div class="orbit orbit-b"></div><div class="orbit orbit-c"></div><div class="orbit-point point-a"></div><div class="orbit-point point-b"></div><div class="orb-glow"></div><div class="orb-core"><img src="images/logo.webp" alt=""></div><span class="orbit-label orbit-label-one">✦ &nbsp; INTELLIGENCE</span><span class="orbit-label orbit-label-two">AT YOUR SERVICE &nbsp; ✦</span></div>
+            <div class="hero-index" aria-hidden="true">01 / 04 <span></span> A LITTLE MORE POSSIBLE</div>
+          </section>
+          <div class="section-heading"><div><span class="section-kicker">A LITTLE SHORTCUT</span><h2>What shall we do?</h2></div><button class="text-link" data-nav="automations">See all actions <svg class="icon"><use href="#i-arrow"/></svg></button></div>
+          <div class="quick-grid">
+            <button class="quick-card" data-action="voice"><span class="quick-icon cyan"><svg class="icon"><use href="#i-mic"/></svg></span><svg class="icon quick-arrow"><use href="#i-arrow"/></svg><strong>Talk to Ultron</strong><small>Let's have a conversation</small></button>
+            <button class="quick-card" data-action="search"><span class="quick-icon violet"><svg class="icon"><use href="#i-search"/></svg></span><svg class="icon quick-arrow"><use href="#i-arrow"/></svg><strong>Search the web</strong><small>Find what you're looking for</small></button>
+            <button class="quick-card" data-action="message"><span class="quick-icon blue"><svg class="icon"><use href="#i-message"/></svg></span><svg class="icon quick-arrow"><use href="#i-arrow"/></svg><strong>Draft a message</strong><small>A little help staying in touch</small></button>
+            <button class="quick-card" data-action="note"><span class="quick-icon amber"><svg class="icon"><use href="#i-note"/></svg></span><svg class="icon quick-arrow"><use href="#i-arrow"/></svg><strong>Save a thought</strong><small>Keep the good ideas close</small></button>
+          </div>
+          <div class="home-lower">
+            <section class="panel recent-panel"><div class="panel-heading"><div><span class="section-kicker">PICK UP WHERE YOU LEFT OFF</span><h2>Recent conversations</h2></div><button class="round-arrow" data-nav="chat" aria-label="Open chat"><svg class="icon"><use href="#i-arrow"/></svg></button></div><div id="home-recent" class="recent-content"></div></section>
+            <section class="panel tip-panel"><div class="tip-icon"><svg class="icon"><use href="#i-spark"/></svg></div><div class="tip-copy"><span class="section-kicker">A LITTLE INSPIRATION</span><h3>Made to move<br>with you.</h3><p>Bring Ultron along with a floating HUD, whenever you want it.</p><button class="text-link" data-action="hud">Set up your HUD <svg class="icon"><use href="#i-arrow"/></svg></button></div><div class="tip-lines" aria-hidden="true"></div></section>
+          </div>
+          <div class="home-footer"><span>DESIGNED TO BE ON YOUR SIDE.</span><span>✦ &nbsp; YOUR WORLD, A LITTLE SIMPLER.</span></div>
+        </section>
+
+        <section class="page" id="page-chat" data-page="chat" hidden>
+          <div class="page-header"><div><div class="eyebrow"><span class="eyebrow-line"></span> YOUR SPACE TO THINK</div><h1>Let's talk.</h1><p>Big ideas, little questions, and everything in between.</p></div><button class="button subtle small" data-action="clear-chat"><svg class="icon"><use href="#i-trash"/></svg> Clear chat</button></div>
+          <div class="chat-shell panel"><div class="chat-top"><div class="chat-identity"><div class="chat-avatar"><img src="images/logo.webp" alt=""></div><div><strong id="chat-agent-name">Ultron Assistant</strong><span><i class="status-dot"></i><span id="chat-connection-label">On-device commands available</span></span></div></div><button class="button subtle small" data-nav="agents">Switch agent <svg class="icon"><use href="#i-chevron"/></svg></button></div><div class="chat-stream" id="chat-stream" aria-live="polite"></div><div class="chat-compose"><div class="suggestions" id="chat-suggestions"><button data-suggestion="What can you do?">What can you do?</button><button data-suggestion="Remember ">Remember something</button><button data-suggestion="Search the web for ">Search the web</button></div><form id="chat-form"><button class="compose-icon" type="button" data-action="voice" aria-label="Talk to Ultron"><svg class="icon"><use href="#i-mic"/></svg></button><textarea id="chat-input" rows="1" maxlength="4000" placeholder="Ask anything, or give me a command..." aria-label="Message Ultron"></textarea><button class="send-button" type="submit" aria-label="Send message"><svg class="icon"><use href="#i-arrow"/></svg></button></form><p><svg class="icon"><use href="#i-shield"/></svg> Your chat stays on this device until you send it to a connected model.</p></div></div>
+        </section>
+
+        <section class="page" id="page-agents" data-page="agents" hidden>
+          <div class="page-header"><div><div class="eyebrow"><span class="eyebrow-line"></span> THE RIGHT MIND FOR THE MOMENT</div><h1>Meet your agents.</h1><p>Different perspectives, all here to help you do more.</p></div></div>
+          <div class="info-banner"><span class="info-icon"><svg class="icon"><use href="#i-spark"/></svg></span><div><strong>One assistant. Many ways to think.</strong><p>These are instruction profiles, not bundled models. Connect an Ollama-compatible model to get AI responses.</p></div><button class="text-link" data-nav="settings">Connect model <svg class="icon"><use href="#i-arrow"/></svg></button></div>
+          <div class="agent-grid" id="agent-grid"></div>
+          <div class="footnote-card"><svg class="icon"><use href="#i-shield"/></svg><div><strong>You choose what powers Ultron.</strong><p>Use an open-weight model installed on your own Ollama server. Model availability, licensing, speed, and hardware requirements vary.</p></div></div>
+        </section>
+
+        <section class="page" id="page-automations" data-page="automations" hidden>
+          <div class="page-header"><div><div class="eyebrow"><span class="eyebrow-line"></span> LITTLE THINGS, HANDLED</div><h1>Make moves.</h1><p>Simple actions that put you in control of your day.</p></div></div>
+          <div class="info-banner compact"><span class="info-icon"><svg class="icon"><use href="#i-shield"/></svg></span><div><strong>You're always in control.</strong><p>Actions only run when you request them. Messages open as drafts for you to review and send.</p></div></div>
+          <div class="action-grid">
+            <button class="action-card" data-action="open-app"><span class="quick-icon cyan"><svg class="icon"><use href="#i-grid"/></svg></span><span><strong>Open an app</strong><small>Jump to an app installed on your phone.</small></span><svg class="icon"><use href="#i-chevron"/></svg></button>
+            <button class="action-card" data-action="search"><span class="quick-icon violet"><svg class="icon"><use href="#i-search"/></svg></span><span><strong>Search the web</strong><small>Look something up in your browser.</small></span><svg class="icon"><use href="#i-chevron"/></svg></button>
+            <button class="action-card" data-action="message"><span class="quick-icon blue"><svg class="icon"><use href="#i-message"/></svg></span><span><strong>Draft a message</strong><small>Start an SMS. You decide when to send.</small></span><svg class="icon"><use href="#i-chevron"/></svg></button>
+            <button class="action-card" data-action="share"><span class="quick-icon teal"><svg class="icon"><use href="#i-send"/></svg></span><span><strong>Share to an app</strong><small>Send a draft to your chosen app.</small></span><svg class="icon"><use href="#i-chevron"/></svg></button>
+            <button class="action-card" data-action="screen"><span class="quick-icon amber"><svg class="icon"><use href="#i-eye"/></svg></span><span><strong>Read visible screen</strong><small>Use the HUD to read accessible labels.</small></span><svg class="icon"><use href="#i-chevron"/></svg></button>
+            <button class="action-card" data-action="tap"><span class="quick-icon rose"><svg class="icon"><use href="#i-spark"/></svg></span><span><strong>Tap a button</strong><small>One supervised tap after a countdown.</small></span><svg class="icon"><use href="#i-chevron"/></svg></button>
+          </div>
+        </section>
+
+        <section class="page" id="page-connections" data-page="connections" hidden>
+          <div class="page-header"><div><div class="eyebrow"><span class="eyebrow-line"></span> BETTER TOGETHER</div><h1>Stay connected.</h1><p>Bring the tools you already use a little closer.</p></div></div>
+          <div class="connection-list panel">
+            <div class="connection-row"><span class="quick-icon cyan"><svg class="icon"><use href="#i-layers"/></svg></span><div><strong>Open model</strong><p>Connect your own Ollama server and choose a model.</p></div><span class="connection-status" id="connection-model">NOT CONNECTED</span><button class="button subtle small" data-nav="settings">Configure</button></div>
+            <div class="connection-row"><span class="quick-icon violet"><svg class="icon"><use href="#i-phone"/></svg></span><div><strong>Apps on your phone</strong><p>Open apps and share drafts through Android.</p></div><span class="connection-status" id="connection-device">ANDROID</span><button class="button subtle small" data-action="open-app">Try it</button></div>
+            <div class="connection-row"><span class="quick-icon blue"><svg class="icon"><use href="#i-eye"/></svg></span><div><strong>Screen assistance</strong><p>Optional accessibility access for visible labels and taps.</p></div><span class="connection-status" id="connection-accessibility">OFF</span><button class="button subtle small" data-action="screen">Set up</button></div>
+            <div class="connection-row"><span class="quick-icon teal"><svg class="icon"><use href="#i-spark"/></svg></span><div><strong>Floating HUD</strong><p>A little shortcut that can sit above other apps.</p></div><span class="connection-status" id="connection-hud">OFF</span><button class="button subtle small" data-action="hud">Set up</button></div>
+            <div class="connection-row"><span class="quick-icon amber"><svg class="icon"><use href="#i-mic"/></svg></span><div><strong>Voice services</strong><p>Talk and listen using your phone's speech services.</p></div><span class="connection-status" id="connection-voice">ON REQUEST</span><button class="button subtle small" data-action="voice">Try it</button></div>
+          </div><p class="page-disclaimer">Ultron uses Android's app picker and sharing screen; it does not sign into or control your social accounts. Some actions depend on your phone and installed apps.</p>
+        </section>
+
+        <section class="page" id="page-memory" data-page="memory" hidden>
+          <div class="page-header"><div><div class="eyebrow"><span class="eyebrow-line"></span> THE THINGS WORTH KEEPING</div><h1>A place to remember.</h1><p>Your notes, ideas, and little details, all in one place.</p></div><button class="button primary" data-action="note"><svg class="icon"><use href="#i-plus"/></svg> Add a memory</button></div>
+          <div class="memory-toolbar"><div class="memory-count"><span class="status-dot"></span> <span id="memory-count">0 saved memories</span> <span class="toolbar-separator">·</span> Stored on this device</div><label class="memory-search"><svg class="icon"><use href="#i-search"/></svg><input id="memory-search" placeholder="Search memories" aria-label="Search memories"></label></div>
+          <div class="memory-grid" id="memory-grid"></div>
+          <div class="footnote-card"><svg class="icon"><use href="#i-shield"/></svg><div><strong>Your memories belong to you.</strong><p>Notes are stored in the app's private storage, not encrypted. Uninstalling or clearing app data removes them.</p></div></div>
+        </section>
+
+        <section class="page" id="page-settings" data-page="settings" hidden>
+          <div class="page-header"><div><div class="eyebrow"><span class="eyebrow-line"></span> MAKE IT YOURS</div><h1>Your settings.</h1><p>A little customization goes a long way.</p></div></div>
+          <div class="settings-stack">
+            <section class="panel settings-panel"><div class="settings-title"><span class="quick-icon cyan"><svg class="icon"><use href="#i-layers"/></svg></span><div><h2>Connect an AI model</h2><p>Use Ollama directly or the optional Ultron gateway.</p></div></div><form id="model-form"><label>Server URL<input type="url" id="model-url" placeholder="http://192.168.1.10:11434" autocomplete="off"><small>Use the server's reachable address, not your computer's localhost.</small></label><label>Default model<input id="model-name" placeholder="e.g. qwen2.5:3b" autocomplete="off" maxlength="120"><small>The model must already be installed on your server.</small></label><label>Gateway token <span class="optional">OPTIONAL</span><input type="password" id="model-token" placeholder="Only if your server requires it" autocomplete="off" maxlength="256"><small>Stored unencrypted in app-private storage. HTTP sends data and tokens unencrypted; use a trusted network or HTTPS.</small></label><div class="settings-actions"><button class="button primary" type="submit">Save connection <svg class="icon"><use href="#i-arrow"/></svg></button><button class="button subtle" type="button" data-action="test-model">Test connection</button><span id="model-test-result" class="inline-result" aria-live="polite"></span></div></form></section>
+            <section class="panel settings-panel"><div class="settings-title"><span class="quick-icon violet"><svg class="icon"><use href="#i-volume"/></svg></span><div><h2>Voice &amp; sound</h2><p>Make conversations feel a little more natural.</p></div></div><label class="setting-toggle"><span><strong>Read replies aloud</strong><small>Uses your phone's text-to-speech engine.</small></span><input type="checkbox" id="voice-replies"><span class="switch" aria-hidden="true"></span></label></section>
+            <section class="panel settings-panel"><div class="settings-title"><span class="quick-icon teal"><svg class="icon"><use href="#i-shield"/></svg></span><div><h2>Privacy &amp; permissions</h2><p>Nothing is enabled without your say-so.</p></div></div><div class="settings-links"><button data-action="hud"><span>Floating HUD permission</span><span id="settings-hud">Set up <svg class="icon"><use href="#i-chevron"/></svg></span></button><button data-action="screen"><span>Accessibility permission</span><span id="settings-accessibility">Set up <svg class="icon"><use href="#i-chevron"/></svg></span></button><button data-action="clear-data"><span>Clear local app data</span><span>Manage <svg class="icon"><use href="#i-chevron"/></svg></span></button></div></section>
+            <p class="page-disclaimer">Ultron Ai is a local-first prototype. Android, speech services, and model servers have their own limitations and privacy practices. No models are bundled.</p>
+          </div>
+        </section>
+      </main>
+      <aside class="right-rail" id="right-rail" aria-label="Assistant status">
+        <div class="rail-heading"><span>YOUR COMMAND CENTER</span><span class="rail-dots">•••</span></div>
+        <div class="status-card"><div class="status-card-top"><div class="tiny-logo"><img src="images/logo.webp" alt=""></div><div><strong>Ultron is here.</strong><small>Your personal assistant</small></div><span class="status-ring"><span></span></span></div><div class="status-divider"></div><div class="status-line"><span>DEVICE ACTIONS</span><strong id="rail-device-status">ANDROID APP</strong></div><div class="status-line"><span>AI MODEL</span><strong id="rail-model-status">NOT CONNECTED</strong></div></div>
+        <div class="rail-section-title"><div><span class="section-kicker">A LITTLE EXTRA HELP</span><h3>Your floating HUD</h3></div><svg class="icon"><use href="#i-spark"/></svg></div>
+        <div class="hud-card"><div class="hud-art" aria-hidden="true"><div class="hud-orbit one"></div><div class="hud-orbit two"></div><div class="hud-bubble"><img src="images/logo.webp" alt=""></div><div class="hud-plus">✦</div></div><span class="hud-overline">YOUR ASSISTANT, EVERYWHERE</span><h4>Always within reach.</h4><p>Keep a little piece of Ultron close, right on top of your apps.</p><button class="button hud-button" data-action="hud">Set up HUD <svg class="icon"><use href="#i-arrow"/></svg></button><div class="hud-foot"><span class="status-dot muted" id="hud-dot"></span><span id="hud-state">OFF BY DEFAULT</span></div></div>
+        <div class="rail-section-title lower"><div><span class="section-kicker">IN YOUR CONTROL</span><h3>Made for your privacy</h3></div></div><div class="privacy-card"><span class="privacy-icon"><svg class="icon"><use href="#i-shield"/></svg></span><p>Built to keep you in the driver's seat. Permissions are always optional.</p></div>
+      </aside>
+    </div>
+  </div>
+  <nav class="bottom-nav" aria-label="Mobile navigation"><button class="active" data-nav="home"><svg class="icon"><use href="#i-home"/></svg><span>Home</span></button><button data-nav="chat"><svg class="icon"><use href="#i-chat"/></svg><span>Chat</span></button><button data-nav="agents"><svg class="icon"><use href="#i-agents"/></svg><span>Agents</span></button><button data-nav="memory"><svg class="icon"><use href="#i-memory"/></svg><span>Memory</span></button><button data-action="more"><svg class="icon"><use href="#i-more"/></svg><span>More</span></button></nav>
+</div>
+<div id="modal-root"></div><div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

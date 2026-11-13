@@ -1,0 +1,59 @@
+name: Android build
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      # GitHub's Ubuntu runner already includes the Android SDK.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npm test
+      - run: npm run test:ui
+      - name: Build Android APK
+        run: |
+          if ! ./gradlew --no-daemon assembleDebug > "$RUNNER_TEMP/gradle-build.log" 2>&1; then
+            cat "$RUNNER_TEMP/gradle-build.log"
+            echo "::error title=Gradle build failed::$(tail -30 "$RUNNER_TEMP/gradle-build.log" | tr '\n' ' ' | sed 's/%/%25/g')"
+            exit 1
+          fi
+          tail -20 "$RUNNER_TEMP/gradle-build.log"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ultron-ai-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+  emulator-smoke:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enable hardware acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          target: google_apis
+          arch: x86_64
+          disable-animations: true
+          script: ./scripts/android-smoke-ci.sh releases/Ultron-Ai-v0.1.0.apk
+      - name: Report emulator diagnostics
+        if: failure()
+        run: |
+          if [ -f "$RUNNER_TEMP/ultron-smoke.log" ]; then
+            echo "::error title=Android smoke test failed::$(tail -20 "$RUNNER_TEMP/ultron-smoke.log" | tr '\n' ' ' | sed 's/%/%25/g')"
+          else
+            echo "::error title=Emulator setup failed::The emulator could not start before the APK smoke test ran."
+          fi
