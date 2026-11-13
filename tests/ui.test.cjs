@@ -120,6 +120,10 @@ async function run() {
   assert.equal(await page.locator('#page-connections').isVisible(), true);
   await page.locator('.bottom-nav [data-nav=chat]').click(); await page.locator('#chat-input').focus();
   assert.equal(await page.locator('.bottom-nav').isVisible(), false);
+  await page.evaluate(() => window.UltronApp.onBackPressed());
+  assert.equal(await page.locator('#page-home').isVisible(), true);
+  assert.equal(await page.locator('.bottom-nav').isVisible(), true);
+  await page.locator('.bottom-nav [data-nav=chat]').click(); await page.locator('#chat-input').focus();
   await page.locator('#chat-input').blur(); assert.equal(await page.locator('.bottom-nav').isVisible(), true);
   assert.deepEqual(pageErrors, []);
   console.log('UI tests passed: notes, chat, safe intents, model privacy, permissions, voice, and mobile navigation.');

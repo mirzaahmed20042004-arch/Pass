@@ -55,6 +55,7 @@
   }
   function navigate(page) {
     if (!names[page]) page = 'home';
+    if (page !== 'chat') { $('#chat-input').blur(); document.body.classList.remove('input-focused'); }
     currentPage = page;
     $$('.page').forEach(function (section) { var active = section.dataset.page === page; section.hidden = !active; section.classList.toggle('active', active); });
     $$('[data-nav]').forEach(function (button) { if (button.classList.contains('nav-item') || button.parentNode.classList.contains('bottom-nav')) button.classList.toggle('active', button.dataset.nav === page); });
