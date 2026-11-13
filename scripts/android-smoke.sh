@@ -13,6 +13,9 @@ if ! adb shell pidof com.ultronai.assistant | tr -d '\r' | grep -q '[0-9]'; then
 fi
 LOG="$(adb logcat -d -s AndroidRuntime:E)"
 if grep -q 'Process: com.ultronai.assistant' <<< "$LOG"; then echo "$LOG"; exit 1; fi
+# The first dump can enable WebView accessibility asynchronously; allow it to settle.
+adb shell uiautomator dump /sdcard/ultron-window.xml >/dev/null
+sleep 3
 adb shell uiautomator dump /sdcard/ultron-window.xml >/dev/null
 UI="$(adb shell cat /sdcard/ultron-window.xml | tr -d '\r')"
 if ! grep -q 'Consider it\|YOUR PERSONAL COMMAND CENTER\|Good morning\|Good afternoon\|Good evening' <<< "$UI"; then

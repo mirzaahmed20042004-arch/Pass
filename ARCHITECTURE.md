@@ -20,7 +20,7 @@ Bundled UI / localStorage
 
 ## AI
 
-`core.js` defines four instruction profiles: assistant, coding, research, and creative. They are not separate model installations. A default model and optional profile-specific model names are configured by the user. The app sends the profile's system instruction and at most eight model-context messages to `/api/chat` with `stream: false`. Notes, screen snapshots and local action messages are not added to model context. `/api/tags` checks connectivity and installed model names. The configured server processes model prompts; inference is not bundled or guaranteed offline.
+`core.js` defines four instruction profiles: assistant, coding, research, and creative. They are not separate model installations. A default model and optional profile-specific model names are configured by the user. The app sends the profile's system instruction and at most eight model-context messages (truncated to 4,000 characters each) to `/api/chat` with `stream: false`. Notes, screen snapshots and local action messages are not added to model context. `/api/tags` checks connectivity and installed model names. The configured server processes model prompts; inference is not bundled or guaranteed offline.
 
 `backend/server.py` is an optional dependency-free, Ollama-compatible proxy. It binds to loopback by default and requires a token for non-loopback binds; it validates inputs, strips tool definitions, limits request/response sizes, refuses upstream redirects, and stores no prompts. It is not an internet-hardened server or TLS terminator.
 

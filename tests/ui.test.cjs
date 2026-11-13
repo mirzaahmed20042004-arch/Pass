@@ -45,7 +45,7 @@ async function run() {
       shareText: value => record('shareText', value),
       scheduleTap: value => record('scheduleTap', value),
       testModel: value => { const req = JSON.parse(value); record('testModel', req); setTimeout(() => window.UltronApp.onModelTest(req.id, JSON.stringify({ok: true, modelFound: true})), 20); },
-      chatWithModel: value => { const req = JSON.parse(value); record('chatWithModel', req); setTimeout(() => window.UltronApp.onModelResponse(req.id, JSON.stringify({ok: true, text: '<b>Answer from model</b>'})), 20); }
+      chatWithModel: value => { const req = JSON.parse(value); record('chatWithModel', req); if (req.messages.some(m => m.content === 'very slow response')) window.slowRequestId = req.id; else setTimeout(() => window.UltronApp.onModelResponse(req.id, JSON.stringify({ok: true, text: '<b>Answer from model</b>'})), 20); }
     };
   });
   await page.goto(`http://127.0.0.1:${server.address().port}/`, {waitUntil: 'networkidle'});
@@ -97,6 +97,12 @@ async function run() {
   assert.equal(sent.model, 'codellama:7b'); assert.equal(sent.token, 'example-secret-token');
   assert.ok(!JSON.stringify(sent.messages).includes('PRIVATE SCREEN LABEL')); assert.ok(!JSON.stringify(sent.messages).includes('buy milk'));
   assert.match(sent.messages[0].content, /cannot execute/i);
+  // A response that arrives after clearing must not repopulate deleted history.
+  await page.locator('#chat-input').fill('very slow response'); await page.locator('#chat-form button[type=submit]').click();
+  await page.waitForFunction(() => window.slowRequestId > 0);
+  await page.locator('#page-chat [data-action=clear-chat]').click(); await page.locator('[data-confirm=chat]').click();
+  await page.evaluate(() => window.UltronApp.onModelResponse(window.slowRequestId, JSON.stringify({ok: true, text: 'late private response'})));
+  assert.equal(await page.locator('.chat-message').count(), 0);
 
   // HUD, accessibility and one-shot voice are initiated only by the user's buttons.
   await clickNav('connections'); await page.locator('#page-connections [data-action=hud]').click(); await page.locator('[data-action=start-hud]').click();

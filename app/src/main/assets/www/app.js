@@ -154,8 +154,8 @@
   function addNote(text) {
     text = String(text || '').trim();
     if (!text) { toast('Add a little text first.'); return false; }
+    if (state.notes.length >= 200) { toast('Memory is full. Delete a note before adding another.'); return false; }
     state.notes.unshift({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8), text: text.slice(0, 3000), created: Date.now() });
-    state.notes = state.notes.slice(0, 200);
     if (!persist()) { state.notes.shift(); return false; }
     renderMemory(); return true;
   }
@@ -207,7 +207,7 @@
         return;
       }
       var messages = [{ role: 'system', content: agent.prompt }];
-      state.messages.filter(function (m) { return m.modelContext; }).slice(-8).forEach(function (m) { messages.push({ role: m.role, content: m.text }); });
+      state.messages.filter(function (m) { return m.modelContext; }).slice(-8).forEach(function (m) { messages.push({ role: m.role, content: m.text.slice(0, 4000) }); });
       busy = true; pendingVoiceReply = !!fromVoice; renderChat();
       var id = ++modelRequest;
       var request = { id: id, url: endpoint.value, model: model, token: state.settings.token, messages: messages };
@@ -312,8 +312,8 @@
       openModal('LET IT GO', 'Delete this memory?', 'This note will be removed from your device.', '', '<button class="button subtle" data-modal-close>Cancel</button><button class="button primary" data-confirm-note="' + e(id) + '">Delete memory</button>'); return;
     }
     if (target.dataset.confirmNote) { state.notes = state.notes.filter(function (n) { return n.id !== target.dataset.confirmNote; }); persist(); closeModal(); renderMemory(); toast('Memory deleted.'); return; }
-    if (target.dataset.confirm === 'chat') { state.messages = []; persist(); closeModal(); renderChat(); renderHome(); toast('Conversation cleared.'); return; }
-    if (target.dataset.confirm === 'data') { liveVoice = false; if (hasNative()) { callNative('stopVoice'); callNative('stopHud'); } state = defaults(); connectionVerified = false; persist(); closeModal(); renderSettings(); renderHome(); renderChat(); renderMemory(); renderAgents(); refreshCapabilities(); toast('Local app data cleared.'); }
+    if (target.dataset.confirm === 'chat') { modelRequest++; busy = false; pendingVoiceReply = false; if (liveVoice && hasNative()) callNative('stopVoice'); liveVoice = false; var oldMessages = state.messages; state.messages = []; if (!persist()) { state.messages = oldMessages; renderChat(); return; } closeModal(); renderChat(); renderHome(); toast('Conversation cleared.'); return; }
+    if (target.dataset.confirm === 'data') { try { localStorage.removeItem(KEY); } catch (err) { toast('Could not clear local app data.'); return; } modelRequest++; testRequest++; busy = false; pendingVoiceReply = false; liveVoice = false; if (hasNative()) { callNative('stopVoice'); callNative('stopHud'); } state = defaults(); connectionVerified = false; closeModal(); renderSettings(); renderHome(); renderChat(); renderMemory(); renderAgents(); refreshCapabilities(); toast('Local app data cleared.'); }
   });
   document.addEventListener('submit', function (event) {
     var form = event.target; event.preventDefault();
