@@ -22,7 +22,7 @@ for node in root.iter('node'):
     matches = any(v == needle or (needle.endswith('*') and v.startswith(needle[:-1])) for v in values)
     if matches or (needle == '__EDIT__' and attrs.get('class') == 'android.widget.EditText'):
         bounds = list(map(int, re.findall(r'\d+', attrs.get('bounds', ''))))
-        if len(bounds) == 4 and bounds[2] > bounds[0] and bounds[3] > bounds[1]:
+        if len(bounds) == 4 and bounds[2] - bounds[0] >= 8 and bounds[3] - bounds[1] >= 8:
             print((bounds[0] + bounds[2]) // 2, (bounds[1] + bounds[3]) // 2)
             break
 else:
