@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.NoFilter" parent="@android:style/Theme.Material.NoActionBar">
+        <item name="nfBackground">@color/bg_dark</item>
+        <item name="nfSurface">@color/surface_dark</item>
+        <item name="nfSurface2">@color/surface2_dark</item>
+        <item name="nfText">@color/text_dark</item>
+        <item name="nfMuted">@color/muted_dark</item>
+        <item name="nfBorder">@color/border_dark</item>
+        <item name="nfAccent">@color/accent</item>
+        <item name="nfAccent2">@color/accent2</item>
+        <item name="android:windowBackground">@color/bg_dark</item>
+        <item name="android:statusBarColor">@color/bg_dark</item>
+        <item name="android:navigationBarColor">@color/bg_dark</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:textColorPrimary">@color/text_dark</item>
+        <item name="android:textColorSecondary">@color/muted_dark</item>
+    </style>
+
+    <style name="Theme.NoFilter.Light">
+        <item name="nfBackground">@color/bg_light</item>
+        <item name="nfSurface">@color/surface_light</item>
+        <item name="nfSurface2">@color/surface2_light</item>
+        <item name="nfText">@color/text_light</item>
+        <item name="nfMuted">@color/muted_light</item>
+        <item name="nfBorder">@color/border_light</item>
+        <item name="nfAccent">@color/accent_light</item>
+        <item name="nfAccent2">@color/accent2_light</item>
+        <item name="android:windowBackground">@color/bg_light</item>
+        <item name="android:statusBarColor">@color/bg_light</item>
+        <item name="android:navigationBarColor">@color/bg_light</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:textColorPrimary">@color/text_light</item>
+        <item name="android:textColorSecondary">@color/muted_light</item>
+    </style>
+
+    <style name="Theme.NoFilter.Splash" parent="Theme.NoFilter">
+        <item name="android:windowBackground">@color/bg_dark</item>
+    </style>
+</resources>

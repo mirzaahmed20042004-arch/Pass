@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- dark palette -->
+    <color name="bg_dark">#0B0F1A</color>
+    <color name="surface_dark">#131A2C</color>
+    <color name="surface2_dark">#1B2440</color>
+    <color name="text_dark">#E9EDF9</color>
+    <color name="muted_dark">#98A2C3</color>
+    <color name="border_dark">#2A3352</color>
+    <!-- light palette -->
+    <color name="bg_light">#F3F5FB</color>
+    <color name="surface_light">#FFFFFF</color>
+    <color name="surface2_light">#E7ECF8</color>
+    <color name="text_light">#131A2E</color>
+    <color name="muted_light">#5B6584</color>
+    <color name="border_light">#D5DBEC</color>
+    <!-- shared -->
+    <color name="accent">#8B5CF6</color>
+    <color name="accent2">#22D3EE</color>
+    <color name="accent_light">#7C3AED</color>
+    <color name="accent2_light">#0891B2</color>
+    <color name="ic_launcher_background">#0B0F1A</color>
+    <color name="danger">#F87171</color>
+    <color name="ok">#34D399</color>
+    <color name="user_bubble_start">#7C3AED</color>
+    <color name="user_bubble_end">#2563EB</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="code_bg">#0A0E1A</color>
+</resources>

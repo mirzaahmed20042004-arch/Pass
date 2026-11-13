@@ -1,0 +1,12 @@
+# Build outputs & scratch
+.gradle/
+build/
+app/build/
+local.properties
+*.iml
+.idea/
+.DS_Store
+Unselected files/
+release/*.idsig
+release/*.keystore
+release/*.p12
