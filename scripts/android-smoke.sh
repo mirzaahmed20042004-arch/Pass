@@ -59,12 +59,14 @@ for n in ET.parse(sys.argv[1]).getroot().iter('node'):
 PYCODE
 tap_node '__EDIT__'
 adb shell input text 'remember%sbuy%smilk'
+# Dismiss the soft keyboard after typing so it cannot cover the send control.
+adb shell input keyevent 4
 sleep 1
 dump_ui
 tap_node 'Send message'
 sleep 4
 dump_ui
-if ! grep -q 'Saved to your local memories' "$UI_FILE"; then cat "$UI_FILE"; echo 'Local command did not complete' >&2; exit 1; fi
+if ! grep -q 'Saved to your local memories' "$UI_FILE"; then echo 'Local command did not complete' >&2; cat "$UI_FILE"; exit 1; fi
 adb shell am force-stop com.ultronai.assistant
 adb shell am start -n com.ultronai.assistant/.MainActivity
 sleep 8
@@ -74,7 +76,7 @@ dump_ui
 tap_node 'Memory'
 sleep 2
 dump_ui
-if ! grep -q 'buy milk' "$UI_FILE"; then cat "$UI_FILE"; echo 'Local memory did not persist across restart' >&2; exit 1; fi
+if ! grep -q 'buy milk' "$UI_FILE"; then echo 'Local memory did not persist across restart' >&2; cat "$UI_FILE"; exit 1; fi
 LOG="$(adb logcat -d -s AndroidRuntime:E)"
 if grep -q 'Process: com.ultronai.assistant' <<< "$LOG"; then echo "$LOG"; exit 1; fi
 echo 'APK installed, rendered, handled a local chat command, and persisted a note across restart without an AndroidRuntime crash.'
