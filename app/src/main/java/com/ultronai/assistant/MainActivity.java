@@ -151,7 +151,7 @@ public class MainActivity extends Activity {
             Intent intent = new Intent(this, HudService.class);
             if (Build.VERSION.SDK_INT >= 26) startForegroundService(intent); else startService(intent);
             main.postDelayed(this::sendCapabilities, 500);
-        } catch (Exception ex) { callback("onActionResult", "Could not start the floating HUD on this device."); }
+        } catch (Exception ex) { android.util.Log.e("UltronHUD", "Failed to request the HUD service", ex); callback("onActionResult", "Could not start the floating HUD on this device."); }
     }
     private void beginVoice() {
         if (!SpeechRecognizer.isRecognitionAvailable(this)) {

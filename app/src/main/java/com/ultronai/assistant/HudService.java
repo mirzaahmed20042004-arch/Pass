@@ -47,6 +47,7 @@ public class HudService extends Service {
             createBubble();
             running = true;
         } catch (Exception ex) {
+            android.util.Log.e("UltronHUD", "Failed to start the floating HUD", ex);
             Toast.makeText(this, "Could not display the HUD. Check overlay permission.", Toast.LENGTH_LONG).show();
             stopSelf();
         }

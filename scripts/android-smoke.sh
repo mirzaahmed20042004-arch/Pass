@@ -91,9 +91,21 @@ tap_node 'Floating HUD permission*'
 sleep 1
 dump_ui
 tap_node 'Enable floating HUD*'
-sleep 4
+sleep 1
+dump_ui
+python3 - "$UI_FILE" <<'PYCODE'
+import sys, xml.etree.ElementTree as ET
+for n in ET.parse(sys.argv[1]).getroot().iter('node'):
+    a = n.attrib
+    if a.get('text') and (a.get('class') == 'android.widget.Button' or a.get('package') != 'com.ultronai.assistant'):
+        print('HUD_UI', a.get('package'), a.get('text'), a.get('bounds'))
+PYCODE
+sleep 3
 if ! adb shell dumpsys activity services com.ultronai.assistant | grep -q 'com.ultronai.assistant/.HudService'; then
-  echo 'HUD foreground service did not start' >&2; adb shell dumpsys activity services com.ultronai.assistant; exit 1
+  echo 'HUD foreground service did not start' >&2
+  echo "::error title=HUD diagnostic::$(adb shell appops get com.ultronai.assistant SYSTEM_ALERT_WINDOW | tr '\n' ' ') $(adb logcat -d -v brief -s UltronHUD:E | tail -c 3000 | tr '\n' ' ')"
+  adb shell dumpsys activity services com.ultronai.assistant | grep -i -E 'ultron|hud' | head -30
+  exit 1
 fi
 dump_ui
 tap_node 'Floating HUD permission*'
