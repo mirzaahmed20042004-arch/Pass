@@ -1,61 +1,58 @@
-11-14 22:54:57.348   286   286 D AndroidRuntime: >>>>>> START com.android.internal.os.ZygoteInit uid 0 <<<<<<
-11-14 22:54:57.421   286   286 I AndroidRuntime: Using default boot image
-11-14 22:54:57.421   286   286 I AndroidRuntime: Leaving lock profiling enabled
-11-14 22:54:57.669   290   290 D AndroidRuntime: >>>>>> START com.android.internal.os.ZygoteInit uid 0 <<<<<<
-11-14 22:54:57.755   290   290 I AndroidRuntime: Using default boot image
-11-14 22:54:57.755   290   290 I AndroidRuntime: Leaving lock profiling enabled
-11-14 22:55:06.002   856   856 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
-11-14 22:55:06.083   864   864 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
-11-14 22:55:11.274  1547  1547 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-11-14 22:55:11.286  1547  1547 I AndroidRuntime: Using default boot image
-11-14 22:55:11.286  1547  1547 I AndroidRuntime: Leaving lock profiling enabled
-11-14 22:55:12.663  1547  1547 D AndroidRuntime: Calling main entry com.android.commands.input.Input
-11-14 22:55:17.839  1547  1547 D AndroidRuntime: Shutting down VM
-11-14 22:55:25.226   494   553 I PackageDexOptimizer: Running dexopt (dexoptNeeded=1) on: /data/app/~~8BpexDV3UptL79ZvRwxVEg==/com.safeguard.app-bqcvD3tyI1gRv_XLiYf_Jw==/base.apk pkg=com.safeguard.app isa=x86_64 dexoptFlags=boot_complete,profile_guided,public,enable_hidden_api_checks targetFilter=speed-profile oatDir=/data/app/~~8BpexDV3UptL79ZvRwxVEg==/com.safeguard.app-bqcvD3tyI1gRv_XLiYf_Jw==/oat classLoaderContext=PCL[]{}
-11-14 22:55:25.267   423   423 V installd: DexInv: --- BEGIN '/data/app/~~8BpexDV3UptL79ZvRwxVEg==/com.safeguard.app-bqcvD3tyI1gRv_XLiYf_Jw==/base.apk' ---
-11-14 22:55:26.273  3142  3142 I dex2oat32: /apex/com.android.art/bin/dex2oat32 --input-vdex-fd=-1 --output-vdex-fd=9 --updatable-bcp-packages-file=/system/etc/updatable-bcp-packages.txt --resolve-startup-const-strings=true --max-image-block-size=524288 --compiler-filter=speed-profile --classpath-dir=/data/app/~~8BpexDV3UptL79ZvRwxVEg==/com.safeguard.app-bqcvD3tyI1gRv_XLiYf_Jw== --class-loader-context=PCL[]{} --generate-mini-debug-info --compact-dex-level=none --compilation-reason=install
-11-14 22:55:30.375   423   423 V installd: DexInv: --- END '/data/app/~~8BpexDV3UptL79ZvRwxVEg==/com.safeguard.app-bqcvD3tyI1gRv_XLiYf_Jw==/base.apk' (success) ---
-11-14 22:55:30.809  1443  1443 I MediaProvider: Invalidating LocalCallingIdentity cache for package com.safeguard.app. Reason: package android.intent.action.PACKAGE_ADDED
-11-14 22:55:30.811  1463  1463 I GsaVoiceInteractionSrv: O received Intent { act=android.intent.action.PACKAGE_ADDED dat=package:com.safeguard.app flg=0x4000010 (has extras) }
-11-14 22:55:30.815   697   697 D AvrcpMediaPlayerList: Name of package changed: com.safeguard.app
-11-14 22:55:31.157   697   697 D AvrcpMediaPlayerList: Name of package changed: com.safeguard.app
-11-14 22:55:31.338   494  1802 I ActivityTaskManager: START u0 {flg=0x10000000 cmp=com.safeguard.app/.MainActivity} from uid 2000
-11-14 22:55:31.577   494   537 I ActivityManager: Start proc 3565:com.safeguard.app/u0a167 for pre-top-activity {com.safeguard.app/com.safeguard.app.MainActivity}
-11-14 22:55:31.619  3565  3565 W m.safeguard.ap: Unexpected CPU variant for X86 using defaults: x86_64
-11-14 22:55:31.880  1685  2384 E ACS.ResponseHandler: #onFatalError: com.google.android.apps.gsa.shared.speech.b.o: errorCode: 13, engine: 2
-11-14 22:55:31.880  1685  2384 E ACS.ResponseHandler: com.google.android.apps.gsa.shared.util.b.e: ACS.ResponseHandler: #onFatalError: com.google.android.apps.gsa.shared.speech.b.o: errorCode: 13, engine: 2
-11-14 22:55:31.921  3565  3565 I TetheringManager: registerTetheringEventCallback:com.safeguard.app
-11-14 22:55:32.184   494   844 E JobScheduler.Background: App com.safeguard.app became active but still in NEVER bucket
-11-14 22:55:32.287  1572  3008 I ChromeSync: [Sync,SyncIntentOperation] Handling the intent: Intent { act=android.intent.action.PACKAGE_ADDED dat=package:com.safeguard.app flg=0x4000010 cmp=com.google.android.gms/.chimera.GmsIntentOperationService (has extras) }.
-11-14 22:55:32.296  1572  3014 I FontsPackageChangeOp: Package com.safeguard.app has no metadata
-11-14 22:55:32.313  1179  2694 W GCM     : Unexpected forwarded intent: Intent { act=android.intent.action.PACKAGE_ADDED dat=package:com.safeguard.app flg=0x4000010 cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) }
-11-14 22:55:32.313  1179  2694 W GCM     : Unexpected forwarded intent: Intent { act=android.intent.action.PACKAGE_ADDED dat=package:com.safeguard.app flg=0x4000010 cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) }
-11-14 22:55:32.320  1572  3008 I ChromeSync: [Persistence,AffiliationManager] One of affiliation or grouping data for android://qOPw-GNyYazYXRBhfmoJixR8euNcbJdekBPn7OV7x1XBYoUupwouhqVorg-PBU-bmEu-tiTDoFsxdu_U7ZSJQA==@com.safeguard.app/ was not found. Marking affiliation data as stale...
-11-14 22:55:32.357  1179  2712 I Fitness : OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package:com.safeguard.app flg=0x5000010 cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
-11-14 22:55:32.712   494  2039 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:com.safeguard.app flg=0x4000010 (has extras) } to com.google.android.packageinstaller/com.android.packageinstaller.PackageInstalledReceiver
-11-14 22:55:32.713   494   536 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:com.safeguard.app flg=0x4000010 (has extras) } to com.google.android.gms/.games.chimera.GamesSystemBroadcastReceiverProxy
-11-14 22:55:32.713   494   536 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:com.safeguard.app flg=0x4000010 (has extras) } to com.google.android.gms/.gass.chimera.PackageChangeBroadcastReceiver
-11-14 22:55:32.713   494   536 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:com.safeguard.app flg=0x4000010 (has extras) } to com.google.android.gms/.chimera.GmsIntentOperationService$PersistentTrustedReceiver
-11-14 22:55:32.713   494   536 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:com.safeguard.app flg=0x4000010 (has extras) } to com.google.android.googlequicksearchbox/com.google.android.apps.gsa.googlequicksearchbox.GelStubAppWatcher
-11-14 22:55:32.713   494   536 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:com.safeguard.app flg=0x4000010 (has extras) } to com.google.android.ims/.receivers.RcsAutoStartReceiver
-11-14 22:55:32.917  1179  2801 I Fitness : OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package:com.safeguard.app flg=0x5000010 cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
-11-14 22:55:35.680   494   535 D ArtManagerInternalImpl: /data/misc/iorapd/com.safeguard.app/7/com.safeguard.app.MainActivity/compiled_traces/compiled_trace.pb doesn't exist
-11-14 22:55:35.715   494   535 I ActivityTaskManager: Displayed com.safeguard.app/.MainActivity: +2s418ms
-11-14 22:55:35.736   494   527 E JobScheduler.Background: App com.safeguard.app became active but still in NEVER bucket
-11-14 22:55:37.544  3565  4015 D ProfileInstaller: Installing profile for com.safeguard.app
-11-14 22:55:37.802   424  3555 I iorapd  : Perfetto TraceBuffer saved to file: /data/misc/iorapd/com.safeguard.app/7/com.safeguard.app.MainActivity/raw_traces/1794696937642728703.perfetto_trace.pb
-11-14 22:55:42.013   697   697 D AvrcpMediaPlayerList: Name of package changed: com.safeguard.app
-11-14 22:55:42.244  1179  4603 I Fitness : OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package:com.safeguard.app flg=0x45000010 cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
-11-14 22:55:49.626   494  2321 I ActivityTaskManager: START u0 {flg=0x10000000 cmp=com.safeguard.app/.MainActivity (has extras)} from uid 2000
-11-14 22:56:00.115   494  1817 I ActivityTaskManager: START u0 {flg=0x10000000 cmp=com.safeguard.app/.ui.RadioControlActivity} from uid 2000
-11-14 22:56:00.382   494   535 I ActivityTaskManager: Displayed com.safeguard.app/.ui.RadioControlActivity: +256ms
+11-14 23:03:27.385   285   285 D AndroidRuntime: >>>>>> START com.android.internal.os.ZygoteInit uid 0 <<<<<<
+11-14 23:03:27.433   285   285 I AndroidRuntime: Using default boot image
+11-14 23:03:27.433   285   285 I AndroidRuntime: Leaving lock profiling enabled
+11-14 23:03:27.710   286   286 D AndroidRuntime: >>>>>> START com.android.internal.os.ZygoteInit uid 0 <<<<<<
+11-14 23:03:27.780   286   286 I AndroidRuntime: Using default boot image
+11-14 23:03:27.780   286   286 I AndroidRuntime: Leaving lock profiling enabled
+11-14 23:03:35.849   861   861 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+11-14 23:03:35.859   854   854 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+11-14 23:03:42.168  1580  1580 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 23:03:42.175  1580  1580 I AndroidRuntime: Using default boot image
+11-14 23:03:42.175  1580  1580 I AndroidRuntime: Leaving lock profiling enabled
+11-14 23:03:43.661  1580  1580 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 23:03:43.711  1580  1580 D AndroidRuntime: Shutting down VM
+11-14 23:03:48.607   495   552 I PackageDexOptimizer: Running dexopt (dexoptNeeded=1) on: /data/app/~~5-0Vg-KfmWh9RrCPjHpegg==/com.safeguard.app--sZSQur6xFlt1DI7c56Rpw==/base.apk pkg=com.safeguard.app isa=x86_64 dexoptFlags=boot_complete,profile_guided,public,enable_hidden_api_checks targetFilter=speed-profile oatDir=/data/app/~~5-0Vg-KfmWh9RrCPjHpegg==/com.safeguard.app--sZSQur6xFlt1DI7c56Rpw==/oat classLoaderContext=PCL[]{}
+11-14 23:03:48.608   425   567 V installd: DexInv: --- BEGIN '/data/app/~~5-0Vg-KfmWh9RrCPjHpegg==/com.safeguard.app--sZSQur6xFlt1DI7c56Rpw==/base.apk' ---
+11-14 23:03:48.692  2180  2180 W migrate_legacy_: type=1400 audit(0.0:16): avc: denied { read } for path="/data/app/~~5-0Vg-KfmWh9RrCPjHpegg==/com.safeguard.app--sZSQur6xFlt1DI7c56Rpw==/base.apk" dev="dm-5" ino=40963 scontext=u:r:migrate_legacy_obb_data:s0 tcontext=u:object_r:apk_data_file:s0 tclass=file permissive=0
+11-14 23:03:48.692  2180  2180 W migrate_legacy_: type=1400 audit(0.0:17): avc: denied { read write } for path="/data/app/~~5-0Vg-KfmWh9RrCPjHpegg==/com.safeguard.app--sZSQur6xFlt1DI7c56Rpw==/oat/x86_64/base.odex" dev="dm-5" ino=40969 scontext=u:r:migrate_legacy_obb_data:s0 tcontext=u:object_r:dalvikcache_data_file:s0 tclass=file permissive=0
+11-14 23:03:48.692  2180  2180 W migrate_legacy_: type=1400 audit(0.0:18): avc: denied { read write } for path="/data/app/~~5-0Vg-KfmWh9RrCPjHpegg==/com.safeguard.app--sZSQur6xFlt1DI7c56Rpw==/oat/x86_64/base.vdex" dev="dm-5" ino=40970 scontext=u:r:migrate_legacy_obb_data:s0 tcontext=u:object_r:dalvikcache_data_file:s0 tclass=file permissive=0
+11-14 23:03:50.468  2179  2179 I dex2oat32: /apex/com.android.art/bin/dex2oat32 --input-vdex-fd=-1 --output-vdex-fd=9 --updatable-bcp-packages-file=/system/etc/updatable-bcp-packages.txt --resolve-startup-const-strings=true --max-image-block-size=524288 --compiler-filter=speed-profile --classpath-dir=/data/app/~~5-0Vg-KfmWh9RrCPjHpegg==/com.safeguard.app--sZSQur6xFlt1DI7c56Rpw== --class-loader-context=PCL[]{} --generate-mini-debug-info --compact-dex-level=none --compilation-reason=install
+11-14 23:04:00.924   425   567 V installd: DexInv: --- END '/data/app/~~5-0Vg-KfmWh9RrCPjHpegg==/com.safeguard.app--sZSQur6xFlt1DI7c56Rpw==/base.apk' (success) ---
+11-14 23:04:02.371   495   524 I ActivityTaskManager: START u0 {flg=0x10000000 cmp=com.safeguard.app/.MainActivity} from uid 2000
+11-14 23:04:02.519  1661  1661 I MediaProvider: Invalidating LocalCallingIdentity cache for package com.safeguard.app. Reason: package android.intent.action.PACKAGE_ADDED
+11-14 23:04:02.531  1710  1710 I GsaVoiceInteractionSrv: O received Intent { act=android.intent.action.PACKAGE_ADDED dat=package:com.safeguard.app flg=0x4000010 (has extras) }
+11-14 23:04:02.538   495   537 I ActivityManager: Start proc 3464:com.safeguard.app/u0a167 for pre-top-activity {com.safeguard.app/com.safeguard.app.MainActivity}
+11-14 23:04:02.555   689   689 D AvrcpMediaPlayerList: Name of package changed: com.safeguard.app
+11-14 23:04:02.597  3464  3464 W m.safeguard.ap: Unexpected CPU variant for X86 using defaults: x86_64
+11-14 23:04:02.706  3464  3464 I TetheringManager: registerTetheringEventCallback:com.safeguard.app
+11-14 23:04:03.322   495  1806 E JobScheduler.Background: App com.safeguard.app became active but still in NEVER bucket
+11-14 23:04:06.060  1136  3029 W GCM     : Unexpected forwarded intent: Intent { act=android.intent.action.PACKAGE_ADDED dat=package:com.safeguard.app flg=0x4000010 cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) }
+11-14 23:04:06.060  1136  2164 W GCM     : Unexpected forwarded intent: Intent { act=android.intent.action.PACKAGE_ADDED dat=package:com.safeguard.app flg=0x4000010 cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) }
+11-14 23:04:06.112  1372  3384 I ChromeSync: [Sync,SyncIntentOperation] Handling the intent: Intent { act=android.intent.action.PACKAGE_ADDED dat=package:com.safeguard.app flg=0x4000010 cmp=com.google.android.gms/.chimera.GmsIntentOperationService (has extras) }.
+11-14 23:04:06.126  1372  3377 I FontsPackageChangeOp: Package com.safeguard.app has no metadata
+11-14 23:04:06.128  1372  3384 I ChromeSync: [Persistence,AffiliationManager] One of affiliation or grouping data for android://qOPw-GNyYazYXRBhfmoJixR8euNcbJdekBPn7OV7x1XBYoUupwouhqVorg-PBU-bmEu-tiTDoFsxdu_U7ZSJQA==@com.safeguard.app/ was not found. Marking affiliation data as stale...
+11-14 23:04:07.999  3464  3845 D ProfileInstaller: Installing profile for com.safeguard.app
+11-14 23:04:08.915   495   535 D ArtManagerInternalImpl: /data/misc/iorapd/com.safeguard.app/7/com.safeguard.app.MainActivity/compiled_traces/compiled_trace.pb doesn't exist
+11-14 23:04:08.916   495   535 I ActivityTaskManager: Displayed com.safeguard.app/.MainActivity: +2s921ms
+11-14 23:04:09.507   495   527 E JobScheduler.Background: App com.safeguard.app became active but still in NEVER bucket
+11-14 23:04:11.193   689   689 D AvrcpMediaPlayerList: Name of package changed: com.safeguard.app
+11-14 23:04:11.461  1136  3620 I Fitness : OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package:com.safeguard.app flg=0x45000010 cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
+11-14 23:04:18.998   495  1829 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:com.safeguard.app flg=0x4000010 (has extras) } to com.google.android.packageinstaller/com.android.packageinstaller.PackageInstalledReceiver
+11-14 23:04:18.998   495   536 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:com.safeguard.app flg=0x4000010 (has extras) } to com.google.android.gms/.games.chimera.GamesSystemBroadcastReceiverProxy
+11-14 23:04:18.998   495   536 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:com.safeguard.app flg=0x4000010 (has extras) } to com.google.android.gms/.gass.chimera.PackageChangeBroadcastReceiver
+11-14 23:04:18.998   495   536 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:com.safeguard.app flg=0x4000010 (has extras) } to com.google.android.gms/.chimera.GmsIntentOperationService$PersistentTrustedReceiver
+11-14 23:04:18.998   495   536 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:com.safeguard.app flg=0x4000010 (has extras) } to com.google.android.googlequicksearchbox/com.google.android.apps.gsa.googlequicksearchbox.GelStubAppWatcher
+11-14 23:04:18.998   495   536 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:com.safeguard.app flg=0x4000010 (has extras) } to com.google.android.ims/.receivers.RcsAutoStartReceiver
+11-14 23:04:23.255   495   524 I ActivityTaskManager: START u0 {flg=0x10000000 cmp=com.safeguard.app/.MainActivity (has extras)} from uid 2000
+11-14 23:04:33.791   495  1831 I ActivityTaskManager: START u0 {flg=0x10000000 cmp=com.safeguard.app/.ui.RadioControlActivity} from uid 2000
+11-14 23:04:34.042   495   535 I ActivityTaskManager: Displayed com.safeguard.app/.ui.RadioControlActivity: +241ms
 --- files captured ---
--rw-r--r-- 1 runner runner 190220 Nov 14 22:55 /home/runner/work/Pass/Pass/screenshot-dashboard.png
--rw-r--r-- 1 runner runner 132504 Nov 14 22:56 /home/runner/work/Pass/Pass/screenshot-radio-controls.png
--rw-r--r-- 1 runner runner 187765 Nov 14 22:56 /home/runner/work/Pass/Pass/screenshot-tools.png
-encoded docs/screenshots/dashboard.png 253628 b64 chars
+-rw-r--r-- 1 runner runner 189810 Nov 14 23:04 /home/runner/work/Pass/Pass/screenshot-dashboard.png
+-rw-r--r-- 1 runner runner 131385 Nov 14 23:04 /home/runner/work/Pass/Pass/screenshot-radio-controls.png
+-rw-r--r-- 1 runner runner 187244 Nov 14 23:04 /home/runner/work/Pass/Pass/screenshot-tools.png
+encoded docs/screenshots/dashboard.png 253080 b64 chars
 OK docs/screenshots/dashboard.png
-encoded docs/screenshots/tools.png 250356 b64 chars
+encoded docs/screenshots/tools.png 249660 b64 chars
 OK docs/screenshots/tools.png
-encoded docs/screenshots/radio-controls.png 176672 b64 chars
+encoded docs/screenshots/radio-controls.png 175180 b64 chars
 OK docs/screenshots/radio-controls.png
