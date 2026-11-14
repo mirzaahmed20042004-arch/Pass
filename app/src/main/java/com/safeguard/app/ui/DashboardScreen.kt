@@ -230,7 +230,7 @@ private fun StatusStrip(jam: JamState, accent: Color, privilege: String) {
         Column(Modifier.weight(1f)) {
             Text(
                 if (jam.running) {
-                    if (local.privilege.startsWith("STANDARD")) "MONITORING · RADIO LOCKED" else "JAMMING ACTIVE"
+                    if (privilege.startsWith("STANDARD")) "MONITORING · RADIO LOCKED" else "JAMMING ACTIVE"
                 } else "ENGINE IDLE",
                 color = accent,
                 fontSize = 12.sp,
