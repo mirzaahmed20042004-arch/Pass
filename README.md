@@ -14,6 +14,10 @@ npm test
 npm run dev
 ```
 
+## Download Android APK
+
+[Download the Easy AI debug APK](https://github.com/mirzaahmed20042004-arch/Pass/raw/refs/heads/arena/a8e1102b-pass/releases/Easy-AI-debug.apk). This is a debug build, signature-verified but not tested on a physical Android device. See the signing notes below.
+
 ## Build Android APK
 
 Install JDK 17, Android SDK Platform 35 and Gradle 8.9. Then from the repository root:

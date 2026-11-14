@@ -5,3 +5,5 @@ android/.gradle/
 android/local.properties
 android/app/build/
 *.apk
+# Keep the explicitly requested downloadable debug build on the GitHub branch.
+!releases/Easy-AI-debug.apk
