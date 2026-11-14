@@ -1,0 +1,12 @@
+{
+  "appId": "com.omnidrive.vehiclesounds",
+  "appName": "OmniDrive Sounds",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": true,
+    "backgroundColor": "#07090f"
+  }
+}

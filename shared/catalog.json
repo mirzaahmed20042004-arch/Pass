@@ -1,0 +1,544 @@
+{
+  "app": {
+    "name": "OmniDrive Soundboard",
+    "tagline": "Tap Any Vehicle Sound to Loop • Ground, Emergency, Heavy & Flying",
+    "version": "1.0.0"
+  },
+  "categories": [
+    { "id": "all", "label": "All Vehicles", "icon": "grid" },
+    { "id": "cars", "label": "Cars & Supra", "icon": "car" },
+    { "id": "bikes", "label": "Bikes", "icon": "bike" },
+    { "id": "emergency", "label": "Emergency", "icon": "siren" },
+    { "id": "heavy", "label": "Truck & Bus", "icon": "truck" },
+    { "id": "flying", "label": "Flying", "icon": "plane" },
+    { "id": "special", "label": "Rail, Sea & EV", "icon": "ship" }
+  ],
+  "vehicles": [
+    {
+      "id": "supra",
+      "name": "Toyota Supra MK4",
+      "subtitle": "2JZ-GTE Twin-Turbo • Iconic Boost & Flutter",
+      "category": "cars",
+      "featured": true,
+      "accent": "#f59e0b",
+      "badge": "LEGEND",
+      "specs": "3.0L Inline-6 • Twin Turbo • 280+ HP",
+      "svgType": "supra",
+      "sounds": [
+        {
+          "id": "supra_engine",
+          "label": "Supra 2JZ Sound",
+          "shortLabel": "2JZ Engine",
+          "role": "engine",
+          "file": "/audio/supra_engine.mp3",
+          "duration": 5.12
+        },
+        {
+          "id": "supra_turbo_flutter",
+          "label": "Supra Turbo Flutter",
+          "shortLabel": "Stututu Turbo",
+          "role": "turbo",
+          "file": "/audio/supra_turbo_flutter.mp3",
+          "duration": 4.32
+        }
+      ]
+    },
+    {
+      "id": "supercar",
+      "name": "Exotic Supercar",
+      "subtitle": "High-Revving V10 / V12 Screamer",
+      "category": "cars",
+      "featured": true,
+      "accent": "#ef4444",
+      "badge": "8500 RPM",
+      "specs": "5.2L V10 • Naturally Aspirated • Track Exhaust",
+      "svgType": "supercar",
+      "sounds": [
+        {
+          "id": "supercar_v10",
+          "label": "Supercar V10 Sound",
+          "shortLabel": "V10 Scream",
+          "role": "engine",
+          "file": "/audio/supercar_v10.mp3",
+          "duration": 4.92
+        },
+        {
+          "id": "supercar_launch",
+          "label": "Supercar Revs",
+          "shortLabel": "Launch & Crackles",
+          "role": "turbo",
+          "file": "/audio/supercar_launch.mp3",
+          "duration": 4.22
+        }
+      ]
+    },
+    {
+      "id": "car",
+      "name": "Street Sedan Car",
+      "subtitle": "Real Highway Driving & Dual-Tone Horn",
+      "category": "cars",
+      "featured": false,
+      "accent": "#3b82f6",
+      "badge": "DAILY DRIVE",
+      "specs": "2.0L Turbo • Gear Shifts + Road Hum",
+      "svgType": "car",
+      "sounds": [
+        {
+          "id": "car_driving",
+          "label": "Car Driving Sound",
+          "shortLabel": "Car Driving",
+          "role": "engine",
+          "file": "/audio/car_driving.mp3",
+          "duration": 5.32
+        },
+        {
+          "id": "car_horn",
+          "label": "Car Horn",
+          "shortLabel": "Car Horn",
+          "role": "horn",
+          "file": "/audio/car_horn.mp3",
+          "duration": 2.50
+        }
+      ]
+    },
+    {
+      "id": "bike",
+      "name": "Sportbike 1000cc",
+      "subtitle": "Inline-4 Redline Scream & Disc Horn",
+      "category": "bikes",
+      "featured": false,
+      "accent": "#10b981",
+      "badge": "13,000 RPM",
+      "specs": "999cc Inline-4 • Quickshifter",
+      "svgType": "bike",
+      "sounds": [
+        {
+          "id": "bike_engine",
+          "label": "Bike Sound",
+          "shortLabel": "Bike Engine",
+          "role": "engine",
+          "file": "/audio/bike_engine.mp3",
+          "duration": 4.72
+        },
+        {
+          "id": "bike_horn",
+          "label": "Bike Horn",
+          "shortLabel": "Bike Horn",
+          "role": "horn",
+          "file": "/audio/bike_horn.mp3",
+          "duration": 2.12
+        }
+      ]
+    },
+    {
+      "id": "dirtbike",
+      "name": "Motocross Dirt Bike",
+      "subtitle": "Snappy 2-Stroke Trail Braap",
+      "category": "bikes",
+      "featured": false,
+      "accent": "#84cc16",
+      "badge": "OFF-ROAD",
+      "specs": "250cc 2-Stroke • MX Exhaust",
+      "svgType": "dirtbike",
+      "sounds": [
+        {
+          "id": "dirtbike",
+          "label": "Dirt Bike Braap",
+          "shortLabel": "2-Stroke Braap",
+          "role": "engine",
+          "file": "/audio/dirtbike.mp3",
+          "duration": 4.12
+        }
+      ]
+    },
+    {
+      "id": "police",
+      "name": "Police Interceptor",
+      "subtitle": "Pursuit V8 Roar & Wail/Yelp Siren",
+      "category": "emergency",
+      "featured": true,
+      "accent": "#2563eb",
+      "badge": "911 PURSUIT",
+      "specs": "5.0L V8 Interceptor • 100W Wail/Yelp Siren",
+      "svgType": "police",
+      "sounds": [
+        {
+          "id": "police_siren",
+          "label": "Police Siren",
+          "shortLabel": "Police Siren",
+          "role": "siren",
+          "file": "/audio/police_siren.mp3",
+          "duration": 5.72
+        },
+        {
+          "id": "police_engine",
+          "label": "Police Car Sound",
+          "shortLabel": "Police V8",
+          "role": "engine",
+          "file": "/audio/police_engine.mp3",
+          "duration": 4.72
+        }
+      ]
+    },
+    {
+      "id": "ambulance",
+      "name": "Emergency Ambulance",
+      "subtitle": "Rescue Diesel & Hi-Lo Medical Siren",
+      "category": "emergency",
+      "featured": false,
+      "accent": "#f43f5e",
+      "badge": "EMS RESCUE",
+      "specs": "6.7L Turbo Diesel • Hi-Lo + Yelp Siren",
+      "svgType": "ambulance",
+      "sounds": [
+        {
+          "id": "ambulance_siren",
+          "label": "Ambulance Siren",
+          "shortLabel": "Ambulance Siren",
+          "role": "siren",
+          "file": "/audio/ambulance_siren.mp3",
+          "duration": 5.32
+        },
+        {
+          "id": "ambulance_engine",
+          "label": "Ambulance Sound",
+          "shortLabel": "Ambulance Engine",
+          "role": "engine",
+          "file": "/audio/ambulance_engine.mp3",
+          "duration": 4.52
+        }
+      ]
+    },
+    {
+      "id": "firebrigade",
+      "name": "Fire Brigade Engine",
+      "subtitle": "Federal Q2B Mechanical Siren & Pump Diesel",
+      "category": "emergency",
+      "featured": true,
+      "accent": "#dc2626",
+      "badge": "FIRE DEPT",
+      "specs": "Heavy Ladder Apparatus • Q2B Siren + Air Horn",
+      "svgType": "firebrigade",
+      "sounds": [
+        {
+          "id": "firebrigade_siren",
+          "label": "Fire Brigade Siren",
+          "shortLabel": "Q2B Siren",
+          "role": "siren",
+          "file": "/audio/firebrigade_siren.mp3",
+          "duration": 5.72
+        },
+        {
+          "id": "firebrigade_engine",
+          "label": "Fire Brigade Engine",
+          "shortLabel": "Diesel & Pump",
+          "role": "engine",
+          "file": "/audio/firebrigade_engine.mp3",
+          "duration": 4.72
+        }
+      ]
+    },
+    {
+      "id": "truck",
+      "name": "18-Wheeler Semi Truck",
+      "subtitle": "Heavy Diesel Jake Brake & Air Horn",
+      "category": "heavy",
+      "featured": false,
+      "accent": "#f97316",
+      "badge": "HEAVY HAUL",
+      "specs": "15L Inline-6 Diesel • Dual Brass Air Horn",
+      "svgType": "truck",
+      "sounds": [
+        {
+          "id": "truck_engine",
+          "label": "Truck Diesel Sound",
+          "shortLabel": "Truck Engine",
+          "role": "engine",
+          "file": "/audio/truck_engine.mp3",
+          "duration": 5.12
+        },
+        {
+          "id": "truck_airhorn",
+          "label": "Truck Air Horn",
+          "shortLabel": "Air Horn",
+          "role": "horn",
+          "file": "/audio/truck_airhorn.mp3",
+          "duration": 3.06
+        }
+      ]
+    },
+    {
+      "id": "bus",
+      "name": "City Transit Bus",
+      "subtitle": "Diesel Coach, Air Brakes & Transit Horn",
+      "category": "heavy",
+      "featured": false,
+      "accent": "#eab308",
+      "badge": "TRANSIT",
+      "specs": "9L Cummins Diesel • Pneumatic Door & Brake Hiss",
+      "svgType": "bus",
+      "sounds": [
+        {
+          "id": "bus_engine",
+          "label": "Bus Sound & Brakes",
+          "shortLabel": "Bus Engine",
+          "role": "engine",
+          "file": "/audio/bus_engine.mp3",
+          "duration": 5.12
+        },
+        {
+          "id": "bus_horn",
+          "label": "Bus Horn",
+          "shortLabel": "Bus Horn",
+          "role": "horn",
+          "file": "/audio/bus_horn.mp3",
+          "duration": 2.48
+        }
+      ]
+    },
+    {
+      "id": "tractor",
+      "name": "Tractor & Bulldozer",
+      "subtitle": "Heavy Earthmover Diesel Chug",
+      "category": "heavy",
+      "featured": false,
+      "accent": "#ca8a04",
+      "badge": "CONSTRUCTION",
+      "specs": "Heavy Torque Diesel • Hydraulic Whine",
+      "svgType": "tractor",
+      "sounds": [
+        {
+          "id": "tractor_engine",
+          "label": "Tractor Diesel",
+          "shortLabel": "Tractor Loop",
+          "role": "engine",
+          "file": "/audio/tractor_engine.mp3",
+          "duration": 4.52
+        }
+      ]
+    },
+    {
+      "id": "helicopter",
+      "name": "Twin-Blade Helicopter",
+      "subtitle": "Authentic Rotor Whop-Whop & Turbine Whine",
+      "category": "flying",
+      "featured": true,
+      "accent": "#06b6d4",
+      "badge": "FLYING • ROTOR",
+      "specs": "Twin-Blade BVI Slap • Turboshaft Engine",
+      "svgType": "helicopter",
+      "sounds": [
+        {
+          "id": "helicopter",
+          "label": "Helicopter Rotor Sound",
+          "shortLabel": "Rotor & Turbine",
+          "role": "flying",
+          "file": "/audio/helicopter.mp3",
+          "duration": 4.92
+        }
+      ]
+    },
+    {
+      "id": "plane",
+      "name": "Passenger Jet Plane",
+      "subtitle": "Widebody Turbofan Spool & Jet Roar",
+      "category": "flying",
+      "featured": true,
+      "accent": "#0ea5e9",
+      "badge": "FLYING • JET",
+      "specs": "High-Bypass Turbofan • Takeoff & Cruise",
+      "svgType": "plane",
+      "sounds": [
+        {
+          "id": "plane_jet",
+          "label": "Plane Jet Engine",
+          "shortLabel": "Jet Liner",
+          "role": "flying",
+          "file": "/audio/plane_jet.mp3",
+          "duration": 5.72
+        }
+      ]
+    },
+    {
+      "id": "fighter_jet",
+      "name": "Supersonic Fighter Jet",
+      "subtitle": "Afterburner Shock Crackle & Flyby",
+      "category": "flying",
+      "featured": false,
+      "accent": "#38bdf8",
+      "badge": "FLYING • MACH",
+      "specs": "Twin Afterburning Turbofan • Mach Crackle",
+      "svgType": "fighter_jet",
+      "sounds": [
+        {
+          "id": "fighter_jet",
+          "label": "Fighter Jet Afterburner",
+          "shortLabel": "Afterburner",
+          "role": "flying",
+          "file": "/audio/fighter_jet.mp3",
+          "duration": 5.32
+        }
+      ]
+    },
+    {
+      "id": "prop_plane",
+      "name": "Propeller Aircraft",
+      "subtitle": "Classic Aviation Radial Engine & Prop Chop",
+      "category": "flying",
+      "featured": false,
+      "accent": "#14b8a6",
+      "badge": "FLYING • PROP",
+      "specs": "Twin-Propeller • Rhythmic Blade Pass",
+      "svgType": "prop_plane",
+      "sounds": [
+        {
+          "id": "prop_plane",
+          "label": "Propeller Plane",
+          "shortLabel": "Propeller Hum",
+          "role": "flying",
+          "file": "/audio/prop_plane.mp3",
+          "duration": 4.52
+        }
+      ]
+    },
+    {
+      "id": "drone",
+      "name": "Quadcopter Drone",
+      "subtitle": "4-Motor Brushless Hover & Buzz",
+      "category": "flying",
+      "featured": false,
+      "accent": "#22d3ee",
+      "badge": "FLYING • UAV",
+      "specs": "Quad Brushless Motors • Agile Hover",
+      "svgType": "drone",
+      "sounds": [
+        {
+          "id": "drone",
+          "label": "Drone Rotor Buzz",
+          "shortLabel": "Quadcopter",
+          "role": "flying",
+          "file": "/audio/drone.mp3",
+          "duration": 4.12
+        }
+      ]
+    },
+    {
+      "id": "train",
+      "name": "Locomotive Train",
+      "subtitle": "Diesel Chug, Rail Clack & 5-Chime Horn",
+      "category": "special",
+      "featured": false,
+      "accent": "#a855f7",
+      "badge": "RAILWAY",
+      "specs": "V12 Diesel-Electric • Leslie 5-Chime Horn",
+      "svgType": "train",
+      "sounds": [
+        {
+          "id": "train_engine",
+          "label": "Train & Track Clack",
+          "shortLabel": "Train Chug",
+          "role": "engine",
+          "file": "/audio/train_engine.mp3",
+          "duration": 4.92
+        },
+        {
+          "id": "train_horn",
+          "label": "Train Horn Chord",
+          "shortLabel": "Train Horn",
+          "role": "horn",
+          "file": "/audio/train_horn.mp3",
+          "duration": 3.64
+        }
+      ]
+    },
+    {
+      "id": "speedboat",
+      "name": "Offshore Speedboat",
+      "subtitle": "V8 Marine Exhaust & Water Wake",
+      "category": "special",
+      "featured": false,
+      "accent": "#0284c7",
+      "badge": "MARINE",
+      "specs": "Twin V8 Outboard • Ocean Spray",
+      "svgType": "speedboat",
+      "sounds": [
+        {
+          "id": "speedboat",
+          "label": "Speedboat & Wake",
+          "shortLabel": "Speedboat V8",
+          "role": "engine",
+          "file": "/audio/speedboat.mp3",
+          "duration": 4.52
+        }
+      ]
+    },
+    {
+      "id": "ship",
+      "name": "Cargo Ship Foghorn",
+      "subtitle": "Deep Harbor Bass Horn",
+      "category": "special",
+      "featured": false,
+      "accent": "#6366f1",
+      "badge": "OCEAN",
+      "specs": "68Hz Deep Bass Horn • Harbor Echo",
+      "svgType": "ship",
+      "sounds": [
+        {
+          "id": "ship_horn",
+          "label": "Ship Foghorn",
+          "shortLabel": "Foghorn",
+          "role": "horn",
+          "file": "/audio/ship_horn.mp3",
+          "duration": 4.00
+        }
+      ]
+    },
+    {
+      "id": "futuristic",
+      "name": "Hyper EV / Hovercraft",
+      "subtitle": "Futuristic Electric Inverter & Ion Thruster",
+      "category": "special",
+      "featured": false,
+      "accent": "#ec4899",
+      "badge": "FUTURE TECH",
+      "specs": "Quad-Motor EV • Sci-Fi Acoustic Profile",
+      "svgType": "futuristic",
+      "sounds": [
+        {
+          "id": "futuristic_ev",
+          "label": "Hyper EV / Hover",
+          "shortLabel": "Electric Warp",
+          "role": "flying",
+          "file": "/audio/futuristic_ev.mp3",
+          "duration": 4.52
+        }
+      ]
+    }
+  ],
+  "defaultPresets": [
+    {
+      "id": "preset-supra-chase",
+      "name": "Midnight Supra Pursuit",
+      "description": "Supra 2JZ + Turbo Flutter + Police Siren",
+      "soundIds": ["supra_engine", "supra_turbo_flutter", "police_siren"]
+    },
+    {
+      "id": "preset-airfield",
+      "name": "Busy Airbase Scramble",
+      "description": "Helicopter Rotor + Fighter Jet Afterburner",
+      "soundIds": ["helicopter", "fighter_jet"]
+    },
+    {
+      "id": "preset-city-rush",
+      "name": "Downtown Rush Hour",
+      "description": "Car Driving + Car Horn + City Bus + Ambulance",
+      "soundIds": ["car_driving", "car_horn", "bus_engine", "ambulance_siren"]
+    },
+    {
+      "id": "preset-fire-rescue",
+      "name": "All-Units Emergency",
+      "description": "Fire Brigade Q2B + Police Siren + Helicopter",
+      "soundIds": ["firebrigade_siren", "police_siren", "helicopter"]
+    }
+  ]
+}

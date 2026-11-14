@@ -1,0 +1,8 @@
+node_modules/
+frontend/dist/
+backend/data/
+downloads/*.apk
+*.keystore
+*.jks
+.env
+.DS_Store

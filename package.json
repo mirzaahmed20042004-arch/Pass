@@ -1,0 +1,11 @@
+{
+  "name": "omnidrive-vehicle-sounds",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "install:all": "cd backend && npm install && cd ../frontend && npm install",
+    "build:frontend": "cd frontend && npm run build",
+    "sync:android": "cd frontend && npm run build && npx cap sync android",
+    "start": "cd backend && node server.js"
+  }
+}
