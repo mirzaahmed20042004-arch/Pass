@@ -157,45 +157,26 @@ jobs:
           profile: pixel_5
           disable-animations: true
           script: |
-            set +e
             adb install -r artifacts/SafeGuard-v1.3.0-release.apk
             adb shell pm grant com.safeguard.app android.permission.ACCESS_FINE_LOCATION || true
             adb shell pm grant com.safeguard.app android.permission.POST_NOTIFICATIONS || true
-            adb shell am start -n com.safeguard.app/.MainActivity
-            sleep 12
-            # open the Radio Controls screen (VPN consent + OS panels)
-            adb shell am start -n com.safeguard.app/.ui.RadioControlActivity || true
-            sleep 5
-            adb shell screencap -p /sdcard/controls.png
-            adb pull /sdcard/controls.png "${GITHUB_WORKSPACE:-.}/screenshot-radio-controls.png" || true
-            ls -la /sdcard/controls.png || true
-            adb shell am start -n com.safeguard.app/.MainActivity
-            sleep 4
-            # exercise the tools screen via the debug deep-link intent
-            adb shell am start -n com.safeguard.app/.MainActivity -e screen tools || true
-            sleep 8
-            adb shell screencap -p /sdcard/tools.png
-            adb pull /sdcard/tools.png "${GITHUB_WORKSPACE:-.}/screenshot-tools.png" || true
-            adb shell dumpsys activity activities | grep -i "safeguard" | head -3
-            adb logcat -d | grep -iE "AndroidRuntime|FATAL|safeguard|VpnService|ShieldVpn" | tail -n 150 > ci-crashlog.txt || true
-            {
-              echo "\n--- screenshots on device ---"
-              adb shell ls -la /sdcard/*.png
-              echo "--- cwd: $(pwd) ---"
-              ls -la *.png 2>/dev/null || echo "no local png"
-            } >> ci-crashlog.txt 2>&1
-            true
-            echo "\n--- pid ---" >> ci-crashlog.txt
-            adb shell pidof com.safeguard.app >> ci-crashlog.txt || true
-            echo "\n--- foreground activity ---" >> ci-crashlog.txt
-            adb shell dumpsys activity activities | grep -i safeguard | head -5 >> ci-crashlog.txt || true
-            cd "$GITHUB_WORKSPACE" 2>/dev/null || true
+            adb shell am start -W -n com.safeguard.app/.MainActivity
+            sleep 10
             adb shell screencap -p /sdcard/shot.png
-            adb pull /sdcard/shot.png "${GITHUB_WORKSPACE:-.}/screenshot-dashboard.png" || true
-            ls -la "${GITHUB_WORKSPACE:-.}"/screenshot-*.png 2>/dev/null || echo "no screenshots pulled"
-            adb shell dumpsys activity activities | grep -i "com.safeguard.app" | head -5
-            adb logcat -d -s AndroidRuntime:E | tail -20
-            adb shell pidof com.safeguard.app
+            adb pull /sdcard/shot.png "${GITHUB_WORKSPACE}/screenshot-dashboard.png"
+            adb shell am start -W -n com.safeguard.app/.MainActivity --es screen tools
+            sleep 10
+            adb shell screencap -p /sdcard/tools.png
+            adb pull /sdcard/tools.png "${GITHUB_WORKSPACE}/screenshot-tools.png"
+            adb shell am start -W -n com.safeguard.app/.ui.RadioControlActivity
+            sleep 6
+            adb shell screencap -p /sdcard/controls.png
+            adb pull /sdcard/controls.png "${GITHUB_WORKSPACE}/screenshot-radio-controls.png"
+            adb logcat -d | grep -iE "AndroidRuntime|FATAL|safeguard|VpnService|ShieldVpn" | tail -n 150 > "${GITHUB_WORKSPACE}/ci-crashlog.txt" || true
+            echo "--- pid ---" >> "${GITHUB_WORKSPACE}/ci-crashlog.txt"
+            adb shell pidof com.safeguard.app >> "${GITHUB_WORKSPACE}/ci-crashlog.txt" || true
+            echo "--- resumed ---" >> "${GITHUB_WORKSPACE}/ci-crashlog.txt"
+            adb shell dumpsys activity activities | grep -i "mResumedActivity" >> "${GITHUB_WORKSPACE}/ci-crashlog.txt" || true
 
       - name: Publish screenshots + crash log via API
         if: always()
