@@ -225,7 +225,7 @@ private fun Header(jam: JamState) {
                 letterSpacing = 2.sp
             )
             Text(
-                "SignalDisruptor Pro · v1.0",
+                "Home network control · v${com.safeguard.app.BuildConfig.VERSION_NAME}",
                 color = SgPalette.TextSecondary,
                 fontSize = 10.sp,
                 letterSpacing = 0.8.sp

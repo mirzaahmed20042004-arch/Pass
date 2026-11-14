@@ -99,8 +99,8 @@ jobs:
       - name: Collect artifacts
         run: |
           mkdir -p artifacts
-          cp app/build/outputs/apk/debug/app-debug.apk artifacts/SafeGuard-v1.3.1-debug.apk
-          cp app/build/outputs/apk/release/app-release.apk artifacts/SafeGuard-v1.3.1-release.apk
+          cp app/build/outputs/apk/debug/app-debug.apk artifacts/SafeGuard-v1.3.2-debug.apk
+          cp app/build/outputs/apk/release/app-release.apk artifacts/SafeGuard-v1.3.2-release.apk
           ls -lh artifacts
 
       - name: Upload build artifacts
@@ -114,12 +114,12 @@ jobs:
         if: github.ref == 'refs/heads/arena/481d206d-pass' || github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.3.1
-          name: Safe Guard v1.3.1 (SignalDisruptor Pro)
+          tag_name: v1.3.2
+          name: Safe Guard v1.3.2 (SignalDisruptor Pro)
           body: |
             **Safe Guard** — RF diagnostics & resilience testing build.
 
-            Install `SafeGuard-v1.3.1-release.apk` (signed) or the debug APK.
+            Install `SafeGuard-v1.3.2-release.apk` (signed) or the debug APK.
             Requires Android 8.0+ (API 26).
           files: artifacts/*.apk
           fail_on_unmatched_files: false
@@ -158,7 +158,7 @@ jobs:
           profile: pixel_5
           disable-animations: true
           script: |
-            adb install -r artifacts/SafeGuard-v1.3.1-release.apk
+            adb install -r artifacts/SafeGuard-v1.3.2-release.apk
             adb shell pm grant com.safeguard.app android.permission.ACCESS_FINE_LOCATION || true
             adb shell pm grant com.safeguard.app android.permission.POST_NOTIFICATIONS || true
             adb shell am start -W -n com.safeguard.app/.MainActivity

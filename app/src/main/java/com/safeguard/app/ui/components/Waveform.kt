@@ -55,7 +55,7 @@ fun Waveform(
     Canvas(
         modifier = modifier
             .fillMaxWidth()
-            .height(132.dp)
+            .height(118.dp)
     ) {
         val midY = size.height / 2f
         val width = size.width
@@ -63,7 +63,7 @@ fun Waveform(
 
         repeat(layers) { layer ->
             val layerChaos = (chaos * (1f - layer * 0.22f)).coerceIn(0f, 1f)
-            val amplitude = 5f + layerChaos * (size.height * 0.36f)
+            val amplitude = 16f + layerChaos * (size.height * 0.34f)
             val path = Path()
             val steps = 140
             val layerPhase = phase + layer * 0.7f

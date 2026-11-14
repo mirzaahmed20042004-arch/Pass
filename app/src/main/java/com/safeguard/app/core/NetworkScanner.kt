@@ -56,9 +56,16 @@ class NetworkScanner(private val context: Context) {
             ?.firstOrNull { it.address is java.net.Inet4Address }
         val ip = address?.address?.hostAddress
         val prefix = address?.prefixLength ?: 24
+        // Prefer the IPv4 default gateway: fe80:: link-local addresses are
+        // useless for the router UI, and an IPv6 literal breaks http:// URLs.
         val gateway = props?.routes
-            ?.firstOrNull { it.isDefaultRoute }?.gateway?.hostAddress
+            ?.asSequence()
+            ?.filter { it.isDefaultRoute }
+            ?.mapNotNull { it.gateway }
+            ?.firstOrNull { it is java.net.Inet4Address }
+            ?.hostAddress
             ?: readGatewayFromProc()
+            ?: props?.routes?.firstOrNull { it.isDefaultRoute }?.gateway?.hostAddress
 
         Network(
             ssid = if (isWifi) currentSsid() else "Mobile data",
