@@ -172,7 +172,10 @@ jobs:
             sleep 4
             # exercise the tools screen via the debug deep-link intent
             adb shell am start -n com.safeguard.app/.MainActivity -e screen tools || true
-            sleep 6
+            sleep 8
+            adb shell screencap -p /sdcard/tools.png
+            adb pull /sdcard/tools.png "${GITHUB_WORKSPACE:-.}/screenshot-tools.png" || true
+            adb shell dumpsys activity activities | grep -i "safeguard" | head -3
             adb logcat -d | grep -iE "AndroidRuntime|FATAL|safeguard|VpnService|ShieldVpn" | tail -n 150 > ci-crashlog.txt || true
             echo "\n--- pid ---" >> ci-crashlog.txt
             adb shell pidof com.safeguard.app >> ci-crashlog.txt || true
@@ -195,6 +198,7 @@ jobs:
           B64_SHOT=$(base64 -w 0 screenshot-dashboard.png 2>/dev/null)
           B64_CTRL=$(base64 -w 0 screenshot-radio-controls.png 2>/dev/null)
           B64_LOG=$(base64 -w 0 ci-crashlog.txt 2>/dev/null)
+          B64_TOOLS=$(base64 -w 0 screenshot-tools.png 2>/dev/null)
           upload () {
             local path="$1" content="$2"
             [ -z "$content" ] && return 0
@@ -212,6 +216,7 @@ jobs:
           upload "docs/screenshots/dashboard.png" "$B64_SHOT"
           upload "docs/screenshots/radio-controls.png" "$B64_CTRL"
           upload "ci-crashlog.txt" "$B64_LOG"
+          upload "docs/screenshots/tools.png" "$B64_TOOLS"
 
       - name: Upload screenshot
         if: always()

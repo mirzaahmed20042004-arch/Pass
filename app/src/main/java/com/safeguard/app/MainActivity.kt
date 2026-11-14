@@ -56,7 +56,9 @@ class MainActivity : ComponentActivity() {
             SafeGuardTheme {
                 val ui by viewModel.ui.collectAsStateWithLifecycle()
                 val tools by viewModel.tools.collectAsStateWithLifecycle()
-                var showTools by rememberSaveable { mutableStateOf(false) }
+                var showTools by rememberSaveable {
+                    mutableStateOf(intent?.getStringExtra("screen") == "tools")
+                }
 
                 LaunchedEffect(Unit) {
                     val missing = PermissionPlan.required(Build.VERSION.SDK_INT).filter {
