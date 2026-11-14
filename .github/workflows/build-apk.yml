@@ -177,6 +177,12 @@ jobs:
             adb pull /sdcard/tools.png "${GITHUB_WORKSPACE:-.}/screenshot-tools.png" || true
             adb shell dumpsys activity activities | grep -i "safeguard" | head -3
             adb logcat -d | grep -iE "AndroidRuntime|FATAL|safeguard|VpnService|ShieldVpn" | tail -n 150 > ci-crashlog.txt || true
+            {
+              echo "\n--- screenshots on device ---"
+              adb shell ls -la /sdcard/*.png
+              echo "--- cwd: $(pwd) ---"
+              ls -la *.png 2>/dev/null || echo "no local png"
+            } >> ci-crashlog.txt 2>&1 || true
             echo "\n--- pid ---" >> ci-crashlog.txt
             adb shell pidof com.safeguard.app >> ci-crashlog.txt || true
             echo "\n--- foreground activity ---" >> ci-crashlog.txt

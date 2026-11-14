@@ -1,5 +1,22 @@
 # Safe Guard — SignalDisruptor Pro
 
+> ## v1.3.0 — Tools tab: home-network control (all legal, all real)
+>
+> **Signed release APK** → https://github.com/mirzaahmed20042004-arch/Pass/releases/download/v1.3.0/SafeGuard-v1.3.0-release.apk
+> **Debug APK** → https://github.com/mirzaahmed20042004-arch/Pass/releases/download/v1.3.0/SafeGuard-v1.3.0-debug.apk
+>
+> New **TOOLS** button on the dashboard opens a second screen with box-style cards in simple English:
+>
+> | Box | What it really does |
+> |---|---|
+> | 👥 **Who is on my Wi-Fi** | Sweeps your subnet (ICMP + TCP fallback), reads `/proc/net/arp` for MACs, lists every phone/TV/laptop with delay. Read-only. |
+> | 🛠 **Router quick access** | Detects your gateway and offers `192.168.1.1` / `192.168.0.1` / `10.0.0.1` … one tap to the admin page, plus 6 steps to switch the Wi-Fi off for the whole house. |
+> | ⏸ **Pause home Wi-Fi** | Explains and links the only real way to stop the whole house network (router switch) — no pretending. |
+> | 🧑‍🤝‍🧑 **Child on another router** | Legal, effective playbook: MAC filter, time schedule, traffic stats, owner permission. |
+> | 🌙 **Bedtime blackout** | A daily window where the phone's own data shield turns itself on (WorkManager enforces it every 15 min). Set start/end, no root. |
+> | 📶 **Wi-Fi channel checker** | Scans nearby networks, counts crowding per 2.4 GHz channel and recommends 1 / 6 / 11 for a faster home Wi-Fi. |
+> | ⚖️ **What this app will never do** | States plainly that it does not jam, does not touch other people's phones, and changes nothing in your router without you pressing Save. |
+>
 > ## v1.2.1 — non-root build (fixes the "app kam nahi kar rahi" bugs)
 >
 > - **Signed release APK (1.0 MB)** → https://github.com/mirzaahmed20042004-arch/Pass/releases/download/v1.2.1/SafeGuard-v1.2.1-release.apk
