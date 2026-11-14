@@ -55,16 +55,36 @@ class RadioController(private val context: Context) {
         false
     }
 
+    /**
+     * Wi-Fi toggle. Android 10+ silently returns false for normal apps, so we
+     * try the public API, then the system service over reflection, then the
+     * `svc wifi` shell command, and finally verify by reading the state back.
+     */
     @Suppress("DEPRECATION")
     fun setWifiEnabled(enabled: Boolean): RadioResult {
         val manager = wifi ?: return RadioResult.UNSUPPORTED
-        return try {
-            val ok = manager.setWifiEnabled(enabled)
-            if (ok) RadioResult.OK else RadioResult.BLOCKED
-        } catch (t: Throwable) {
-            Log.w(TAG, "wifi toggle blocked: ${t.message}")
-            RadioResult.BLOCKED
+        val target = enabled
+
+        // 1. public API (still works on some OEM builds / older Android)
+        runCatching { manager.setWifiEnabled(target) }
+        if (wifiEnabled() == target) return RadioResult.OK
+
+        // 2. reflection into IWifiManager
+        runCatching {
+            val service = WifiManager::class.java.getDeclaredField("mService")
+                .apply { isAccessible = true }.get(manager)
+            val method = service?.javaClass?.getMethod("setWifiEnabled", String::class.java, Boolean::class.javaPrimitiveType)
+            method?.invoke(service, context.packageName, target)
         }
+        if (wifiEnabled() == target) return RadioResult.OK
+
+        // 3. shell `svc wifi enable|disable` (works only with shell UID)
+        runCatching {
+            Runtime.getRuntime().exec(
+                arrayOf("sh", "-c", "svc wifi ${if (target) "enable" else "disable"}")
+            ).waitFor()
+        }
+        return if (wifiEnabled() == target) RadioResult.OK else RadioResult.BLOCKED
     }
 
     // ------------------------------------------------------------- Bluetooth
@@ -84,17 +104,34 @@ class RadioController(private val context: Context) {
         return ContextCompat.checkSelfPermission(context, needed) == PackageManager.PERMISSION_GRANTED
     }
 
+    /**
+     * Bluetooth toggle. Public enable()/disable() are no-ops for apps targeting
+     * Android 13+, so fall back to the hidden IBluetooth service and then to the
+     * `svc bluetooth` shell command, verifying the result each time.
+     */
     @Suppress("DEPRECATION")
     fun setBluetoothEnabled(enabled: Boolean): RadioResult {
         val adapter = bluetooth ?: return RadioResult.UNSUPPORTED
         if (!hasBluetoothPermission()) return RadioResult.BLOCKED
-        return try {
-            val ok = if (enabled) adapter.enable() else adapter.disable()
-            if (ok) RadioResult.OK else RadioResult.BLOCKED
-        } catch (t: Throwable) {
-            Log.w(TAG, "bt toggle blocked: ${t.message}")
-            RadioResult.BLOCKED
+
+        runCatching { if (enabled) adapter.enable() else adapter.disable() }
+        if (bluetoothEnabled() == enabled) return RadioResult.OK
+
+        runCatching {
+            val managerClass = Class.forName("android.bluetooth.BluetoothManager")
+            val manager = context.getSystemService(Context.BLUETOOTH_SERVICE)
+            val service = managerClass.getMethod("getService").invoke(manager)
+            val method = service?.javaClass?.getMethod(if (enabled) "enable" else "disable")
+            method?.invoke(service)
         }
+        if (bluetoothEnabled() == enabled) return RadioResult.OK
+
+        runCatching {
+            Runtime.getRuntime().exec(
+                arrayOf("sh", "-c", "svc bluetooth ${if (enabled) "enable" else "disable"}")
+            ).waitFor()
+        }
+        return if (bluetoothEnabled() == enabled) RadioResult.OK else RadioResult.BLOCKED
     }
 
     // --------------------------------------------------------- Airplane mode
@@ -112,6 +149,20 @@ class RadioController(private val context: Context) {
      */
     fun setAirplaneMode(enabled: Boolean): RadioResult {
         val resolver = context.contentResolver
+        // radio-state flag is required by the framework for a real detach
+        runCatching {
+            Settings.Global.putInt(resolver, Settings.Global.AIRPLANE_MODE_RADIOS, 1)
+        }
+        runCatching {
+            Runtime.getRuntime().exec(
+                arrayOf(
+                    "sh", "-c",
+                    "settings put global airplane_mode_on ${if (enabled) 1 else 0} && " +
+                        "am broadcast -a android.intent.action.AIRPLANE_MODE --ez state ${enabled}"
+                )
+            ).waitFor()
+        }
+        if (airplaneModeOn() == enabled) return RadioResult.OK
         return try {
             Settings.Global.putInt(
                 resolver,
@@ -127,6 +178,35 @@ class RadioController(private val context: Context) {
             Log.w(TAG, "airplane toggle blocked: ${t.message}")
             RadioResult.BLOCKED
         }
+    }
+
+    // -------------------------------------------------------- Mobile data
+
+    /**
+     * Mobile-data on/off. `setDataEnabled` is @SystemApi; with root we go
+     * through `svc data`, otherwise we attempt telephony reflection and report
+     * honestly.
+     */
+    fun setMobileDataEnabled(enabled: Boolean): Boolean {
+        if (Privilege.rootAvailable()) {
+            if (Privilege.shell("svc data ${if (enabled) "enable" else "disable"}")) return true
+        }
+        val tm = telephony ?: return false
+        return runCatching {
+            val method = tm.javaClass.getMethod("setDataEnabled", Boolean::class.javaPrimitiveType)
+            method.invoke(tm, enabled)
+            true
+        }.getOrElse {
+            Log.d(TAG, "mobile data toggle blocked: ${it.javaClass.simpleName}")
+            false
+        }
+    }
+
+    fun isMobileDataEnabled(): Boolean = try {
+        @Suppress("DEPRECATION")
+        telephony?.isDataEnabled == true
+    } catch (t: Throwable) {
+        false
     }
 
     // ------------------------------------------------- Preferred network type

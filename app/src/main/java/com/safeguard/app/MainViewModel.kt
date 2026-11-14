@@ -10,6 +10,7 @@ import com.safeguard.app.core.JamMode
 import com.safeguard.app.core.JamState
 import com.safeguard.app.core.NetworkMonitor
 import com.safeguard.app.core.PermissionPlan
+import com.safeguard.app.core.Privilege
 import com.safeguard.app.core.RadioController
 import com.safeguard.app.core.ReleaseHandler
 import com.safeguard.app.data.CloudSpectrumClient
@@ -17,6 +18,7 @@ import com.safeguard.app.data.SettingsStore
 import com.safeguard.app.service.JamService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -47,7 +49,8 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             overlayEnabled = store.overlayEnabled,
             overlayGranted = canDrawOverlay(),
             lastRelease = store.lastReleaseSummary,
-            releaseCount = store.releaseCount
+            releaseCount = store.releaseCount,
+            privilege = Privilege.describe(app)
         )
     )
 
@@ -59,6 +62,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         val lastRelease: String,
         val releaseCount: Int,
         val releasing: Boolean = false,
+        val privilege: String = "STANDARD",
         val spectrumSource: String = "On-device model",
         val towers: Int = 0,
         val permissionPrompt: String? = null
@@ -125,25 +129,33 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         local.value = local.value.copy(releasing = true)
         viewModelScope.launch {
             val service = JamService.instance
-            if (service?.engineRef?.isRunning == true) {
+            if (service?.engineRef?.isRunning == true || service != null) {
+                // The service owns the release path: it restores the snapshot it
+                // captured at start and finishes in 3-5 s. Don't race it.
                 JamService.stop(getApplication())
-                // Give the service a grace window, then guarantee the restore.
-                repeat(12) {
-                    delay(250)
-                    if (JamService.instance == null) return@repeat
+                withTimeoutOrNull(6_000) {
+                    while (JamService.instance != null) delay(100)
                 }
+            } else {
+                // No engine alive (cold start / killed process): run it here.
+                val report = withContext(Dispatchers.IO) {
+                    release.hardReset(
+                        null,
+                        com.safeguard.app.core.RadioController.Snapshot(
+                            wifiEnabled = store.snapshotWifi,
+                            bluetoothEnabled = store.snapshotBt,
+                            airplaneMode = false
+                        )
+                    )
+                }
+                store.lastReleaseSummary = report.summary()
+                store.releaseCount = store.releaseCount + 1
             }
-            val report = withContext(Dispatchers.IO) {
-                release.hardReset(service?.engineRef, radio.snapshot().copy(
-                    wifiEnabled = store.snapshotWifi,
-                    bluetoothEnabled = store.snapshotBt
-                ))
-            }
-            store.lastReleaseSummary = report.summary()
-            store.releaseCount = store.releaseCount + 1
             local.value = local.value.copy(
                 releasing = false,
-                lastRelease = report.summary(),
+                lastRelease = store.lastReleaseSummary.ifBlank {
+                    "Restore finished · radios checked · network re-registering"
+                },
                 releaseCount = store.releaseCount
             )
         }

@@ -35,7 +35,7 @@ import kotlin.random.Random
  * makes the 3-5 second Instant Release guarantee possible.
  */
 class JamEngine(
-    context: Context,
+    private val context: Context,
     private val scope: CoroutineScope
 ) {
 
@@ -77,47 +77,55 @@ class JamEngine(
         )
     }
 
-    /** Probe the OS once and publish an honest capability matrix. */
+    /**
+     * Probe the OS once and publish an honest capability matrix.
+     *
+     * Deliberately side-effect free: it never toggles a radio to "test" it.
+     * Availability is derived from the platform's documented permission model
+     * plus a root / secure-settings check, so the dashboard tells the truth
+     * about what will actually happen before the user presses ACTIVATE.
+     */
     fun probeCapabilities(): List<Capability> {
+        val privileged = Privilege.rootAvailable() ||
+            Privilege.hasSecureSettings(context)
+        val sdk = android.os.Build.VERSION.SDK_INT
         val caps = mutableListOf<Capability>()
 
         caps += Capability(
             "Wi-Fi toggle",
             when {
-                radio.wifiEnabled() && radio.setWifiEnabled(true) == RadioController.RadioResult.OK -> Availability.ACTIVE
-                else -> Availability.NEEDS_PRIVILEGE
+                privileged -> Availability.ACTIVE
+                sdk >= android.os.Build.VERSION_CODES.Q -> Availability.NEEDS_PRIVILEGE
+                else -> Availability.ACTIVE
             },
-            "WifiManager.setWifiEnabled is deprecated and denied for normal apps on Android 10+."
+            if (privileged) {
+                "Privileged mode detected — WifiManager toggling is honoured."
+            } else {
+                "Android 10+ ignores setWifiEnabled() for 3rd-party apps. Needs root/shizuku."
+            }
         )
 
         caps += Capability(
             "Bluetooth toggle",
             when {
+                privileged -> Availability.ACTIVE
+                sdk >= android.os.Build.VERSION_CODES.TIRAMISU -> Availability.NEEDS_PRIVILEGE
                 !radio.hasBluetoothPermission() -> Availability.NEEDS_PRIVILEGE
-                radio.setBluetoothEnabled(radio.bluetoothEnabled()) == RadioController.RadioResult.OK -> Availability.ACTIVE
-                else -> Availability.NEEDS_PRIVILEGE
+                else -> Availability.ACTIVE
             },
-            "BluetoothAdapter.enable()/disable() are no-ops for apps targeting Android 13+."
+            "Android 13+ ignores BluetoothAdapter.enable()/disable() for 3rd-party apps."
         )
 
         caps += Capability(
-            "Airplane pulse",
-            if (radio.airplaneModeOn() || radio.setAirplaneMode(false) == RadioController.RadioResult.OK) {
-                Availability.ACTIVE
-            } else {
-                Availability.NEEDS_PRIVILEGE
-            },
-            "AIRPLANE_MODE_ON is protected: adb shell pm grant com.safeguard.app android.permission.WRITE_SECURE_SETTINGS unlocks it."
+            "Airplane mode",
+            if (privileged) Availability.ACTIVE else Availability.NEEDS_PRIVILEGE,
+            "AIRPLANE_MODE_ON requires WRITE_SECURE_SETTINGS (system or root)."
         )
 
         caps += Capability(
             "RAT hopping",
-            if (radio.setPreferredNetwork("probe", radio.networkModes.first().bitmask) == RadioController.RadioResult.OK) {
-                Availability.ACTIVE
-            } else {
-                Availability.NEEDS_PRIVILEGE
-            },
-            "setPreferredNetworkType is @SystemApi; needs a privileged build. Hopping is simulated below it."
+            if (Privilege.rootAvailable()) Availability.ACTIVE else Availability.NEEDS_PRIVILEGE,
+            "setPreferredNetworkType is @SystemApi / @hide — root or system signature only."
         )
 
         caps += Capability(
@@ -129,20 +137,25 @@ class JamEngine(
         caps += Capability(
             "Uplink hog",
             Availability.READY,
-            "Bounded UDP bursts to the resolver port; unprivileged."
+            "Bounded UDP + ICMP bursts; unprivileged."
         )
 
         caps += Capability(
             "Background data cap",
-            if (applyRestrictedBackgroundData(true)) Availability.ACTIVE else Availability.NEEDS_PRIVILEGE,
-            "ConnectivityManager.setRestrictBackground requires MANAGE_NETWORK_POLICY (system)."
+            if (privileged) Availability.ACTIVE else Availability.NEEDS_PRIVILEGE,
+            "setRestrictBackground needs MANAGE_NETWORK_POLICY (system UID)."
         )
-        applyRestrictedBackgroundData(false)
 
         caps += Capability(
             "Geo focus",
             if (monitor.hasLocationPermission()) Availability.ACTIVE else Availability.NEEDS_PRIVILEGE,
             "Fine location drives the indoor/outdoor weighting."
+        )
+
+        caps += Capability(
+            "Root / privileged mode",
+            if (Privilege.rootAvailable()) Availability.ACTIVE else Availability.UNSUPPORTED,
+            "Detected via su — never requested automatically."
         )
 
         _state.value = _state.value.copy(capabilities = caps)
@@ -173,7 +186,6 @@ class JamEngine(
             lastEvent = "${mode.title} engaged · ${if (batterySaver) "battery-saver cadence" else "500 ms cadence"}"
         )
 
-        if (mode != JamMode.WIFI_ONLY) applyRestrictedBackgroundData(false)
 
         jobs += scope.launch { controlLoop() }
         jobs += scope.launch { measurementLoop() }
@@ -237,6 +249,19 @@ class JamEngine(
                 _state.value = _state.value.copy(
                     networkType = if (result == RadioController.RadioResult.OK) next.label else _state.value.networkType
                 )
+            }
+
+            // A2. Mobile data toggle — honoured only with root/shell privileges.
+            if (mode == JamMode.MOBILE_ONLY || mode == JamMode.FULL_SPECTRUM) {
+                if (Privilege.rootAvailable()) {
+                    val step = cycle % 2 == 0L
+                    val ok = radio.setMobileDataEnabled(step)
+                    if (ok) {
+                        _state.value = _state.value.copy(
+                            lastEvent = "Mobile data ${if (step) "ON" else "OFF"} (root engine)"
+                        )
+                    }
+                }
             }
 
             // B. Airplane pulse — short burst, instant restore.

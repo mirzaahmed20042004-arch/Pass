@@ -103,10 +103,15 @@ class ReleaseHandler(
 
     private fun restoreAirplane(steps: MutableList<String>): Boolean {
         if (!radio.airplaneModeOn()) {
-            steps += "Airplane mode already OFF"
+            // Power-cycle the radio anyway: after a pulse the modem is still
+            // re-registering, and toggling data forces a fresh attach in ~2 s.
+            runCatching { radio.setMobileDataEnabled(false) }
+            runCatching { radio.setMobileDataEnabled(true) }
+            steps += "Airplane mode already OFF · data re-attached"
             return true
         }
         val result = radio.setAirplaneMode(false)
+        runCatching { radio.setMobileDataEnabled(true) }
         val off = !radio.airplaneModeOn()
         steps += when {
             off -> "Airplane mode forced OFF"

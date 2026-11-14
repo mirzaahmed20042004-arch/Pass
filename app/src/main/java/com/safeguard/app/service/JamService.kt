@@ -75,16 +75,20 @@ class JamService : Service() {
             ACTION_STOP -> stopJam("Stopped from notification")
             ACTION_RELEASE_ONLY -> stopJam("Release requested")
             else -> {
-                // Restarted by the OS: only resume if a session was flagged active.
-                if (store.sessionActive && !started) {
-                    startJam(JamMode.FULL_SPECTRUM, store.engineMode, store.batterySaver)
+                // Restarted by the OS. Never silently re-engage a jam: if the
+                // process died mid-session, the release path already ran and the
+                // radios are restored. Report idle instead of pretending.
+                if (!started) {
+                    store.sessionActive = false
+                    releaseCrashedSession()
                 }
             }
         }
-        return START_STICKY
+        return START_NOT_STICKY
     }
 
     private fun startJam(mode: JamMode, engineMode: EngineMode, saver: Boolean) {
+        if (started) stopJamInternal() // re-entrant command = reconfigure
         started = true
         store.sessionActive = true
         store.engineMode = engineMode
@@ -109,19 +113,37 @@ class JamService : Service() {
 
     private fun stopJam(reason: String) {
         if (!started) {
-            stopSelfSafely()
+            // Started from a notification/broadcast action: Android still
+            // requires a startForeground() call in this window.
+            startForegroundIfNeeded()
+            releaseCrashedSession()
             return
         }
+        stopJamInternal()
+        releaseSafely(reason)
+    }
+
+    /** Cancels the loops immediately; safe to call re-entrantly. */
+    private fun stopJamInternal() {
         started = false
         store.sessionActive = false
         overlay.hide()
         acquireReleaseWakeLock()
+    }
+
+    private fun startForegroundIfNeeded() {
+        runCatching { startForegroundWithNotification(JamMode.OFF) }
+    }
+
+    private fun releaseSafely(reason: String) {
+        acquiringRelease = true
         serviceScope.launch {
             val report = release.hardReset(engine, engine.originalSnapshot())
             store.lastReleaseSummary = report.summary()
             store.releaseCount = store.releaseCount + 1
             Log.i(TAG, "$reason → ${report.summary()}")
             releaseWakeLock()
+            acquiringRelease = false
             stopSelfSafely()
         }
     }
@@ -133,19 +155,23 @@ class JamService : Service() {
     }
 
     override fun onDestroy() {
+        // The OS is tearing us down: restore radios synchronously, and never
+        // cancel the scope we are running on mid-restore.
         if (started) {
+            started = false
             store.sessionActive = false
+            engine.stopAll()
             overlay.hide()
-            // Best-effort synchronous restore; the process may die right after.
             runCatching {
                 kotlinx.coroutines.runBlocking {
-                    release.hardReset(engine, store.snapshotWifi.let {
-                        com.safeguard.app.core.RadioController.Snapshot(
-                            wifiEnabled = it,
+                    release.hardReset(
+                        engine = null,
+                        wanted = com.safeguard.app.core.RadioController.Snapshot(
+                            wifiEnabled = store.snapshotWifi,
                             bluetoothEnabled = store.snapshotBt,
                             airplaneMode = false
                         )
-                    })
+                    )
                 }
             }
         }
@@ -209,6 +235,7 @@ class JamService : Service() {
 
     private var lastNotify = 0L
     private var notificationCollectorAttached = false
+    private var acquiringRelease = false
     private fun publishNotification(state: JamState) {
         val now = System.currentTimeMillis()
         if (now - lastNotify < 1500) return
@@ -249,6 +276,21 @@ class JamService : Service() {
     }
 
     // --------------------------------------------------------------- wake locks
+
+    /** No engine state survived: just prove the radios are back on. */
+    private fun releaseCrashedSession() {
+        serviceScope.launch {
+            val snapshot = com.safeguard.app.core.RadioController.Snapshot(
+                wifiEnabled = store.snapshotWifi,
+                bluetoothEnabled = store.snapshotBt,
+                airplaneMode = false
+            )
+            val report = release.hardReset(null, snapshot)
+            store.lastReleaseSummary = report.summary()
+            store.releaseCount = store.releaseCount + 1
+            stopSelfSafely()
+        }
+    }
 
     private fun acquireWakeLock() {
         if (wakeLock?.isHeld == true) return

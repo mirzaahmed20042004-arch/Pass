@@ -97,7 +97,7 @@ fun DashboardScreen(
         Header(jam)
         Spacer(Modifier.height(18.dp))
 
-        StatusStrip(jam, accent)
+        StatusStrip(jam, accent, local.privilege)
         Spacer(Modifier.height(14.dp))
 
         WaveformCard(jam, accent)
@@ -133,7 +133,10 @@ fun DashboardScreen(
             )
         }
 
-        Spacer(Modifier.height(16.dp))
+        if (local.privilege.startsWith("STANDARD")) {
+            RealityBanner()
+            Spacer(Modifier.height(10.dp))
+        }
         ActivateBlock(jam, local.releasing, onEngage, onRelease)
         Spacer(Modifier.height(14.dp))
         QuickActions(jam, onEngage)
@@ -148,7 +151,7 @@ fun DashboardScreen(
         Spacer(Modifier.height(14.dp))
         ReleaseCard(local, jam)
         Spacer(Modifier.height(14.dp))
-        PermissionCard(onRequestPermissions, onBatterySettings, onDismissPrompt, local.permissionPrompt)
+        PermissionCard(onRequestPermissions, onBatterySettings, onDismissPrompt, local.permissionPrompt, local.privilege)
         Spacer(Modifier.height(20.dp))
         Text(
             "SafeGuard is an RF diagnostics / resilience testing tool. It uses only public,\n" +
@@ -214,7 +217,7 @@ private fun Header(jam: JamState) {
 }
 
 @Composable
-private fun StatusStrip(jam: JamState, accent: Color) {
+private fun StatusStrip(jam: JamState, accent: Color, privilege: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -226,7 +229,9 @@ private fun StatusStrip(jam: JamState, accent: Color) {
     ) {
         Column(Modifier.weight(1f)) {
             Text(
-                if (jam.running) "JAMMING ACTIVE" else "ENGINE IDLE",
+                if (jam.running) {
+                    if (local.privilege.startsWith("STANDARD")) "MONITORING · RADIO LOCKED" else "JAMMING ACTIVE"
+                } else "ENGINE IDLE",
                 color = accent,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
@@ -236,6 +241,12 @@ private fun StatusStrip(jam: JamState, accent: Color) {
                 "${jam.mode.title} · ${jam.intervalMs} ms · ${jam.networkType}",
                 color = SgPalette.TextSecondary,
                 fontSize = 10.sp
+            )
+            Text(
+                privilege,
+                color = if (privilege.startsWith("STANDARD")) SgPalette.Amber else SgPalette.Teal,
+                fontSize = 9.sp,
+                fontFamily = Mono
             )
         }
         Column(horizontalAlignment = Alignment.End) {
@@ -297,6 +308,44 @@ private fun Metric(label: String, value: String, color: Color) {
     Column(Modifier.padding(end = 16.dp)) {
         Text(label, color = SgPalette.TextSecondary, fontSize = 8.sp, letterSpacing = 1.sp)
         Text(value, color = color, fontSize = 12.sp, fontFamily = Mono, fontWeight = FontWeight.Bold)
+    }
+}
+
+/**
+ * Shown whenever the app has no root and no adb grant, because in that state
+ * Android physically refuses to switch off any radio — and pretending
+ * otherwise would be lying to the user.
+ */
+@Composable
+private fun RealityBanner() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(14.dp))
+            .background(SgPalette.Amber.copy(alpha = 0.10f))
+            .border(1.dp, SgPalette.Amber.copy(alpha = 0.55f), RoundedCornerShape(14.dp))
+            .padding(12.dp)
+    ) {
+        Text("⚠", color = SgPalette.Amber, fontSize = 15.sp)
+        Spacer(Modifier.width(9.dp))
+        Column {
+            Text(
+                "RADIO CONTROL NOT GRANTED",
+                color = SgPalette.Amber,
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 1.2.sp
+            )
+            Spacer(Modifier.height(3.dp))
+            Text(
+                "Android blocks Wi-Fi, Bluetooth, mobile-data and airplane-mode changes for normal apps. " +
+                    "This build is in MONITORING mode: it measures, logs and simulates, but it cannot cut a neighbour's signal. " +
+                    "See the ACCESS card below for the one-time setup that unlocks real control.",
+                color = SgPalette.TextSecondary,
+                fontSize = 10.sp,
+                lineHeight = 15.sp
+            )
+        }
     }
 }
 
@@ -661,7 +710,8 @@ private fun PermissionCard(
     onRequest: () -> Unit,
     onBattery: () -> Unit,
     onDismiss: () -> Unit,
-    prompt: String?
+    prompt: String?,
+    privilege: String
 ) {
     Column(
         modifier = Modifier
@@ -671,11 +721,36 @@ private fun PermissionCard(
             .border(1.dp, Color(0x3349A0FF), RoundedCornerShape(16.dp))
             .padding(14.dp)
     ) {
-        Text("ACCESS", color = SgPalette.TextSecondary, fontSize = 9.sp, letterSpacing = 1.4.sp)
+        Text("ACCESS & PRIVILEGE", color = SgPalette.TextSecondary, fontSize = 9.sp, letterSpacing = 1.4.sp)
+        Spacer(Modifier.height(6.dp))
+        Text(
+            privilege,
+            color = if (privilege.startsWith("STANDARD")) SgPalette.Amber else SgPalette.Teal,
+            fontSize = 11.sp,
+            fontFamily = Mono
+        )
         Spacer(Modifier.height(8.dp))
         ActionRow("Grant runtime permissions", "Location · Bluetooth · Notifications", onRequest)
-        ActionRow("Allow overlay badge", "SYSTEM_ALERT_WINDOW", { })
         ActionRow("Disable battery optimisation", "Keeps the foreground engine alive", onBattery)
+        Spacer(Modifier.height(8.dp))
+        Text(
+            "TO UNLOCK REAL RADIO CONTROL (one-time, your own device):",
+            color = SgPalette.Teal,
+            fontSize = 9.sp,
+            letterSpacing = 0.8.sp
+        )
+        Spacer(Modifier.height(5.dp))
+        CodeLine("adb shell pm grant com.safeguard.app android.permission.WRITE_SECURE_SETTINGS")
+        CodeLine("adb shell appops set com.safeguard.app SYSTEM_ALERT_WINDOW allow")
+        Text(
+            "That enables airplane-mode / secure-settings paths. Wi-Fi, Bluetooth, mobile data and "
+                + "network-mode switching are hard-blocked for every 3rd-party app on Android 10-14 — "
+                + "only a rooted device can do those, and no APK can change that.",
+            color = SgPalette.TextSecondary,
+            fontSize = 9.sp,
+            lineHeight = 14.sp,
+            modifier = Modifier.padding(top = 6.dp)
+        )
         if (prompt != null) {
             Text(
                 "Overlay permission is required for the floating badge. Enable it, then flip the switch again.",
@@ -693,6 +768,20 @@ private fun PermissionCard(
                     .clickable(onClick = onDismiss)
             )
         }
+    }
+}
+
+@Composable
+private fun CodeLine(text: String) {
+    Box(
+        Modifier
+            .fillMaxWidth()
+            .padding(vertical = 2.dp)
+            .clip(RoundedCornerShape(6.dp))
+            .background(Color(0xFF060B12))
+            .padding(horizontal = 8.dp, vertical = 6.dp)
+    ) {
+        Text(text, color = SgPalette.TextPrimary.copy(alpha = 0.85f), fontSize = 8.5.sp, fontFamily = Mono)
     }
 }
 
