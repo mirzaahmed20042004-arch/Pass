@@ -167,6 +167,7 @@ jobs:
             sleep 5
             adb shell screencap -p /sdcard/controls.png
             adb pull /sdcard/controls.png "${GITHUB_WORKSPACE:-.}/screenshot-radio-controls.png" || true
+            ls -la /sdcard/controls.png || true
             adb shell am start -n com.safeguard.app/.MainActivity
             sleep 4
             adb logcat -d | grep -iE "AndroidRuntime|FATAL|safeguard|VpnService|ShieldVpn" | tail -n 150 > ci-crashlog.txt || true
@@ -176,7 +177,8 @@ jobs:
             adb shell dumpsys activity activities | grep -i safeguard | head -5 >> ci-crashlog.txt || true
             cd "$GITHUB_WORKSPACE" 2>/dev/null || true
             adb shell screencap -p /sdcard/shot.png
-            adb pull /sdcard/shot.png "${GITHUB_WORKSPACE:-.}/screenshot-dashboard.png"
+            adb pull /sdcard/shot.png "${GITHUB_WORKSPACE:-.}/screenshot-dashboard.png" || true
+            ls -la "${GITHUB_WORKSPACE:-.}"/screenshot-*.png 2>/dev/null || echo "no screenshots pulled"
             adb shell dumpsys activity activities | grep -i "com.safeguard.app" | head -5
             adb logcat -d -s AndroidRuntime:E | tail -20
             adb shell pidof com.safeguard.app
