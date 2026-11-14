@@ -172,6 +172,33 @@ jobs:
             adb logcat -d -s AndroidRuntime:E | tail -20
             adb shell pidof com.safeguard.app
 
+      - name: Publish screenshots + crash log via API
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set +e
+          B64_SHOT=$(base64 -w 0 screenshot-dashboard.png 2>/dev/null)
+          B64_CTRL=$(base64 -w 0 screenshot-radio-controls.png 2>/dev/null)
+          B64_LOG=$(base64 -w 0 ci-crashlog.txt 2>/dev/null)
+          upload () {
+            local path="$1" content="$2"
+            [ -z "$content" ] && return 0
+            local sha
+            sha=$(gh api "repos/$GITHUB_REPOSITORY/contents/$path?ref=$GITHUB_REF_NAME" --jq .sha 2>/dev/null)
+            if [ -n "$sha" ]; then
+              gh api -X PUT "repos/$GITHUB_REPOSITORY/contents/$path"                 -f message="ci: update $path [skip ci]" -f content="$content" -f sha="$sha" \
+                -f branch="$GITHUB_REF_NAME" > /dev/null
+            else
+              gh api -X PUT "repos/$GITHUB_REPOSITORY/contents/$path"                 -f message="ci: add $path [skip ci]" -f content="$content" \
+                -f branch="$GITHUB_REF_NAME" > /dev/null
+            fi
+            echo "uploaded $path"
+          }
+          upload "docs/screenshots/dashboard.png" "$B64_SHOT"
+          upload "docs/screenshots/radio-controls.png" "$B64_CTRL"
+          upload "ci-crashlog.txt" "$B64_LOG"
+
       - name: Upload screenshot
         if: always()
         uses: actions/upload-artifact@v4
