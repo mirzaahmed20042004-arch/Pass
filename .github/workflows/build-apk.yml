@@ -42,12 +42,12 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          mkdir -p keystore
-          # A stable signing key is essential: with a new key every run, Android
-          # refuses the update ("App not installed") and users stay on an old build.
           set +e
-          gh api "repos/$GITHUB_REPOSITORY/contents/keystore/safeguard-release.jks?ref=$GITHUB_REF_NAME" --jq .content 2>/dev/null | tr -d '\n' | base64 -d > keystore/safeguard-release.jks
-          set -e
+          mkdir -p keystore
+          # A stable signing key is essential: with a new key on every run Android
+          # refuses the update ("App not installed") and users stay on an old build.
+          gh api "repos/$GITHUB_REPOSITORY/contents/keystore/safeguard-release.jks?ref=$GITHUB_REF_NAME" \
+            --jq .content 2>/dev/null | tr -d '\n' | base64 -d > keystore/safeguard-release.jks 2>/dev/null
           if [ -s keystore/safeguard-release.jks ]; then
             echo "restored committed keystore"
           else
@@ -55,13 +55,12 @@ jobs:
               -alias safeguard -keyalg RSA -keysize 2048 -validity 10950 \
               -storepass safeguard -keypass safeguard \
               -dname "CN=Safe Guard, OU=SignalDisruptor Pro, O=SafeGuard, L=Karachi, C=PK"
-            set +e
             B64=$(base64 -w 0 keystore/safeguard-release.jks)
             gh api -X PUT "repos/$GITHUB_REPOSITORY/contents/keystore/safeguard-release.jks" \
               -f message="ci: persist signing keystore [skip ci]" \
               -f content="$B64" -f branch="$GITHUB_REF_NAME" > /dev/null && echo "keystore persisted"
-            set -e
           fi
+          exit 0
 
       - name: Build debug APK
         run: |
