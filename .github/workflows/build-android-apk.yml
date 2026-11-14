@@ -31,8 +31,15 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Verify Android SDK & install Platform 34
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          SDK_MGR=$(find "$ANDROID_HOME/cmdline-tools" -name sdkmanager | head -n 1)
+          if [ -n "$SDK_MGR" ]; then
+            yes | "$SDK_MGR" --licenses >/dev/null 2>&1 || true
+            "$SDK_MGR" "platforms;android-34" "build-tools;34.0.0" >/dev/null
+          fi
+          ls -la "$ANDROID_HOME/platforms" "$ANDROID_HOME/build-tools"
 
       - name: Install backend & frontend dependencies
         run: |
