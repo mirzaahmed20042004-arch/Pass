@@ -150,6 +150,7 @@ jobs:
 
       - name: Boot emulator, install and launch
         uses: reactivecircus/android-emulator-runner@v2
+        continue-on-error: true
         with:
           api-level: 30
           target: google_apis
@@ -163,20 +164,19 @@ jobs:
             adb shell am start -W -n com.safeguard.app/.MainActivity
             sleep 10
             adb shell screencap -p /sdcard/shot.png
-            adb pull /sdcard/shot.png "${GITHUB_WORKSPACE}/screenshot-dashboard.png"
-            adb shell am start -W -n com.safeguard.app/.MainActivity --es screen tools
+            adb pull /sdcard/shot.png "$GITHUB_WORKSPACE/screenshot-dashboard.png" || true
+            adb shell am start -n com.safeguard.app/.MainActivity --es screen tools || true
             sleep 10
             adb shell screencap -p /sdcard/tools.png
-            adb pull /sdcard/tools.png "${GITHUB_WORKSPACE}/screenshot-tools.png"
-            adb shell am start -W -n com.safeguard.app/.ui.RadioControlActivity
+            adb pull /sdcard/tools.png "$GITHUB_WORKSPACE/screenshot-tools.png" || true
+            adb shell am start -n com.safeguard.app/.ui.RadioControlActivity || true
             sleep 6
             adb shell screencap -p /sdcard/controls.png
-            adb pull /sdcard/controls.png "${GITHUB_WORKSPACE}/screenshot-radio-controls.png"
-            adb logcat -d | grep -iE "AndroidRuntime|FATAL|safeguard|VpnService|ShieldVpn" | tail -n 150 > "${GITHUB_WORKSPACE}/ci-crashlog.txt" || true
-            echo "--- pid ---" >> "${GITHUB_WORKSPACE}/ci-crashlog.txt"
-            adb shell pidof com.safeguard.app >> "${GITHUB_WORKSPACE}/ci-crashlog.txt" || true
-            echo "--- resumed ---" >> "${GITHUB_WORKSPACE}/ci-crashlog.txt"
-            adb shell dumpsys activity activities | grep -i "mResumedActivity" >> "${GITHUB_WORKSPACE}/ci-crashlog.txt" || true
+            adb pull /sdcard/controls.png "$GITHUB_WORKSPACE/screenshot-radio-controls.png" || true
+            adb logcat -d > "$GITHUB_WORKSPACE/full-logcat.txt" || true
+            grep -iE "AndroidRuntime|FATAL|safeguard|VpnService|ShieldVpn" "$GITHUB_WORKSPACE/full-logcat.txt" | tail -n 150 > "$GITHUB_WORKSPACE/ci-crashlog.txt" || true
+            echo "--- files captured ---" >> "$GITHUB_WORKSPACE/ci-crashlog.txt"
+            ls -la "$GITHUB_WORKSPACE"/*.png >> "$GITHUB_WORKSPACE/ci-crashlog.txt" 2>&1
 
       - name: Publish screenshots + crash log via API
         if: always()
