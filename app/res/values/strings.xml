@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">VoiceMorph</string>
+
+    <string name="tab_studio">Studio</string>
+    <string name="tab_live">Live</string>
+    <string name="tab_game">Game</string>
+
+    <string name="mode_original">Original</string>
+    <string name="mode_male">Male</string>
+    <string name="mode_female">Female</string>
+
+    <string name="strength">Effect strength</string>
+    <string name="record">Record</string>
+    <string name="stop">Stop</string>
+    <string name="preview">Preview</string>
+    <string name="save_clip">Save to library</string>
+    <string name="share">Share</string>
+    <string name="delete">Delete</string>
+    <string name="broadcast">Broadcast</string>
+    <string name="cloud_presets">Cloud presets</string>
+    <string name="server_url">Server URL</string>
+
+    <string name="studio_hint">Hold nothing back - tap Record, speak for a few seconds, then pick Male or Female and preview the result.</string>
+    <string name="rec_idle">Tap the mic to record</string>
+    <string name="rec_running">Recording&#8230; tap to stop</string>
+    <string name="processing">Processing voice&#8230;</string>
+    <string name="saved">Saved to library</string>
+    <string name="nothing_recorded">Record something first</string>
+
+    <string name="live_title">Live voice changer</string>
+    <string name="live_desc">Your microphone is morphed in real time and played out of this device. Use headphones to avoid feedback, or let the speaker broadcast your changed voice to a nearby mic.</string>
+    <string name="live_start">Start live</string>
+    <string name="live_stop">Stop live</string>
+    <string name="live_note">Android gives the microphone to one app at a time. Live morphing therefore works while VoiceMorph is the app in front of you - background apps receive silence while you are here.</string>
+
+    <string name="game_title">Game mode - speaker broadcast</string>
+    <string name="game_explain">Android hands the microphone exclusively to the game that is on screen (PUBG, Free Fire, COD Mobile&#8230;), and Android has no virtual-microphone API, so no app can inject a changed voice into a game in real time without root. The method that genuinely works everywhere is acoustic broadcast: VoiceMorph plays your morphed clip out loud at max volume and the game microphone picks it up.</string>
+    <string name="game_steps">1. Record and morph your voice in Studio.\n2. Join voice chat in your game.\n3. Press Broadcast - a 3 second countdown gives you time to switch back to the game, then the clip plays at maximum volume.</string>
+    <string name="game_empty">No clips yet. Record and save one in the Studio tab first.</string>
+    <string name="broadcasting">Broadcasting&#8230; switch to your game!</string>
+    <string name="countdown">Get ready: %1$d</string>
+
+    <string name="need_mic">VoiceMorph needs microphone access to change your voice.</string>
+    <string name="presets_loaded">Cloud presets loaded</string>
+    <string name="presets_failed">Could not reach server</string>
+</resources>

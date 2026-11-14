@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VoiceMorph - real male &amp; female voice changer for Android</title>
+<style>
+  :root { --bg:#0A0E1A; --card:#151C2F; --line:#1B2440; --cyan:#22D3EE; --pink:#F472B6; --text:#E8ECF8; --dim:#9AA6C4; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text);
+         font:16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 24px; }
+  header { text-align:center; padding: 40px 16px 8px; }
+  h1 { font-size: clamp(2rem, 6vw, 3.4rem); margin: 0 0 8px;
+       background: linear-gradient(90deg, var(--cyan), var(--pink));
+       -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .tag { color: var(--dim); max-width: 640px; margin: 0 auto; }
+  .hero { width:100%; border-radius:18px; margin:28px 0; border:1px solid var(--line); }
+  .cta { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin: 18px 0 8px; }
+  a.btn { display:inline-block; padding: 14px 30px; border-radius: 999px; font-weight:700;
+          background: linear-gradient(90deg, var(--cyan), var(--pink)); color:#0A0E1A; text-decoration:none; }
+  a.btn.ghost { background: var(--line); color: var(--cyan); border:1px solid var(--cyan); }
+  .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:16px; margin: 28px 0; }
+  .card { background: var(--card); border:1px solid var(--line); border-radius:16px; padding:20px; }
+  .card h3 { margin:0 0 8px; color: var(--cyan); }
+  .card p { margin:0; color: var(--dim); font-size: 14.5px; }
+  code { background: var(--line); padding: 2px 7px; border-radius: 6px; color: var(--pink); }
+  .note { border-left: 3px solid var(--pink); padding: 10px 16px; background: var(--card); border-radius: 0 12px 12px 0; color: var(--dim); font-size: 14.5px; }
+  footer { color: var(--dim); text-align:center; padding: 28px 0 40px; font-size: 13px; }
+  .server { font-size: 13px; color: var(--dim); text-align:center; margin-top: 6px; }
+  .server b { color: var(--text); word-break: break-all; }
+</style>
+</head>
+<body>
+<header>
+  <h1>VoiceMorph</h1>
+  <p class="tag">A real voice changer for Android with two built-in voices - <b>male</b> and <b>female</b> -
+  plus a live monitor and a game soundboard that works with PUBG Mobile, Free Fire, COD Mobile and friends.</p>
+</header>
+<div class="wrap">
+  <img class="hero" src="/hero.png" alt="VoiceMorph neon artwork">
+  <div class="cta">
+    <a class="btn" href="/download">Download APK (v1.0)</a>
+    <a class="btn ghost" href="/api/presets">Preset API</a>
+  </div>
+  <p class="server">In-app <b>Cloud presets</b> server URL (paste into Studio &rarr; Cloud presets):
+    <b><script>document.write(location.origin)</script></b></p>
+
+  <div class="grid">
+    <div class="card"><h3>Studio</h3><p>Record a take, morph it to male or female with an adjustable strength
+      slider, preview instantly and save clips to your library. Real DSP: WSOLA pitch shifting plus
+      shelf-EQ timbre tilt - not a cartoon chipmunk filter.</p></div>
+    <div class="card"><h3>Live</h3><p>Real-time morphing with ~90 ms block latency: your mic is processed
+      chunk by chunk and played back as the other voice. Perfect for monitoring, prank calls to yourself
+      and speaker broadcast.</p></div>
+    <div class="card"><h3>Game mode</h3><p>A clip soundboard with a 3-second countdown and max-volume
+      speaker broadcast, so the microphone of the game you switched to picks up your morphed voice.</p></div>
+    <div class="card"><h3>Cloud presets</h3><p>This page is the backend: <code>GET /api/presets</code> and
+      <code>POST /api/presets</code> serve community voice recipes straight into the app.</p></div>
+  </div>
+
+  <div class="note">
+    <b>Honest note about "in-game" voice changing.</b> Android gives the microphone to exactly one app at a
+    time - the game in front - and Android has no virtual-microphone API. Without root, <i>no</i> app can
+    inject a changed voice into PUBG's voice chat in real time; apps claiming otherwise are fake or use the
+    speaker trick. VoiceMorph does the speaker trick properly: record &amp; morph in Studio, join voice chat,
+    then Broadcast the clip at max volume - the game mic hears your new voice. On rooted devices a system-level
+    audio hook would be required, which also risks game bans, so we deliberately do not do that.
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <h3>Install</h3>
+    <p>Download the APK, allow "install unknown apps" for your browser or file manager, tap the file, done.
+    Android 7.0+ (API 24+), no account, no ads, ~250 KB.</p>
+  </div>
+</div>
+<footer>VoiceMorph 1.0 - built from source with aapt2, javac, D8 and a hand-rolled APK v2 signer.</footer>
+</body>
+</html>
