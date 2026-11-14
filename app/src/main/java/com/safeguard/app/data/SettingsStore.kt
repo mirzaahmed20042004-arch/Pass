@@ -42,6 +42,10 @@ class SettingsStore(context: Context) {
         set(value) = prefs.edit().putInt(KEY_RELEASES, value).apply()
 
     /** Last time the periodic worker confirmed a live connection. */
+    var shieldEnabled: Boolean
+        get() = prefs.getBoolean(KEY_SHIELD, false)
+        set(value) = prefs.edit().putBoolean(KEY_SHIELD, value).apply()
+
     var lastHeartbeat: Long
         get() = prefs.getLong(KEY_HEARTBEAT, 0L)
         set(value) = prefs.edit().putLong(KEY_HEARTBEAT, value).apply()
@@ -56,5 +60,6 @@ class SettingsStore(context: Context) {
         const val KEY_LAST_RELEASE = "last_release"
         const val KEY_RELEASES = "release_count"
         const val KEY_HEARTBEAT = "heartbeat"
+        const val KEY_SHIELD = "shield_enabled"
     }
 }

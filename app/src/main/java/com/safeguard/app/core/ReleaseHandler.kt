@@ -57,6 +57,13 @@ class ReleaseHandler(
         val steps = mutableListOf<String>()
         val t0 = System.currentTimeMillis()
 
+        // 0. Tear down the local VPN tunnel first: it is the one thing that can
+        //    genuinely leave the phone without data if it outlives the session.
+        runCatching {
+            com.safeguard.app.service.ShieldGateway.stop(context)
+        }.onSuccess { steps += "Data shield torn down" }
+            .onFailure { steps += "Shield teardown: ${it.javaClass.simpleName}" }
+
         // 1. Kill every loop and socket owner before touching hardware.
         runCatching { engine?.stopAllAndJoin() }
             .onSuccess { steps += "Coroutines + sockets cancelled" }

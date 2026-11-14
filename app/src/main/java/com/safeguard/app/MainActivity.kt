@@ -30,6 +30,10 @@ class MainActivity : ComponentActivity() {
 
     private val viewModel: MainViewModel by viewModels()
 
+    private val vpnConsentLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result -> viewModel.onShieldConsent(result.resultCode == RESULT_OK) }
+
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { viewModel.onPermissionsResolved() }
@@ -41,6 +45,12 @@ class MainActivity : ComponentActivity() {
         setContent {
             SafeGuardTheme {
                 val ui by viewModel.ui.collectAsStateWithLifecycle()
+
+                LaunchedEffect(ui.local.shieldPending) {
+                    val consent = viewModel.shieldConsentIntent()
+                    if (consent != null) vpnConsentLauncher.launch(consent)
+                    else viewModel.onShieldConsent(true)
+                }
 
                 LaunchedEffect(Unit) {
                     val missing = PermissionPlan.required(Build.VERSION.SDK_INT).filter {
@@ -71,11 +81,28 @@ class MainActivity : ComponentActivity() {
                                     PermissionPlan.telephony(Build.VERSION.SDK_INT)).toTypedArray()
                             )
                         },
-                        onDismissPrompt = viewModel::dismissPrompt
+                        onDismissPrompt = viewModel::dismissPrompt,
+                        onShield = { mode ->
+                            if (mode == com.safeguard.app.core.ShieldMode.OFF) viewModel.stopShield()
+                            else {
+                                val consent = viewModel.shieldConsentIntent()
+                                if (consent != null) vpnConsentLauncher.launch(consent)
+                                else viewModel.startShield(mode)
+                            }
+                        },
+                        onOpenRadioControls = {
+                            runCatching { startActivity(viewModel.openRadioControls()) }
+                        }
                     )
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.syncShieldState()
+        viewModel.onPermissionsResolved()
     }
 
     override fun onDestroy() {

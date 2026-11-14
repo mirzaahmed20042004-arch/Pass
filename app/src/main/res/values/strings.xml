@@ -5,4 +5,5 @@
     <string name="service_description">Keeps the radio-stress engine running in the background with a persistent notification.</string>
     <string name="channel_service_name">Active Engine</string>
     <string name="channel_alerts_name">Alerts &amp; Recovery</string>
+    <string name="radio_controls">Radio controls</string>
 </resources>

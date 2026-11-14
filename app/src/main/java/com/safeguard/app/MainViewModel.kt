@@ -11,6 +11,8 @@ import com.safeguard.app.core.JamState
 import com.safeguard.app.core.NetworkMonitor
 import com.safeguard.app.core.PermissionPlan
 import com.safeguard.app.core.Privilege
+import com.safeguard.app.core.ShieldMode
+import com.safeguard.app.service.ShieldGateway
 import com.safeguard.app.core.RadioController
 import com.safeguard.app.core.ReleaseHandler
 import com.safeguard.app.data.CloudSpectrumClient
@@ -50,7 +52,8 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             overlayGranted = canDrawOverlay(),
             lastRelease = store.lastReleaseSummary,
             releaseCount = store.releaseCount,
-            privilege = Privilege.describe(app)
+            privilege = Privilege.describe(app),
+            shield = com.safeguard.app.service.ShieldVpnService.active
         )
     )
 
@@ -63,6 +66,8 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         val releaseCount: Int,
         val releasing: Boolean = false,
         val privilege: String = "STANDARD",
+        val shield: ShieldMode = ShieldMode.OFF,
+        val shieldPending: ShieldMode? = null,
         val spectrumSource: String = "On-device model",
         val towers: Int = 0,
         val permissionPrompt: String? = null
@@ -124,10 +129,25 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         )
     }
 
+    /** One-tap: engage the engine and cut device data without root. */
+    fun engageWithShield() {
+        engage(JamMode.FULL_SPECTRUM)
+        // Consent already granted? start immediately, else the UI launches it.
+        val consent = shieldConsentIntent()
+        if (consent == null) startShield(ShieldMode.FULL) else local.value = local.value.copy(shieldPending = ShieldMode.FULL)
+    }
+
+    fun onShieldConsent(granted: Boolean) {
+        val wanted = local.value.shieldPending ?: ShieldMode.FULL
+        local.value = local.value.copy(shieldPending = null)
+        if (granted) startShield(wanted)
+    }
+
     fun disengage() {
         if (local.value.releasing) return
         local.value = local.value.copy(releasing = true)
         viewModelScope.launch {
+            stopShield()
             val service = JamService.instance
             if (service?.engineRef?.isRunning == true || service != null) {
                 // The service owns the release path: it restores the snapshot it
@@ -204,6 +224,29 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             )
         }
     }
+
+    /** Null when the OS has already stored VPN consent. */
+    fun shieldConsentIntent(): Intent? = ShieldGateway.consentIntent(getApplication())
+
+    fun startShield(mode: ShieldMode) {
+        ShieldGateway.start(getApplication(), mode)
+        store.shieldEnabled = true
+        local.value = local.value.copy(shield = mode)
+    }
+
+    fun stopShield() {
+        ShieldGateway.stop(getApplication())
+        store.shieldEnabled = false
+        local.value = local.value.copy(shield = ShieldMode.OFF)
+    }
+
+    fun syncShieldState() {
+        local.value = local.value.copy(shield = com.safeguard.app.service.ShieldVpnService.active)
+    }
+
+    fun openRadioControls(): Intent =
+        Intent(getApplication(), com.safeguard.app.ui.RadioControlActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
     fun requestPermissions(): List<String> = PermissionPlan.required(android.os.Build.VERSION.SDK_INT)
 

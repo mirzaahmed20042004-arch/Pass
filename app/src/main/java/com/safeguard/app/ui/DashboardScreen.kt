@@ -47,6 +47,7 @@ import com.safeguard.app.core.Availability
 import com.safeguard.app.core.EngineMode
 import com.safeguard.app.core.JamMode
 import com.safeguard.app.core.JamState
+import com.safeguard.app.core.ShieldMode
 import com.safeguard.app.ui.components.GaugeCard
 import com.safeguard.app.ui.components.MiniBar
 import com.safeguard.app.ui.components.SignalBars
@@ -68,7 +69,9 @@ fun DashboardScreen(
     onBatterySettings: () -> Unit,
     onRefreshSpectrum: () -> Unit,
     onRequestPermissions: () -> Unit,
-    onDismissPrompt: () -> Unit
+    onDismissPrompt: () -> Unit,
+    onShield: (ShieldMode) -> Unit,
+    onOpenRadioControls: () -> Unit
 ) {
     val jam = ui.jam
     val local = ui.local
@@ -140,6 +143,8 @@ fun DashboardScreen(
         ActivateBlock(jam, local.releasing, onEngage, onRelease)
         Spacer(Modifier.height(14.dp))
         QuickActions(jam, onEngage)
+        Spacer(Modifier.height(14.dp))
+        ShieldCard(local.shield, onShield, onOpenRadioControls)
         Spacer(Modifier.height(16.dp))
         ModesRow(local.engineMode, onEngineMode)
         Spacer(Modifier.height(14.dp))
@@ -477,6 +482,72 @@ private fun QuickChip(text: String, selected: Boolean, modifier: Modifier = Modi
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(horizontal = 2.dp)
         )
+    }
+}
+
+/**
+ * Non-root data shield. This is the one feature that genuinely cuts
+ * connectivity on a stock phone: a local VPN tunnel with no upstream.
+ */
+@Composable
+private fun ShieldCard(shield: ShieldMode, onShield: (ShieldMode) -> Unit, onOpenControls: () -> Unit) {
+    val on = shield != ShieldMode.OFF
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(if (on) SgPalette.Danger.copy(alpha = 0.10f) else SgPalette.Card)
+            .border(
+                1.dp,
+                if (on) SgPalette.Danger.copy(alpha = 0.6f) else SgPalette.CardStroke,
+                RoundedCornerShape(16.dp)
+            )
+            .padding(14.dp)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Column(Modifier.weight(1f)) {
+                Text(
+                    "DATA SHIELD · NO ROOT",
+                    color = if (on) SgPalette.Danger else SgPalette.TextSecondary,
+                    fontSize = 9.sp,
+                    letterSpacing = 1.3.sp
+                )
+                Text(
+                    if (on) shield.title else "Cuts this phone's data instantly",
+                    color = SgPalette.TextPrimary,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(shield.detail, color = SgPalette.TextSecondary, fontSize = 9.sp)
+            }
+        }
+        Spacer(Modifier.height(10.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+            ShieldChip(
+                if (on) "STOP SHIELD" else "BLACKOUT",
+                if (on) SgPalette.Teal else SgPalette.Danger,
+                Modifier.weight(1f)
+            ) { onShield(if (on) ShieldMode.OFF else ShieldMode.FULL) }
+            ShieldChip("DNS ONLY", SgPalette.Amber, Modifier.weight(1f)) {
+                onShield(if (shield == ShieldMode.DNS) ShieldMode.OFF else ShieldMode.DNS)
+            }
+            ShieldChip("RADIO PANEL", SgPalette.TextPrimary, Modifier.weight(1f), onOpenControls)
+        }
+    }
+}
+
+@Composable
+private fun ShieldChip(text: String, color: Color, modifier: Modifier = Modifier, onClick: () -> Unit) {
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(10.dp))
+            .background(color.copy(alpha = 0.12f))
+            .border(1.dp, color.copy(alpha = 0.55f), RoundedCornerShape(10.dp))
+            .clickable(onClick = onClick)
+            .padding(vertical = 10.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(text, color = color, fontSize = 9.5.sp, fontWeight = FontWeight.Bold, letterSpacing = 0.6.sp)
     }
 }
 

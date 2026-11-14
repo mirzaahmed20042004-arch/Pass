@@ -126,6 +126,7 @@ class JamService : Service() {
     /** Cancels the loops immediately; safe to call re-entrantly. */
     private fun stopJamInternal() {
         started = false
+        runCatching { ShieldGateway.stop(this) }
         store.sessionActive = false
         overlay.hide()
         acquireReleaseWakeLock()
