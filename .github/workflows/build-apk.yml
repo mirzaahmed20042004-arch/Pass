@@ -165,28 +165,16 @@ jobs:
             adb logcat -d -s AndroidRuntime:E | tail -20
             adb shell pidof com.safeguard.app
 
-      - name: Publish screenshots + crash log into repo
+      - name: Save crash log
         if: always()
         run: |
           set +e
-          adb logcat -d > /tmp/logcat.txt
-          grep -E "AndroidRuntime|safeguard|VpnService" /tmp/logcat.txt | tail -n 120 > ci-crashlog.txt
-          adb shell dumpsys activity processes | grep -i safeguard | head -5 >> ci-crashlog.txt
-          git config user.email "ci@users.noreply.github.com"
-          git config user.name "CI Diagnostics"
-          git fetch origin "${GITHUB_REF_NAME}"
-          git reset --hard "origin/${GITHUB_REF_NAME}"
-          mkdir -p docs/screenshots
-          cp screenshot-dashboard.png docs/screenshots/dashboard.png 2>/dev/null
-          cp screenshot-radio-controls.png docs/screenshots/radio-controls.png 2>/dev/null
-          cp ci-crashlog.txt ci-crashlog.txt 2>/dev/null
-          git add -f docs/screenshots ci-crashlog.txt
-          git commit -m "ci: emulator screenshots + crash log [skip ci]" || true
-          for i in 1 2 3; do
-            git fetch origin "${GITHUB_REF_NAME}"
-            git rebase "origin/${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && break
-            sleep 5
-          done
+          adb logcat -d > /tmp/logcat.txt || true
+          grep -iE "AndroidRuntime|FATAL|safeguard|VpnService|ShieldVpn" /tmp/logcat.txt | tail -n 150 > ci-crashlog.txt || true
+          echo "--- process ---" >> ci-crashlog.txt
+          adb shell pidof com.safeguard.app >> ci-crashlog.txt 2>/dev/null
+          echo "--- activities ---" >> ci-crashlog.txt
+          adb shell dumpsys activity activities | grep -i safeguard | head -5 >> ci-crashlog.txt 2>/dev/null
 
       - name: Upload screenshot
         if: always()
@@ -196,3 +184,4 @@ jobs:
           path: |
             screenshot-dashboard.png
             screenshot-radio-controls.png
+            ci-crashlog.txt
