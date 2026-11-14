@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="6dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/app_icon"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:scaleType="fitCenter" />
+
+        <TextView
+            android:id="@+id/app_label"
+            android:layout_width="72dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:shadowColor="#AA000000"
+            android:shadowDx="0"
+            android:shadowDy="1"
+            android:shadowRadius="3"
+            android:text="App"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/badge_hide"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:background="@drawable/bg_cc_circle"
+        android:gravity="center"
+        android:text="−"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:visibility="gone" />
+</FrameLayout>

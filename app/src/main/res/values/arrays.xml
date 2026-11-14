@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="icon_styles">
+        <item>Light</item>
+        <item>Dark</item>
+        <item>Tinted</item>
+    </string-array>
+    <string-array name="grid_sizes">
+        <item>4 x 5</item>
+        <item>4 x 6</item>
+        <item>5 x 5</item>
+        <item>5 x 6</item>
+    </string-array>
+</resources>

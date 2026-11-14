@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <GridLayout
+                android:id="@+id/toggle_grid"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/bg_card"
+                android:columnCount="2"
+                android:padding="14dp" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_card"
+                    android:padding="14dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/music_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:text="Not Playing"
+                            android:textColor="#FFFFFF"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/music_state"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="Music"
+                            android:textColor="#B3FFFFFF"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_card"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:padding="10dp">
+
+                    <ImageView
+                        android:id="@+id/btn_cc_rotation"
+                        android:layout_width="46dp"
+                        android:layout_height="46dp"
+                        android:background="@drawable/bg_cc_circle"
+                        android:padding="11dp"
+                        android:src="@drawable/ic_cc_rotate" />
+
+                    <ImageView
+                        android:id="@+id/btn_cc_flash"
+                        android:layout_width="46dp"
+                        android:layout_height="46dp"
+                        android:layout_marginStart="12dp"
+                        android:background="@drawable/bg_cc_circle"
+                        android:padding="11dp"
+                        android:src="@drawable/ic_cc_flash" />
+
+                    <ImageView
+                        android:id="@+id/btn_cc_camera"
+                        android:layout_width="46dp"
+                        android:layout_height="46dp"
+                        android:layout_marginStart="12dp"
+                        android:background="@drawable/bg_cc_circle"
+                        android:padding="11dp"
+                        android:src="@drawable/ic_cc_camera" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/bg_card"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Brightness"
+                android:textColor="#B3FFFFFF"
+                android:textSize="13sp" />
+
+            <SeekBar
+                android:id="@+id/seek_brightness"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="255" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Volume"
+                android:textColor="#B3FFFFFF"
+                android:textSize="13sp" />
+
+            <SeekBar
+                android:id="@+id/seek_volume"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_close"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Close" />
+    </LinearLayout>
+</ScrollView>

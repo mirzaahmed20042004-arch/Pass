@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">iPhone Launcher 18</string>
+
+    <string name="search_hint">Search</string>
+    <string name="app_library">App Library</string>
+    <string name="cancel">Cancel</string>
+    <string name="done">Done</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+    <string name="hide_app">Hide App</string>
+    <string name="app_info">App Info</string>
+    <string name="uninstall">Uninstall</string>
+    <string name="new_folder">New Folder</string>
+    <string name="add_to_folder">Move to Folder</string>
+    <string name="remove_from_folder">Remove from Folder</string>
+
+    <string name="settings_title">Settings</string>
+    <string name="grp_personalize">Personalize</string>
+    <string name="row_wallpaper">Wallpaper</string>
+    <string name="row_wallpaper_sub">50 iPhone wallpapers</string>
+    <string name="row_icon_style">App Icons</string>
+    <string name="row_grid">Home Grid</string>
+    <string name="row_labels">Show App Names</string>
+    <string name="row_haptics">Haptics</string>
+    <string name="grp_ios_system">iOS System</string>
+    <string name="row_island">Dynamic Island</string>
+    <string name="row_cc">Control Center Gesture</string>
+    <string name="row_cc_sub">Swipe down from top-right edge</string>
+    <string name="row_nc">Notification Center Gesture</string>
+    <string name="row_nc_sub">Swipe down from top-left edge</string>
+    <string name="row_volhud">iOS Volume Panel</string>
+    <string name="row_volhud_sub">Needs Accessibility permission</string>
+    <string name="row_assistive">AssistiveTouch</string>
+    <string name="row_lockscreen">iOS Lock Screen</string>
+    <string name="row_passcode">Lock Screen Passcode</string>
+    <string name="row_passcode_sub">4-digit, empty = swipe only</string>
+    <string name="grp_default_apps">Default Setup</string>
+    <string name="row_default_launcher">Set as Default Launcher</string>
+    <string name="row_notif_access">Notification Access</string>
+    <string name="row_notif_access_sub">For iOS notification center</string>
+    <string name="row_overlay">Draw Over Other Apps</string>
+    <string name="row_overlay_sub">For AssistiveTouch, HUD, gestures</string>
+    <string name="row_admin">Device Admin (Lock)</string>
+    <string name="row_admin_sub">To lock phone from lock screen</string>
+    <string name="row_hidden">Hidden Apps</string>
+    <string name="grp_about">About</string>
+    <string name="row_version">Version</string>
+    <string name="row_reset">Reset Launcher</string>
+
+    <string name="wizard_title">Welcome to iPhone</string>
+    <string name="wizard_sub">iOS 18 style launcher for your Android</string>
+    <string name="wizard_step1_t">1. Default Launcher</string>
+    <string name="wizard_step1_d">Set iPhone Launcher as Home so the iOS look stays.</string>
+    <string name="wizard_step2_t">2. Notifications</string>
+    <string name="wizard_step2_d">Allow notification access for the iOS top shutter.</string>
+    <string name="wizard_step3_t">3. Floating Features</string>
+    <string name="wizard_step3_d">Allow display over other apps for volume panel, AssistiveTouch and gestures.</string>
+    <string name="wizard_step4_t">4. Wallpaper</string>
+    <string name="wizard_step4_d">Pick one of 50 iPhone wallpapers.</string>
+    <string name="wizard_btn">Get Started</string>
+    <string name="wizard_allow">Allow</string>
+    <string name="wizard_pick">Pick</string>
+
+    <string name="cc_airplane">Airplane</string>
+    <string name="cc_wifi">Wi-Fi</string>
+    <string name="cc_bluetooth">Bluetooth</string>
+    <string name="cc_dnd">Focus</string>
+    <string name="cc_rotation">Rotation</string>
+    <string name="cc_flash">Flashlight</string>
+    <string name="cc_brightness">Brightness</string>
+    <string name="cc_volume">Volume</string>
+    <string name="nc_title">Notification Center</string>
+    <string name="nc_clear">Clear</string>
+    <string name="nc_empty">No Notifications</string>
+    <string name="lock_swipe">Swipe up to open</string>
+    <string name="lock_enter">Enter Passcode</string>
+
+    <string name="calc_title">Calculator</string>
+    <string name="notes_title">Notes</string>
+    <string name="notes_hint">New note…</string>
+    <string name="clock_title">Clock</string>
+    <string name="weather_title">Weather</string>
+
+    <string name="island_charging">Charging</string>
+    <string name="hud_volume">Volume</string>
+    <string name="hud_muted">Muted</string>
+</resources>

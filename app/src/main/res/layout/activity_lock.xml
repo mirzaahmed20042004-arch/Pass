@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lock_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/lock_wallpaper"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:id="@+id/lock_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:text="Tuesday, November 14"
+            android:textColor="#E6FFFFFF"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/lock_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="9:41"
+            android:textColor="#FFFFFF"
+            android:textSize="88sp"
+            android:fontFamily="sans-serif-light" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/lock_notifs"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:id="@+id/passcode_box"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:text="Enter Passcode"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+
+            <LinearLayout
+                android:id="@+id/passcode_dots"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal" />
+
+            <GridLayout
+                android:id="@+id/passcode_pad"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:columnCount="3" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/lock_hint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="14dp"
+            android:text="Swipe up to open"
+            android:textColor="#E6FFFFFF"
+            android:textSize="14sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/btn_lock_flash"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:layout_marginStart="24dp"
+                android:background="@drawable/bg_lock_circle"
+                android:padding="14dp"
+                android:src="@drawable/ic_cc_flash" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="5dp"
+                android:layout_weight="1"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:background="@drawable/bg_home_indicator" />
+
+            <ImageView
+                android:id="@+id/btn_lock_camera"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:layout_marginEnd="24dp"
+                android:background="@drawable/bg_lock_circle"
+                android:padding="12dp"
+                android:src="@drawable/ic_cc_camera" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>
