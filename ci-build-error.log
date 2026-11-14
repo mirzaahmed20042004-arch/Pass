@@ -1,0 +1,24 @@
+
+Welcome to Gradle 8.9!
+
+Here are the highlights of this release:
+ - Enhanced Error and Warning Messages
+ - IDE Integration Improvements
+ - Daemon JVM Information
+
+For more details see https://docs.gradle.org/8.9/release-notes.html
+
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.9/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+
+w: file:///home/runner/work/Pass/Pass/app/src/main/java/com/safeguard/app/core/RadioController.kt:290:15 'val connectionInfo: WifiInfo!' is deprecated. Deprecated in Java.
+w: file:///home/runner/work/Pass/Pass/app/src/main/java/com/safeguard/app/core/ReleaseHandler.kt:207:43 'fun startScan(): Boolean' is deprecated. Deprecated in Java.
+w: file:///home/runner/work/Pass/Pass/app/src/main/java/com/safeguard/app/ui/RadioControlActivity.kt:121:41 'fun disable(): Boolean' is deprecated. Deprecated in Java.
+
+
+Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so.
+
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_3-1794685978981.json
+
+BUILD SUCCESSFUL in 3m 13s
+36 actionable tasks: 36 executed
