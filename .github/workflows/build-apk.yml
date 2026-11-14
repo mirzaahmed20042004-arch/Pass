@@ -42,25 +42,27 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          set +e
           mkdir -p keystore
-          # A stable signing key is essential: with a new key on every run Android
-          # refuses the update ("App not installed") and users stay on an old build.
+          rm -f keystore/safeguard-release.jks
+          # A stable signing key matters: with a brand-new key every run, Android
+          # rejects the update ("App not installed") and users stay on an old build.
           gh api "repos/$GITHUB_REPOSITORY/contents/keystore/safeguard-release.jks?ref=$GITHUB_REF_NAME" \
-            --jq .content 2>/dev/null | tr -d '\n' | base64 -d > keystore/safeguard-release.jks 2>/dev/null
-          if [ -s keystore/safeguard-release.jks ]; then
-            echo "restored committed keystore"
+            --jq .content 2>/dev/null | tr -d '\n' | base64 -d > keystore/safeguard-release.jks || true
+          if [ -s keystore/safeguard-release.jks ] && keytool -list -keystore keystore/safeguard-release.jks -storepass safeguard >/dev/null 2>&1; then
+            echo "restored persisted keystore"
           else
-            keytool -genkeypair -v -keystore keystore/safeguard-release.jks \
+            rm -f keystore/safeguard-release.jks
+            keytool -genkeypair -keystore keystore/safeguard-release.jks \
               -alias safeguard -keyalg RSA -keysize 2048 -validity 10950 \
               -storepass safeguard -keypass safeguard \
               -dname "CN=Safe Guard, OU=SignalDisruptor Pro, O=SafeGuard, L=Karachi, C=PK"
             B64=$(base64 -w 0 keystore/safeguard-release.jks)
             gh api -X PUT "repos/$GITHUB_REPOSITORY/contents/keystore/safeguard-release.jks" \
               -f message="ci: persist signing keystore [skip ci]" \
-              -f content="$B64" -f branch="$GITHUB_REF_NAME" > /dev/null && echo "keystore persisted"
+              -f content="$B64" -f branch="$GITHUB_REF_NAME" > /dev/null \
+              && echo "keystore persisted for future update builds" \
+              || echo "WARNING: could not persist keystore; this build is self-signed only"
           fi
-          exit 0
 
       - name: Build debug APK
         run: |
