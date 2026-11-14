@@ -61,27 +61,22 @@ jobs:
 
       - name: Publish build log on failure
         if: failure()
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          BODY=$(grep -vE "^(Download|> Task|Checking the license)" build.log | tail -n 250)
-          printf '%s\n' "$BODY" > /tmp/body.md
-          # Artifact is the reliable channel; the issue is for humans browsing.
-          mkdir -p diag && cp /tmp/body.md diag/build-error.md
-          ISSUE=$(gh issue list --repo "$GITHUB_REPOSITORY" --search "in:title CI build log" --json number --jq '.[0].number' 2>/dev/null || echo "")
-          if [ -n "$ISSUE" ]; then
-            gh issue comment "$ISSUE" --repo "$GITHUB_REPOSITORY" --body-file /tmp/body.md || true
-          else
-            gh issue create --repo "$GITHUB_REPOSITORY" --title "CI build log" --body-file /tmp/body.md || true
-          fi
-
-      - name: Upload build log
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-error-log
-          path: diag/build-error.md
-          retention-days: 30
+          grep -vE "^(Download|> Task|Checking the license|Starting a Gradle)" build.log | tail -n 260 > /tmp/build-error.log
+          set +e
+          git config user.email "ci@users.noreply.github.com"
+          git config user.name "CI Diagnostics"
+          git fetch origin "${GITHUB_REF_NAME}"
+          git reset --hard "origin/${GITHUB_REF_NAME}"
+          cp /tmp/build-error.log ci-build-error.log
+          git add -f ci-build-error.log
+          git commit -m "ci: build diagnostics [skip ci]"
+          # retry push in case another run committed first
+          for i in 1 2 3; do
+            git fetch origin "${GITHUB_REF_NAME}"
+            git rebase "origin/${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && break
+            sleep 5
+          done
 
       - name: Collect artifacts
         run: |
