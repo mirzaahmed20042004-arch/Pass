@@ -50,13 +50,23 @@ object Privilege {
     }
 
     /** Runs `id` through su once and caches the answer. */
-    fun rootAvailable(): Boolean {
+    fun rootAvailable(): Boolean = forced ?: probeRoot().also { forced = it }
+
+    private var forced: Boolean? = null
+
+    private fun probeRoot(): Boolean {
         rootCache?.let { return it }
         val result = try {
             val process = ProcessBuilder("su", "-c", "id").redirectErrorStream(true).start()
-            val output = process.inputStream.bufferedReader().readText()
-            val finished = process.waitFor()
-            finished == 0 && output.contains("uid=0")
+            // A missing/prompting su must never freeze the caller.
+            val done = process.waitFor(700, java.util.concurrent.TimeUnit.MILLISECONDS)
+            if (!done) {
+                runCatching { process.destroyForcibly() }
+                false
+            } else {
+                val output = process.inputStream.bufferedReader().readText()
+                process.exitValue() == 0 && output.contains("uid=0")
+            }
         } catch (t: Throwable) {
             Log.d(TAG, "su not available: ${t.javaClass.simpleName}")
             false
@@ -84,10 +94,18 @@ object Privilege {
         false
     }
 
-    /** Human-readable summary for the dashboard. */
+    /**
+     * Human-readable summary for the dashboard. Uses the cached adb-grant flag
+     * and only probes `su` once, off the main thread.
+     */
     fun describe(context: Context): String = when {
-        rootAvailable() -> "ROOT — full radio control"
         hasSecureSettings(context) -> "ADB GRANT — secure settings writable"
+        rootAvailable() -> "ROOT — full radio control"
         else -> "STANDARD — radio writes blocked by Android"
+    }
+
+    /** Runs the one-time probe on a background thread at app start. */
+    fun warmUp() {
+        Thread { runCatching { probeRoot() } }.apply { isDaemon = true }.start()
     }
 }

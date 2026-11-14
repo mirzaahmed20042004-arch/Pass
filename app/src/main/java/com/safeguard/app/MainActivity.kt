@@ -32,7 +32,14 @@ class MainActivity : ComponentActivity() {
 
     private val vpnConsentLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
-    ) { result -> viewModel.onShieldConsent(result.resultCode == RESULT_OK) }
+    ) { result ->
+        val granted = result.resultCode == RESULT_OK
+        viewModel.onShieldConsent(granted)
+        toast(
+            if (granted) "VPN approved — shield starting"
+            else "VPN denied. Tap BLACKOUT again and press OK."
+        )
+    }
 
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -45,12 +52,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             SafeGuardTheme {
                 val ui by viewModel.ui.collectAsStateWithLifecycle()
-
-                LaunchedEffect(ui.local.shieldPending) {
-                    val consent = viewModel.shieldConsentIntent()
-                    if (consent != null) vpnConsentLauncher.launch(consent)
-                    else viewModel.onShieldConsent(true)
-                }
 
                 LaunchedEffect(Unit) {
                     val missing = PermissionPlan.required(Build.VERSION.SDK_INT).filter {
@@ -82,21 +83,39 @@ class MainActivity : ComponentActivity() {
                             )
                         },
                         onDismissPrompt = viewModel::dismissPrompt,
-                        onShield = { mode ->
-                            if (mode == com.safeguard.app.core.ShieldMode.OFF) viewModel.stopShield()
-                            else {
-                                val consent = viewModel.shieldConsentIntent()
-                                if (consent != null) vpnConsentLauncher.launch(consent)
-                                else viewModel.startShield(mode)
-                            }
-                        },
+                        onShield = { mode -> requestShield(mode) },
                         onOpenRadioControls = {
                             runCatching { startActivity(viewModel.openRadioControls()) }
-                        }
+                        },
+                        onActivate = {
+                            viewModel.engage(com.safeguard.app.core.JamMode.FULL_SPECTRUM)
+                            requestShield(com.safeguard.app.core.ShieldMode.FULL)
+                        },
+                        onEmergencyRestore = { viewModel.disengage() }
                     )
                 }
             }
         }
+    }
+
+    /** Single place that owns the VPN consent handshake. */
+    private fun requestShield(mode: com.safeguard.app.core.ShieldMode) {
+        if (mode == com.safeguard.app.core.ShieldMode.OFF) {
+            viewModel.stopShield()
+            return
+        }
+        viewModel.pendingShield = mode
+        val consent = viewModel.shieldConsentIntent()
+        if (consent != null) {
+            vpnConsentLauncher.launch(consent)
+        } else {
+            viewModel.startShield(mode)
+            toast("${mode.title} active")
+        }
+    }
+
+    private fun toast(message: String) {
+        android.widget.Toast.makeText(this, message, android.widget.Toast.LENGTH_SHORT).show()
     }
 
     override fun onResume() {

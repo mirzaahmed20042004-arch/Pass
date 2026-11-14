@@ -14,6 +14,7 @@ class SafeGuardApp : Application() {
             // for a cold start initiated by the user.
             store.sessionActive = false
         }
+        com.safeguard.app.core.Privilege.warmUp()
         WorkerScheduler.schedule(this)
     }
 }

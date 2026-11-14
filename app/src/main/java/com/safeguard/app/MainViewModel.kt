@@ -129,18 +129,26 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         )
     }
 
-    /** One-tap: engage the engine and cut device data without root. */
-    fun engageWithShield() {
+    /**
+     * ACTIVATE in STANDARD mode: no root, so the strongest real action is the
+     * data blackout. Starts the engine + raises the shield (consent handled by
+     * the Activity).
+     */
+    fun engagePowerful() {
         engage(JamMode.FULL_SPECTRUM)
-        // Consent already granted? start immediately, else the UI launches it.
-        val consent = shieldConsentIntent()
-        if (consent == null) startShield(ShieldMode.FULL) else local.value = local.value.copy(shieldPending = ShieldMode.FULL)
+        if (ShieldGateway.isActive()) return
+        local.value = local.value.copy(shieldPending = ShieldMode.FULL)
     }
 
+    /** Set by the Activity right before it launches the VPN consent dialog. */
+    var pendingShield: ShieldMode? = null
+
     fun onShieldConsent(granted: Boolean) {
-        val wanted = local.value.shieldPending ?: ShieldMode.FULL
+        val wanted = pendingShield ?: local.value.shieldPending ?: ShieldMode.FULL
+        pendingShield = null
         local.value = local.value.copy(shieldPending = null)
         if (granted) startShield(wanted)
+        else syncShieldState()
     }
 
     fun disengage() {

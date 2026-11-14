@@ -85,16 +85,21 @@ class ShieldVpnService : VpnService() {
             ShieldMode.OFF -> return
         }
 
+        // Android 8+ requires startForeground() within a few seconds of
+        // startForegroundService(); do it before the (blocking) establish().
+        startForegroundSafely(mode)
+
         val descriptor = runCatching { builder.establish() }.getOrNull()
         if (descriptor == null) {
             Log.w(TAG, "VPN tunnel refused by the OS — consent not granted")
-            stopSelf()
+            failureReason = "consent"
+            stopShield()
             return
         }
 
         tun = descriptor
         active = mode
-        startForegroundSafely(mode)
+        failureReason = null
         startPump(descriptor)
         Log.i(TAG, "shield up: $mode")
     }
@@ -227,6 +232,10 @@ class ShieldVpnService : VpnService() {
 
         @Volatile
         var active: ShieldMode = ShieldMode.OFF
+
+        /** Why the last attempt failed: "consent", "revoked" or null. */
+        @Volatile
+        var failureReason: String? = null
     }
 }
 

@@ -38,13 +38,22 @@ jobs:
         with:
           gradle-version: "8.9"
 
-      - name: Generate release keystore
+      - name: Restore or create release keystore
         run: |
           mkdir -p keystore
-          keytool -genkeypair -v -keystore keystore/safeguard-release.jks \
-            -alias safeguard -keyalg RSA -keysize 2048 -validity 10950 \
-            -storepass safeguard -keypass safeguard \
-            -dname "CN=Safe Guard, OU=SignalDisruptor Pro, O=SafeGuard, L=Karachi, C=PK"
+          ENC="${{ secrets.SG_KEYSTORE_B64 }}"
+          if [ -n "$ENC" ]; then
+            echo "$ENC" | base64 -d > keystore/safeguard-release.jks
+            echo "restored keystore from secret"
+          elif [ -f keystore/safeguard-release.jks ]; then
+            echo "using committed keystore"
+          else
+            keytool -genkeypair -v -keystore keystore/safeguard-release.jks \
+              -alias safeguard -keyalg RSA -keysize 2048 -validity 10950 \
+              -storepass safeguard -keypass safeguard \
+              -dname "CN=Safe Guard, OU=SignalDisruptor Pro, O=SafeGuard, L=Karachi, C=PK"
+            echo "generated new keystore"
+          fi
 
       - name: Build debug APK
         run: |
@@ -156,7 +165,31 @@ jobs:
             adb logcat -d -s AndroidRuntime:E | tail -20
             adb shell pidof com.safeguard.app
 
+      - name: Publish screenshots + crash log into repo
+        if: always()
+        run: |
+          set +e
+          adb logcat -d > /tmp/logcat.txt
+          grep -E "AndroidRuntime|safeguard|VpnService" /tmp/logcat.txt | tail -n 120 > ci-crashlog.txt
+          adb shell dumpsys activity processes | grep -i safeguard | head -5 >> ci-crashlog.txt
+          git config user.email "ci@users.noreply.github.com"
+          git config user.name "CI Diagnostics"
+          git fetch origin "${GITHUB_REF_NAME}"
+          git reset --hard "origin/${GITHUB_REF_NAME}"
+          mkdir -p docs/screenshots
+          cp screenshot-dashboard.png docs/screenshots/dashboard.png 2>/dev/null
+          cp screenshot-radio-controls.png docs/screenshots/radio-controls.png 2>/dev/null
+          cp ci-crashlog.txt ci-crashlog.txt 2>/dev/null
+          git add -f docs/screenshots ci-crashlog.txt
+          git commit -m "ci: emulator screenshots + crash log [skip ci]" || true
+          for i in 1 2 3; do
+            git fetch origin "${GITHUB_REF_NAME}"
+            git rebase "origin/${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && break
+            sleep 5
+          done
+
       - name: Upload screenshot
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: safeguard-screenshot

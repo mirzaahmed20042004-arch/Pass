@@ -21,6 +21,12 @@ class BootReceiver : BroadcastReceiver() {
         if (action != Intent.ACTION_BOOT_COMPLETED && action != Intent.ACTION_MY_PACKAGE_REPLACED) return
 
         val store = SettingsStore(context)
+
+        // Android never restores a VPN tunnel automatically on boot, but a
+        // kill-switch preference set by the user should not look "active".
+        store.shieldEnabled = false
+        com.safeguard.app.service.ShieldVpnService.active = com.safeguard.app.core.ShieldMode.OFF
+
         if (!store.sessionActive) return
 
         Log.i(TAG, "Recovering from interrupted session")

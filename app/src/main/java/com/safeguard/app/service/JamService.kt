@@ -126,7 +126,6 @@ class JamService : Service() {
     /** Cancels the loops immediately; safe to call re-entrantly. */
     private fun stopJamInternal() {
         started = false
-        runCatching { ShieldGateway.stop(this) }
         store.sessionActive = false
         overlay.hide()
         acquireReleaseWakeLock()
@@ -138,6 +137,7 @@ class JamService : Service() {
 
     private fun releaseSafely(reason: String) {
         acquiringRelease = true
+        runCatching { ShieldGateway.stop(this) }
         serviceScope.launch {
             val report = release.hardReset(engine, engine.originalSnapshot())
             store.lastReleaseSummary = report.summary()
@@ -161,6 +161,7 @@ class JamService : Service() {
         if (started) {
             started = false
             store.sessionActive = false
+            runCatching { ShieldGateway.stop(this) }
             engine.stopAll()
             overlay.hide()
             runCatching {
@@ -280,6 +281,7 @@ class JamService : Service() {
 
     /** No engine state survived: just prove the radios are back on. */
     private fun releaseCrashedSession() {
+        runCatching { ShieldGateway.stop(this) }
         serviceScope.launch {
             val snapshot = com.safeguard.app.core.RadioController.Snapshot(
                 wifiEnabled = store.snapshotWifi,

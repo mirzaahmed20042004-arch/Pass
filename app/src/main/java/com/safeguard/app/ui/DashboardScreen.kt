@@ -71,7 +71,9 @@ fun DashboardScreen(
     onRequestPermissions: () -> Unit,
     onDismissPrompt: () -> Unit,
     onShield: (ShieldMode) -> Unit,
-    onOpenRadioControls: () -> Unit
+    onOpenRadioControls: () -> Unit,
+    onActivate: () -> Unit,
+    onEmergencyRestore: () -> Unit
 ) {
     val jam = ui.jam
     val local = ui.local
@@ -140,7 +142,7 @@ fun DashboardScreen(
             RealityBanner()
             Spacer(Modifier.height(10.dp))
         }
-        ActivateBlock(jam, local.releasing, onEngage, onRelease)
+        ActivateBlock(jam, local.releasing, onActivate, onEmergencyRestore)
         Spacer(Modifier.height(14.dp))
         QuickActions(jam, onEngage)
         Spacer(Modifier.height(14.dp))
@@ -358,7 +360,7 @@ private fun RealityBanner() {
 private fun ActivateBlock(
     jam: JamState,
     releasing: Boolean,
-    onEngage: (JamMode) -> Unit,
+    onActivate: () -> Unit,
     onRelease: () -> Unit
 ) {
     val pulse = rememberInfiniteTransition(label = "pulse")
@@ -404,7 +406,7 @@ private fun ActivateBlock(
                         CircleShape
                     )
                     .clickable(enabled = !releasing) {
-                        if (jam.running) onRelease() else onEngage(JamMode.FULL_SPECTRUM)
+                        if (jam.running) onRelease() else onActivate()
                     },
                 contentAlignment = Alignment.Center
             ) {
@@ -424,7 +426,7 @@ private fun ActivateBlock(
                         when {
                             releasing -> "hard reset running"
                             jam.running -> "instant release"
-                            else -> "full spectrum jam"
+                            else -> "engine + data blackout"
                         },
                         color = SgPalette.TextSecondary,
                         fontSize = 9.sp,
@@ -441,6 +443,23 @@ private fun ActivateBlock(
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(horizontal = 10.dp)
         )
+        Spacer(Modifier.height(8.dp))
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(10.dp))
+                .background(SgPalette.Card)
+                .border(1.dp, SgPalette.CardStroke, RoundedCornerShape(10.dp))
+                .clickable(enabled = !releasing, onClick = onRelease)
+                .padding(horizontal = 16.dp, vertical = 9.dp)
+        ) {
+            Text(
+                "EMERGENCY RESTORE",
+                color = SgPalette.Teal,
+                fontSize = 9.5.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 1.sp
+            )
+        }
     }
 }
 
