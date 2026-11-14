@@ -101,7 +101,7 @@
         <!-- Transparent helper that opens the OS radio panels for the user. -->
         <activity
             android:name=".ui.RadioControlActivity"
-            android:exported="false"
+            android:exported="true"
             android:label="@string/radio_controls"
             android:theme="@style/Theme.SafeGuard" />
 

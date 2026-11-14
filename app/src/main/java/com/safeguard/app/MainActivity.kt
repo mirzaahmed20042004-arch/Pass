@@ -33,6 +33,9 @@ class MainActivity : ComponentActivity() {
 
     private val viewModel: MainViewModel by viewModels()
 
+    /** Lets a shortcut / adb intent switch to the Tools tab even when the activity already exists. */
+    private val requestedScreen = androidx.compose.runtime.mutableStateOf<String?>(null)
+
     private val vpnConsentLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -51,13 +54,20 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        requestedScreen.value = intent?.getStringExtra("screen")
 
         setContent {
             SafeGuardTheme {
                 val ui by viewModel.ui.collectAsStateWithLifecycle()
                 val tools by viewModel.tools.collectAsStateWithLifecycle()
-                var showTools by rememberSaveable {
-                    mutableStateOf(intent?.getStringExtra("screen") == "tools")
+                var showTools by rememberSaveable { mutableStateOf(false) }
+                androidx.compose.runtime.LaunchedEffect(requestedScreen.value) {
+                    val target = requestedScreen.value
+                    if (target != null) {
+                        showTools = target == "tools"
+                        if (showTools) viewModel.refreshNetworkInfo()
+                        requestedScreen.value = null
+                    }
                 }
 
                 LaunchedEffect(Unit) {
@@ -142,6 +152,12 @@ class MainActivity : ComponentActivity() {
 
     private fun toast(message: String) {
         android.widget.Toast.makeText(this, message, android.widget.Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        if (intent.getStringExtra("screen") != null) requestedScreen.value = intent.getStringExtra("screen")
     }
 
     override fun onResume() {
