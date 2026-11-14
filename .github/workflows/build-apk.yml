@@ -66,12 +66,22 @@ jobs:
         run: |
           BODY=$(grep -vE "^(Download|> Task|Checking the license)" build.log | tail -n 250)
           printf '%s\n' "$BODY" > /tmp/body.md
-          ISSUE=$(gh issue list --repo "$GITHUB_REPOSITORY" --search "in:title CI build log" --json number --jq '.[0].number' 2>/dev/null)
+          # Artifact is the reliable channel; the issue is for humans browsing.
+          mkdir -p diag && cp /tmp/body.md diag/build-error.md
+          ISSUE=$(gh issue list --repo "$GITHUB_REPOSITORY" --search "in:title CI build log" --json number --jq '.[0].number' 2>/dev/null || echo "")
           if [ -n "$ISSUE" ]; then
-            gh issue comment "$ISSUE" --repo "$GITHUB_REPOSITORY" --body-file /tmp/body.md
+            gh issue comment "$ISSUE" --repo "$GITHUB_REPOSITORY" --body-file /tmp/body.md || true
           else
-            gh issue create --repo "$GITHUB_REPOSITORY" --title "CI build log" --body-file /tmp/body.md
+            gh issue create --repo "$GITHUB_REPOSITORY" --title "CI build log" --body-file /tmp/body.md || true
           fi
+
+      - name: Upload build log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-error-log
+          path: diag/build-error.md
+          retention-days: 30
 
       - name: Collect artifacts
         run: |
