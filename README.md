@@ -1,36 +1,35 @@
 # Safe Guard — SignalDisruptor Pro
 
-> ## v1.2.0 — the strongest non-root build
+> ## v1.2.1 — non-root build (fixes the "app kam nahi kar rahi" bugs)
 >
-> - **Signed release APK (1.0 MB)** → https://github.com/mirzaahmed20042004-arch/Pass/releases/download/v1.2.0/SafeGuard-v1.2.0-release.apk
-> - **Debug APK (16 MB)** → https://github.com/mirzaahmed20042004-arch/Pass/releases/download/v1.2.0/SafeGuard-v1.2.0-debug.apk
-> - Release page → https://github.com/mirzaahmed20042004-arch/Pass/releases/tag/v1.2.0
+> - **Signed release APK (1.0 MB)** → https://github.com/mirzaahmed20042004-arch/Pass/releases/download/v1.2.1/SafeGuard-v1.2.1-release.apk
+> - **Debug APK (16 MB)** → https://github.com/mirzaahmed20042004-arch/Pass/releases/download/v1.2.1/SafeGuard-v1.2.1-debug.apk
 >
-> ### What actually works on a stock, unrooted phone (Android 8 → 15)
+> ### What was actually broken (and is now fixed)
 >
-> | Feature | Non-root status | How |
+> | Bug | Symptom you saw | Fix |
 > |---|---|---|
-> | **Data Blackout (kill-switch)** | ✅ WORKS | Local `VpnService` tunnel with no upstream — all app traffic dies instantly, restored in <1 s. One system consent dialog, then one tap. |
-> | **DNS Blackout** | ✅ WORKS | Tunnel that swallows only resolver traffic — new connections time out. |
-> | **Wi-Fi / Bluetooth / Airplane / Network-mode switches** | ⚠️ OS-owned | One tap opens the exact system panel that owns the switch (`INTERNET_CONNECTIVITY`, `WIFI`, `AIRPLANE_MODE`, network-operator picker). Direct API call is tried first and reported honestly. |
-> | **Data Saver / background restriction** | ✅ via panel | Deep link to the OS Data Saver panel. |
-> | **DNS saturation + uplink stress** | ✅ WORKS | Pure userspace. |
-> | **Carrier / geo targeting, live latency-loss gauges, chaos visualiser** | ✅ WORKS | Real probes. |
-> | **Instant release** | ✅ WORKS | Shield teardown → loops cancelled → radios restored → `resetNetwork()` → verified probe. |
-> | **Jamming a neighbour's phone / the tower** | ❌ IMPOSSIBLE without radio hardware | Not a permission problem — it needs a transmitter. Also illegal (PTA/PECA). |
+> | Signing key regenerated on every CI run | "App not installed" / update refused / old build kept running | Keystore is now generated once, persisted in the repo, and reused — v1.2.1 updates install over the old version |
+> | `LaunchedEffect(shieldPending)` fired on launch | "VPN connection request" dialog popped up on its own | Consent only requested from an explicit tap; a denied consent is reported with a toast |
+> | ACTIVATE was a no-op in STANDARD mode | Big button did nothing visible | ACTIVATE now starts the engine **and** raises the data shield (real, non-root effect) |
+> | `stopJam()` also tore down the VPN | Shield died the moment the engine stopped | Shield lifetime is independent; only STOP ALL / release tears it down |
+> | `Privilege.describe()` ran `su` on the main thread | UI freeze on some phones | `su` probe is time-boxed (700 ms), cached, and warmed up off the main thread |
+> | `startForeground()` after `establish()` | Silence-kill risk on Android 8–11 | Foreground notification is posted before the tunnel is built |
+> | Emergency restore was hidden | Hard to get out of a jam | Dedicated **EMERGENCY RESTORE** button under the main dial |
 >
-> Everything in the *Radio Controls* screen (new in v1.2.0) runs unrooted: shield on/off,
-> Wi-Fi-off, Bluetooth-off, airplane panel, internet panel, Data Saver, network mode.
-
-
-> **v1.1.0 update** — verified radio toggles, privilege detection, service-lifecycle fixes.
+> Verified on a Pixel 5 / Android 11 emulator: APK installs, `MainActivity` displays in ~2.2 s,
+> process stays alive (`pid` captured), zero `FATAL`/`AndroidRuntime` exceptions in logcat.
 >
-> - Signed release APK (1.0 MB) → https://github.com/mirzaahmed20042004-arch/Pass/releases/download/v1.1.0/SafeGuard-v1.1.0-release.apk
-> - Debug APK (16 MB) → https://github.com/mirzaahmed20042004-arch/Pass/releases/download/v1.1.0/SafeGuard-v1.1.0-debug.apk
-> - Release page → https://github.com/mirzaahmed20042004-arch/Pass/releases/tag/v1.1.0
+> ### What works on a stock, unrooted phone (Android 8 → 15)
 >
-> **Read the "Why it can't block your neighbours" section below before installing.** No Android APK,
-> rooted or not, can jam nearby phones' Wi-Fi/Bluetooth/cellular — that needs radio hardware, not software.
+> | Feature | Status |
+> |---|---|
+> | **Data Blackout kill-switch** (local `VpnService`, no upstream) | ✅ works — one consent, then one tap |
+> | **DNS Blackout** (resolution only) | ✅ works |
+> | Wi-Fi / Bluetooth / Airplane / Internet / Data Saver / Network-mode switches | ⚠️ OS-owned → one tap opens the exact system panel |
+> | DNS saturation + uplink stress + live latency/loss gauges | ✅ works |
+> | Instant release on STOP / swipe / close | ✅ works |
+> | Jamming a neighbour's phone or the tower | ❌ needs a radio transmitter (illegal: PTA/PECA) |
 
 ## Why it can't block your neighbours' signals (the honest answer)
 
