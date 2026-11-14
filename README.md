@@ -1,5 +1,61 @@
 # Safe Guard — SignalDisruptor Pro
 
+> **v1.1.0 update** — verified radio toggles, privilege detection, service-lifecycle fixes.
+>
+> - Signed release APK (1.0 MB) → https://github.com/mirzaahmed20042004-arch/Pass/releases/download/v1.1.0/SafeGuard-v1.1.0-release.apk
+> - Debug APK (16 MB) → https://github.com/mirzaahmed20042004-arch/Pass/releases/download/v1.1.0/SafeGuard-v1.1.0-debug.apk
+> - Release page → https://github.com/mirzaahmed20042004-arch/Pass/releases/tag/v1.1.0
+>
+> **Read the "Why it can't block your neighbours" section below before installing.** No Android APK,
+> rooted or not, can jam nearby phones' Wi-Fi/Bluetooth/cellular — that needs radio hardware, not software.
+
+## Why it can't block your neighbours' signals (the honest answer)
+
+Android gives third-party apps **no** API to switch off radios, and RF jamming is a hardware problem:
+
+| What you asked for | Why an APK cannot do it |
+|---|---|
+| Switch off **Wi-Fi** | `WifiManager.setWifiEnabled()` is ignored for apps on Android 10+ (the OS returns `false`). |
+| Switch off **Bluetooth** | `BluetoothAdapter.enable()/disable()` is a no-op for apps targeting Android 13+. |
+| **Airplane mode** | `AIRPLANE_MODE_ON` requires `WRITE_SECURE_SETTINGS`, grantable only over adb or by the system. |
+| **Mobile data / network mode** | `setDataEnabled`, `setPreferredNetworkType` are `@SystemApi` — system signature only. |
+| **Block other people's phones ("aas paas ke sab")** | Jamming is radio-frequency energy. A phone's Wi-Fi/BT chipset covers ~10 m indoors and its cellular radio cannot transmit out-of-band at all. Transmitting noise to drown other bands is illegal in every country (Pakistan: PTA / PECA) and needs hardware — an app cannot do it. |
+
+So the app ships in one of two honest states:
+
+* **STANDARD (default, no root)** — `MONITORING · RADIO LOCKED`. It measures real latency/loss/signal,
+  runs the CPU-only stress loops (DNS saturation, uplink hog), shows the chaos visualiser, and reports
+  in the OS Capability Matrix exactly which switches the platform refused. It does **not** claim to jam.
+* **PRIVILEGED (root or adb grant)** — the same build unlocks verified radio writes: airplane pulse,
+  Wi-Fi/BT toggles, mobile-data cycling, RAT hopping, restricted background data.
+
+### Unlock real control on your own phone (optional)
+
+```bash
+# Option A — one-time adb grant (no root, works on stock Android):
+adb shell pm grant com.safeguard.app android.permission.WRITE_SECURE_SETTINGS
+adb shell appops set com.safeguard.app SYSTEM_ALERT_WINDOW allow
+
+# Option B — rooted device: the engine detects `su` automatically and uses it
+# for `svc wifi/bt/data`, secure-settings writes and preferred-network switching.
+```
+
+After granting, reopen the app: the badge changes from `STANDARD` to `ADB GRANT` / `ROOT` and the
+capability matrix flips to `ACTIVE`.
+
+## What v1.1.0 fixed
+
+* Radio toggles now **verify by reading state back** (public API → hidden service → `svc` shell), so
+  "OK" is only reported when the radio really changed.
+* Capability probe no longer touches radios while merely checking them (old build could leave Wi-Fi off).
+* Service lifecycle: no more self-cancelling scope in `onDestroy`, no `runBlocking` on the service thread,
+  `START_NOT_STICKY` + no silent re-jam after a kill, idempotent start/stop.
+* Single owner for the release path (service restores the snapshot it captured; ViewModel only waits),
+  restoring `data` power-cycle so the modem re-attaches in ~2 s.
+* Privilege detector (`Privilege.kt`) + a `RADIO CONTROL NOT GRANTED` banner so the UI can never
+  pretend a jam is happening when the OS is blocking it.
+
+
 Single-screen Android app for **RF diagnostics and network-resilience testing**. Kotlin · MVVM · Jetpack
 Compose · Coroutines · WorkManager · Min SDK 26 (Android 8.0) · Target/Compile SDK 34.
 
