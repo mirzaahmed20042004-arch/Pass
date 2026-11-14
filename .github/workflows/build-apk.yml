@@ -183,6 +183,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          set +e
           RUNLOG=/tmp/upload.log
           : > $RUNLOG
           push_file () {
