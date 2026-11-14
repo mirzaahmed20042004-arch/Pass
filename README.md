@@ -1,5 +1,16 @@
 # Safe Guard — SignalDisruptor Pro
 
+> ## v1.3.2 — Tools tab: home-network control (all legal, all real)
+>
+> **Signed release APK** → https://github.com/mirzaahmed20042004-arch/Pass/releases/download/v1.3.2/SafeGuard-v1.3.2-release.apk
+> **Debug APK** → https://github.com/mirzaahmed20042004-arch/Pass/releases/download/v1.3.2/SafeGuard-v1.3.2-debug.apk
+>
+> Verified on a real Android 11 emulator (screenshots captured from the running app, committed in
+> `docs/screenshots/`): dashboard renders, Tools tab renders, Radio Controls renders, process alive,
+> no crashes.
+>
+> ![Tools screen](docs/screenshots/tools.png)
+
 > ## v1.3.0 — Tools tab: home-network control (all legal, all real)
 >
 > **Signed release APK** → https://github.com/mirzaahmed20042004-arch/Pass/releases/download/v1.3.0/SafeGuard-v1.3.0-release.apk
@@ -9,7 +20,7 @@
 >
 > | Box | What it really does |
 > |---|---|
-> | 👥 **Who is on my Wi-Fi** | Sweeps your subnet (ICMP + TCP fallback), reads `/proc/net/arp` for MACs, lists every phone/TV/laptop with delay. Read-only. |
+> | 👥 **Who is on my Wi-Fi** | Sweeps your subnet (ICMP + TCP fallback), reads `/proc/net/arp` for MACs, lists every phone/TV/laptop with delay. Read-only. Shows the router's IPv4 gateway and your subnet. |
 > | 🛠 **Router quick access** | Detects your gateway and offers `192.168.1.1` / `192.168.0.1` / `10.0.0.1` … one tap to the admin page, plus 6 steps to switch the Wi-Fi off for the whole house. |
 > | ⏸ **Pause home Wi-Fi** | Explains and links the only real way to stop the whole house network (router switch) — no pretending. |
 > | 🧑‍🤝‍🧑 **Child on another router** | Legal, effective playbook: MAC filter, time schedule, traffic stats, owner permission. |
