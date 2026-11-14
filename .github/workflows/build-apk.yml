@@ -47,7 +47,9 @@ jobs:
             -dname "CN=Safe Guard, OU=SignalDisruptor Pro, O=SafeGuard, L=Karachi, C=PK"
 
       - name: Build debug APK
-        run: gradle :app:assembleDebug --stacktrace
+        run: |
+          set -o pipefail
+          gradle :app:assembleDebug --stacktrace --no-daemon 2>&1 | tee build.log | tail -n 60
 
       - name: Build signed release APK
         env:
@@ -56,6 +58,16 @@ jobs:
           SG_KEY_ALIAS: safeguard
           SG_KEY_PASSWORD: safeguard
         run: gradle :app:assembleRelease --stacktrace
+
+      - name: Publish build log on failure
+        if: failure()
+        run: |
+          git config user.email "[email protected]"
+          git config user.name "CI"
+          grep -vE "^(Download|> Task|Checking the license)" build.log | tail -n 220 > ci-build-error.log || true
+          git add -f ci-build-error.log
+          git commit -m "ci: build diagnostics [skip ci]" || true
+          git push || true
 
       - name: Collect artifacts
         run: |
