@@ -211,6 +211,7 @@ jobs:
             ls -la *.png 2>/dev/null
           } >> ci-crashlog.txt
           push_file "ci-crashlog.txt" ci-crashlog.txt
+          exit 0
 
       - name: Upload screenshot
         if: always()
