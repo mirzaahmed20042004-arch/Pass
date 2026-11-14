@@ -1,4 +1,4 @@
-package com.voicemorph.app;
+package com.voicefilter.app;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -11,7 +11,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Talks to the VoiceMorph backend (GET /api/presets). */
+/** Talks to the Voice Filter backend (GET /api/presets), optionally with an API token. */
 public final class PresetClient {
 
     public static final class CloudPreset {
@@ -23,13 +23,16 @@ public final class PresetClient {
     private PresetClient() {
     }
 
-    public static List<CloudPreset> fetch(String baseUrl) throws IOException {
+    public static List<CloudPreset> fetch(String baseUrl, String token) throws IOException {
         String url = baseUrl;
         while (url.endsWith("/")) url = url.substring(0, url.length() - 1);
         HttpURLConnection con = (HttpURLConnection) new URL(url + "/api/presets").openConnection();
         con.setConnectTimeout(6000);
         con.setReadTimeout(6000);
         con.setRequestProperty("Accept", "application/json");
+        if (token != null && !token.isEmpty()) {
+            con.setRequestProperty("X-VoiceFilter-Token", token);
+        }
         try {
             if (con.getResponseCode() != 200) {
                 throw new IOException("http " + con.getResponseCode());
@@ -42,7 +45,7 @@ public final class PresetClient {
             in.close();
             JSONArray arr = new JSONArray(new String(bos.toByteArray(), "UTF-8"));
             List<CloudPreset> out = new ArrayList<CloudPreset>();
-            for (int i = 0; i < arr.length(); i++) {
+            for (int i = 0; i < arr.length() && i < 200; i++) {
                 JSONObject o = arr.getJSONObject(i);
                 CloudPreset p = new CloudPreset();
                 p.name = o.optString("name", "preset " + i);
@@ -54,6 +57,8 @@ public final class PresetClient {
                 pr.lowShelfHz = (float) o.optDouble("low_hz", 200.0);
                 pr.highShelfDb = (float) o.optDouble("high_db", 0.0);
                 pr.highShelfHz = (float) o.optDouble("high_hz", 4000.0);
+                pr.gainDb = (float) o.optDouble("gain_db", 0.0);
+                pr.echoMs = o.optInt("echo_ms", 0);
                 p.params = pr;
                 out.add(p);
             }

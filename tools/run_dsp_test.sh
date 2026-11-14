@@ -12,7 +12,7 @@ fi
 [ -n "$TOOLS" ] || { echo "toolchain not found - set TOOLS_DIR"; exit 1; }
 mkdir -p build/dsptest
 $TOOLS/jdk17/linux-x86/bin/javac -d build/dsptest \
-  app/src/com/voicemorph/app/VoiceEngine.java \
-  app/src/com/voicemorph/app/VoicePreset.java \
+  app/src/com/voicefilter/app/VoiceEngine.java \
+  app/src/com/voicefilter/app/VoicePreset.java \
   tools/dsptest/TestDsp.java
 $TOOLS/jdk17/linux-x86/bin/java -cp build/dsptest TestDsp

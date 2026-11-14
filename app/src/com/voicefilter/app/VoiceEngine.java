@@ -1,10 +1,11 @@
-package com.voicemorph.app;
+package com.voicefilter.app;
 
 /**
- * Pure-Java voice morphing engine (no Android dependencies so it is unit-testable on a desktop JVM).
+ * Pure-Java voice morphing engine (no Android dependencies, unit-testable on a desktop JVM).
  *
- * Pipeline: linear resample (pitch bend) -> WSOLA time-scale (restore duration, keep new pitch)
- *           -> low/high shelf EQ (timbre tilt towards male / female) -> peak normalise.
+ * Pipeline: noise gate -> pre-gain -> linear resample (pitch bend) -> WSOLA time-scale
+ *           (restore duration, keep new pitch) -> low/high shelf EQ (male/female timbre)
+ *           -> feedback echo -> peak normalise.
  */
 public final class VoiceEngine {
 
@@ -15,6 +16,10 @@ public final class VoiceEngine {
         public float lowShelfHz = 200f;
         public float highShelfDb = 0f;
         public float highShelfHz = 4000f;
+        public float gainDb = 0f;         // pre-gain (mic boost)
+        public float gateDb = -55f;       // noise gate threshold, <= -90 disables
+        public int echoMs = 0;            // 0 = off
+        public float echoFb = 0.35f;      // echo feedback 0..0.8
 
         public Params() {
         }
@@ -30,7 +35,12 @@ public final class VoiceEngine {
         }
 
         public Params copy() {
-            return new Params(pitch, strength, lowShelfDb, lowShelfHz, highShelfDb, highShelfHz);
+            Params p = new Params(pitch, strength, lowShelfDb, lowShelfHz, highShelfDb, highShelfHz);
+            p.gainDb = gainDb;
+            p.gateDb = gateDb;
+            p.echoMs = echoMs;
+            p.echoFb = echoFb;
+            return p;
         }
     }
 
@@ -54,6 +64,14 @@ public final class VoiceEngine {
             x[i] = in[i] / 32768f;
         }
 
+        if (p.gateDb > -90f) {
+            x = noiseGate(x, sampleRate, p.gateDb);
+        }
+        if (Math.abs(p.gainDb) > 0.05f) {
+            float g = (float) Math.pow(10.0, p.gainDb / 20.0);
+            for (int i = 0; i < x.length; i++) x[i] *= g;
+        }
+
         if (in.length >= WIN + 2 * SEARCH && Math.abs(pitch - 1f) > 0.002f) {
             x = resample(x, pitch);   // pitch up/down, duration shrinks/grows
             x = wsola(x, pitch);      // stretch back to original duration, pitch preserved
@@ -68,12 +86,59 @@ public final class VoiceEngine {
             x = biquad(x, shelfCoeffs(sampleRate, p.highShelfHz, hiDb, true));
         }
 
+        if (p.echoMs > 0) {
+            x = echo(x, sampleRate, p.echoMs, clamp(p.echoFb, 0f, 0.8f));
+        }
+
         normalize(x, 0.89f);
         short[] out = new short[x.length];
         for (int i = 0; i < x.length; i++) {
             out[i] = (short) Math.round(clamp(x[i], -1f, 1f) * 32767f);
         }
         return out;
+    }
+
+    /** Soft noise gate: 20 ms RMS windows, gains smoothed per sample to avoid clicks. */
+    private static float[] noiseGate(float[] x, int sr, float gateDb) {
+        int win = Math.max(64, sr / 50);
+        float thr = (float) Math.pow(10.0, gateDb / 20.0);
+        int frames = (x.length + win - 1) / win;
+        float[] gains = new float[frames + 1];
+        for (int f = 0; f < frames; f++) {
+            int off = f * win;
+            double sum = 0;
+            int n = Math.min(win, x.length - off);
+            for (int i = 0; i < n; i++) sum += (double) x[off + i] * x[off + i];
+            float rms = (float) Math.sqrt(sum / Math.max(1, n));
+            // soft knee: full gain 6 dB above threshold, 0.08 floor below
+            float g;
+            if (rms > thr * 2f) g = 1f;
+            else if (rms < thr * 0.5f) g = 0.06f;
+            else g = 0.06f + 0.94f * (rms - thr * 0.5f) / (thr * 1.5f);
+            gains[f] = g;
+        }
+        gains[frames] = gains[frames - 1];
+        float[] y = new float[x.length];
+        for (int i = 0; i < x.length; i++) {
+            int f = i / win;
+            float t = (i % win) / (float) win;
+            y[i] = x[i] * (gains[f] + (gains[f + 1] - gains[f]) * t);
+        }
+        return y;
+    }
+
+    /** Feedback echo: y[i] = x[i] + fb * y[i - d], wet blended at 0.6. */
+    private static float[] echo(float[] x, int sr, int ms, float fb) {
+        int d = Math.max(1, sr * ms / 1000);
+        float[] y = new float[x.length];
+        for (int i = 0; i < x.length; i++) {
+            float delayed = i >= d ? y[i - d] : 0f;
+            y[i] = x[i] + fb * delayed;
+        }
+        for (int i = 0; i < x.length; i++) {
+            y[i] = x[i] * 0.55f + y[i] * 0.45f;
+        }
+        return y;
     }
 
     /** out[i] = x[i * ratio]; length becomes len/ratio. ratio>1 => faster & higher pitched. */

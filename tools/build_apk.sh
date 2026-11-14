@@ -19,7 +19,7 @@ ANDROID_JAR=$TOOLS/android.jar
 R8=$TOOLS/r8-master.jar
 PY=$TOOLS/venv/bin/python
 BUILD=$ROOT/build
-OUT=$ROOT/apk/VoiceMorph-v1.0.apk
+OUT=$ROOT/apk/VoiceFilter-v2.0.apk
 
 rm -rf "$BUILD"
 mkdir -p "$BUILD/gen" "$BUILD/obj" "$BUILD/dex" "$BUILD/apk" "$ROOT/apk" "$ROOT/keys"
@@ -38,7 +38,7 @@ echo "== aapt2 link"
   --manifest app/AndroidManifest.xml \
   --java "$BUILD/gen" \
   --min-sdk-version 24 --target-sdk-version 29 \
-  --version-code 1 --version-name 1.0 \
+  --version-code 2 --version-name 2.0 \
   "$BUILD/res.zip"
 
 echo "== javac"

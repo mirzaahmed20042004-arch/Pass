@@ -2,25 +2,51 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:scrollbars="none">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="16dp">
 
-        <LinearLayout
+        <LinearLayout style="@style/Card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/bg_card"
-            android:padding="16dp">
+            android:orientation="vertical">
 
-            <com.voicemorph.app.LevelMeterView
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView style="@style/SectionDot"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="●" />
+
+                <TextView style="@style/SectionTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:text="@string/capture" />
+            </LinearLayout>
+
+            <com.voicefilter.app.WaveformView
+                android:id="@+id/studio_wave"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:layout_marginTop="12dp" />
+
+            <com.voicefilter.app.LevelMeterView
                 android:id="@+id/studio_meter"
                 android:layout_width="match_parent"
-                android:layout_height="26dp" />
+                android:layout_height="18dp"
+                android:layout_marginTop="8dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -31,16 +57,17 @@
 
                 <FrameLayout
                     android:id="@+id/record_btn"
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
-                    android:background="@drawable/bg_record">
+                    android:layout_width="88dp"
+                    android:layout_height="88dp"
+                    android:background="@drawable/bg_ring_record">
 
                     <ImageView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
+                        android:id="@+id/record_icon"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_mic"
-                        android:tint="@color/primary" />
+                        android:tint="@color/cyan" />
                 </FrameLayout>
 
                 <LinearLayout
@@ -48,7 +75,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical"
-                    android:layout_marginLeft="16dp">
+                    android:layout_marginLeft="18dp">
 
                     <TextView
                         android:id="@+id/record_status"
@@ -63,33 +90,170 @@
                         android:id="@+id/record_time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="0.0 s"
+                        android:text="0.0 s - unlimited"
                         android:textSize="12sp"
-                        android:textColor="@color/text_dim" />
+                        android:textColor="@color/text_dim"
+                        android:layout_marginTop="2dp" />
                 </LinearLayout>
             </LinearLayout>
 
-            <TextView
+            <TextView style="@style/CardText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                style="@style/CardText"
+                android:layout_marginTop="12dp"
                 android:text="@string/studio_hint" />
         </LinearLayout>
 
-        <LinearLayout
+        <LinearLayout style="@style/Card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@drawable/bg_card"
-            android:padding="16dp"
             android:layout_marginTop="12dp">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/SectionTitle"
-                android:text="Voice" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView style="@style/SectionDot"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="●"
+                    android:textColor="@color/pink" />
+
+                <TextView style="@style/SectionTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:text="@string/voice_filter" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="12dp">
+
+                <TextView
+                    android:id="@+id/chip_original"
+                    style="@style/Chip"
+                    android:layout_width="0dp"
+                    android:layout_height="42dp"
+                    android:layout_weight="1"
+                    android:layout_marginRight="6dp"
+                    android:text="@string/mode_original"
+                    android:textColor="@color/text_primary" />
+
+                <TextView
+                    android:id="@+id/chip_male"
+                    style="@style/Chip"
+                    android:layout_width="0dp"
+                    android:layout_height="42dp"
+                    android:layout_weight="1"
+                    android:layout_marginRight="6dp"
+                    android:text="@string/mode_male"
+                    android:textColor="@color/text_primary" />
+
+                <TextView
+                    android:id="@+id/chip_female"
+                    style="@style/Chip"
+                    android:layout_width="0dp"
+                    android:layout_height="42dp"
+                    android:layout_weight="1"
+                    android:text="@string/mode_female"
+                    android:textColor="@color/text_primary" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="14dp">
+
+                <TextView style="@style/SliderLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/strength" />
+
+                <TextView
+                    android:id="@+id/strength_val"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:textColor="@color/cyan" />
+            </LinearLayout>
+
+            <SeekBar
+                android:id="@+id/strength_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="100"
+                android:progress="85"
+                android:progressDrawable="@drawable/seekbar_progress"
+                android:thumb="@drawable/seekbar_thumb"
+                android:splitTrack="false" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="6dp">
+
+                <TextView style="@style/SliderLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/pitch" />
+
+                <TextView
+                    android:id="@+id/pitch_val"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:textColor="@color/cyan" />
+            </LinearLayout>
+
+            <SeekBar
+                android:id="@+id/pitch_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="110"
+                android:progress="28"
+                android:progressDrawable="@drawable/seekbar_progress"
+                android:thumb="@drawable/seekbar_thumb"
+                android:splitTrack="false" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="6dp">
+
+                <TextView style="@style/SliderLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/gain" />
+
+                <TextView
+                    android:id="@+id/gain_val"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:textColor="@color/cyan" />
+            </LinearLayout>
+
+            <SeekBar
+                android:id="@+id/gain_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="18"
+                android:progress="6"
+                android:progressDrawable="@drawable/seekbar_progress"
+                android:thumb="@drawable/seekbar_thumb"
+                android:splitTrack="false" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -97,66 +261,35 @@
                 android:orientation="horizontal"
                 android:layout_marginTop="10dp">
 
-                <TextView
-                    android:id="@+id/chip_original"
+                <Switch
+                    android:id="@+id/gate_switch"
                     android:layout_width="0dp"
-                    android:layout_height="40dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:gravity="center"
-                    android:layout_marginRight="6dp"
-                    android:background="@drawable/bg_chip"
-                    android:text="@string/mode_original"
-                    android:textSize="13sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/text_primary" />
+                    android:text="@string/gate"
+                    android:textSize="12sp"
+                    android:textColor="@color/text_dim"
+                    android:checked="true"
+                    android:thumbTint="@color/violet"
+                    android:trackTint="@color/card_bg2" />
 
-                <TextView
-                    android:id="@+id/chip_male"
+                <Switch
+                    android:id="@+id/echo_switch"
                     android:layout_width="0dp"
-                    android:layout_height="40dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:gravity="center"
-                    android:layout_marginRight="6dp"
-                    android:background="@drawable/bg_chip"
-                    android:text="@string/mode_male"
-                    android:textSize="13sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/text_primary" />
-
-                <TextView
-                    android:id="@+id/chip_female"
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:background="@drawable/bg_chip"
-                    android:text="@string/mode_female"
-                    android:textSize="13sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/text_primary" />
+                    android:text="@string/echo"
+                    android:textSize="12sp"
+                    android:textColor="@color/text_dim"
+                    android:thumbTint="@color/pink"
+                    android:trackTint="@color/card_bg2" />
             </LinearLayout>
-
-            <TextView
-                android:id="@+id/strength_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
-                android:text="@string/strength"
-                android:textSize="13sp"
-                android:textColor="@color/text_dim" />
-
-            <SeekBar
-                android:id="@+id/strength_bar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:max="100"
-                android:progress="85" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="12dp">
+                android:layout_marginTop="14dp">
 
                 <TextView
                     android:id="@+id/preview_btn"
@@ -195,5 +328,11 @@
                 android:textSize="12sp"
                 android:textColor="@color/text_dim" />
         </LinearLayout>
+
+        <TextView style="@style/CardText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/security_note" />
     </LinearLayout>
 </ScrollView>

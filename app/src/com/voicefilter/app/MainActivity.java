@@ -1,4 +1,4 @@
-package com.voicemorph.app;
+package com.voicefilter.app;
 
 import android.Manifest;
 import android.app.Activity;
@@ -7,26 +7,25 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.media.AudioFormat;
-import android.media.AudioManager;
-import android.media.AudioTrack;
-import android.media.MediaPlayer;
+import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
-import java.io.File;
 import java.util.List;
 
 public class MainActivity extends Activity {
@@ -36,30 +35,35 @@ public class MainActivity extends Activity {
     private final Handler main = new Handler(Looper.getMainLooper());
 
     private ViewFlipper flipper;
-    private TextView tabStudio, tabLive, tabGame;
+    private TextView tabStudio, tabLive, tabGame, hudStatus;
 
     // studio
+    private WaveformView studioWave;
     private LevelMeterView studioMeter;
     private FrameLayout recordBtn;
+    private ImageView recordIcon;
     private TextView recordStatus, recordTime, studioStatus;
     private TextView chipOriginal, chipMale, chipFemale;
-    private SeekBar strengthBar;
+    private SeekBar strengthBar, pitchBar, gainBar;
+    private TextView strengthVal, pitchVal, gainVal;
+    private Switch gateSwitch, echoSwitch;
     private TextView previewBtn, saveBtn, cloudBtn;
 
     // live
-    private TextView liveChipMale, liveChipFemale, liveToggle, liveStatus;
+    private TextView liveChipMale, liveChipFemale, liveToggle, liveStatus, liveStrengthVal;
     private SeekBar liveStrengthBar;
     private LevelMeterView liveMeter;
+    private TextView hudBtn, gameHudBtn;
 
     // game
     private LinearLayout clipList;
     private TextView gameEmpty, gameStatus;
+    private Switch forceSpeakerSwitch;
 
     private int studioMode = VoicePreset.MODE_MALE;
     private int liveMode = VoicePreset.MODE_MALE;
-    private float studioStrength = 0.85f;
     private float liveStrength = 0.85f;
-    private VoiceEngine.Params customParams = null;
+    private float[] customShelves = null;   // lowDb, lowHz, highDb, highHz from a cloud preset
     private String customName = null;
 
     private short[] rawPcm = null;
@@ -76,12 +80,7 @@ public class MainActivity extends Activity {
     };
 
     private LiveChanger liveChanger = null;
-
-    private AudioTrack playerTrack = null;
-    private Thread playerThread = null;
-    private volatile boolean playerStop = false;
-
-    private MediaPlayer broadcastPlayer = null;
+    private final PcmPlayer player = new PcmPlayer();
     private Runnable countdownTick = null;
 
     private SharedPreferences prefs;
@@ -90,15 +89,18 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        prefs = getSharedPreferences("voicemorph", MODE_PRIVATE);
+        prefs = getSharedPreferences("voicefilter", MODE_PRIVATE);
 
         flipper = (ViewFlipper) findViewById(R.id.flipper);
         tabStudio = (TextView) findViewById(R.id.tab_studio);
         tabLive = (TextView) findViewById(R.id.tab_live);
         tabGame = (TextView) findViewById(R.id.tab_game);
+        hudStatus = (TextView) findViewById(R.id.hud_status);
 
+        studioWave = (WaveformView) findViewById(R.id.studio_wave);
         studioMeter = (LevelMeterView) findViewById(R.id.studio_meter);
         recordBtn = (FrameLayout) findViewById(R.id.record_btn);
+        recordIcon = (ImageView) findViewById(R.id.record_icon);
         recordStatus = (TextView) findViewById(R.id.record_status);
         recordTime = (TextView) findViewById(R.id.record_time);
         studioStatus = (TextView) findViewById(R.id.studio_status);
@@ -106,6 +108,13 @@ public class MainActivity extends Activity {
         chipMale = (TextView) findViewById(R.id.chip_male);
         chipFemale = (TextView) findViewById(R.id.chip_female);
         strengthBar = (SeekBar) findViewById(R.id.strength_bar);
+        pitchBar = (SeekBar) findViewById(R.id.pitch_bar);
+        gainBar = (SeekBar) findViewById(R.id.gain_bar);
+        strengthVal = (TextView) findViewById(R.id.strength_val);
+        pitchVal = (TextView) findViewById(R.id.pitch_val);
+        gainVal = (TextView) findViewById(R.id.gain_val);
+        gateSwitch = (Switch) findViewById(R.id.gate_switch);
+        echoSwitch = (Switch) findViewById(R.id.echo_switch);
         previewBtn = (TextView) findViewById(R.id.preview_btn);
         saveBtn = (TextView) findViewById(R.id.save_btn);
         cloudBtn = (TextView) findViewById(R.id.cloud_btn);
@@ -115,30 +124,19 @@ public class MainActivity extends Activity {
         liveToggle = (TextView) findViewById(R.id.live_toggle);
         liveStatus = (TextView) findViewById(R.id.live_status);
         liveStrengthBar = (SeekBar) findViewById(R.id.live_strength_bar);
+        liveStrengthVal = (TextView) findViewById(R.id.live_strength_val);
         liveMeter = (LevelMeterView) findViewById(R.id.live_meter);
+        hudBtn = (TextView) findViewById(R.id.hud_btn);
+        gameHudBtn = (TextView) findViewById(R.id.game_hud_btn);
 
         clipList = (LinearLayout) findViewById(R.id.clip_list);
         gameEmpty = (TextView) findViewById(R.id.game_empty);
         gameStatus = (TextView) findViewById(R.id.game_status);
+        forceSpeakerSwitch = (Switch) findViewById(R.id.force_speaker_switch);
 
-        tabStudio.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showTab(0);
-            }
-        });
-        tabLive.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showTab(1);
-            }
-        });
-        tabGame.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showTab(2);
-            }
-        });
+        tabStudio.setOnClickListener(tabClick(0));
+        tabLive.setOnClickListener(tabClick(1));
+        tabGame.setOnClickListener(tabClick(2));
 
         View.OnClickListener chipClick = new View.OnClickListener() {
             @Override
@@ -146,9 +144,11 @@ public class MainActivity extends Activity {
                 if (v == chipOriginal) studioMode = VoicePreset.MODE_ORIGINAL;
                 else if (v == chipMale) studioMode = VoicePreset.MODE_MALE;
                 else studioMode = VoicePreset.MODE_FEMALE;
-                customParams = null;
+                customShelves = null;
                 customName = null;
+                pitchBar.setProgress(VoicePreset.defaultPitchPct(studioMode) - 50);
                 refreshStudioChips();
+                updateSliderLabels();
                 studioStatus.setText("");
             }
         };
@@ -163,25 +163,49 @@ public class MainActivity extends Activity {
                 liveMode = (v == liveChipMale) ? VoicePreset.MODE_MALE : VoicePreset.MODE_FEMALE;
                 refreshLiveChips();
                 if (liveChanger != null) liveChanger.setParams(VoicePreset.params(liveMode, liveStrength));
+                if (HudService.running()) HudService.get().setVoice(liveMode);
             }
         };
         liveChipMale.setOnClickListener(liveChipClick);
         liveChipFemale.setOnClickListener(liveChipClick);
         refreshLiveChips();
 
-        strengthBar.setOnSeekBarChangeListener(new SimpleSeek() {
+        SeekBar.OnSeekBarChangeListener studioSeek = new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar bar, int progress, boolean fromUser) {
-                studioStrength = progress / 100f;
+                updateSliderLabels();
             }
-        });
-        liveStrengthBar.setOnSeekBarChangeListener(new SimpleSeek() {
+
+            @Override
+            public void onStartTrackingTouch(SeekBar bar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar bar) {
+            }
+        };
+        strengthBar.setOnSeekBarChangeListener(studioSeek);
+        pitchBar.setOnSeekBarChangeListener(studioSeek);
+        gainBar.setOnSeekBarChangeListener(studioSeek);
+        updateSliderLabels();
+
+        liveStrengthBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar bar, int progress, boolean fromUser) {
                 liveStrength = progress / 100f;
+                liveStrengthVal.setText(Math.round(liveStrength * 100) + "%");
                 if (liveChanger != null) liveChanger.setParams(VoicePreset.params(liveMode, liveStrength));
             }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar bar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar bar) {
+            }
         });
+        liveStrengthVal.setText("85%");
 
         recordBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -189,7 +213,6 @@ public class MainActivity extends Activity {
                 toggleRecord();
             }
         });
-
         previewBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -208,7 +231,6 @@ public class MainActivity extends Activity {
                 showServerDialog();
             }
         });
-
         liveToggle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -216,10 +238,42 @@ public class MainActivity extends Activity {
             }
         });
 
+        View.OnClickListener hudClick = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleHud();
+            }
+        };
+        hudBtn.setOnClickListener(hudClick);
+        gameHudBtn.setOnClickListener(hudClick);
+
+        forceSpeakerSwitch.setChecked(BroadcastPlayer.forceSpeaker(this));
+        forceSpeakerSwitch.setOnCheckedChangeListener(new android.widget.CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(android.widget.CompoundButton button, boolean checked) {
+                prefs.edit().putBoolean("force_speaker", checked).apply();
+            }
+        });
+
         if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, REQ_MIC);
         }
         showTab(0);
+    }
+
+    private View.OnClickListener tabClick(final int index) {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showTab(index);
+            }
+        };
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshHudUi();
     }
 
     // ---------------------------------------------------------------- tabs
@@ -232,9 +286,16 @@ public class MainActivity extends Activity {
         if (index == 2) {
             refreshClipList();
         }
-        tabStudio.setTextColor(getResources().getColor(index == 0 ? R.color.primary : R.color.tab_idle, null));
-        tabLive.setTextColor(getResources().getColor(index == 1 ? R.color.primary : R.color.tab_idle, null));
-        tabGame.setTextColor(getResources().getColor(index == 2 ? R.color.primary : R.color.tab_idle, null));
+        styleTab(tabStudio, index == 0);
+        styleTab(tabLive, index == 1);
+        styleTab(tabGame, index == 2);
+    }
+
+    private void styleTab(TextView tab, boolean selected) {
+        int color = getResources().getColor(selected ? R.color.cyan : R.color.tab_idle, null);
+        tab.setTextColor(color);
+        tab.setCompoundDrawableTintList(ColorStateList.valueOf(color));
+        tab.setBackgroundResource(selected ? R.drawable.bg_button_ghost : 0);
     }
 
     // ---------------------------------------------------------------- studio
@@ -255,6 +316,13 @@ public class MainActivity extends Activity {
         tv.setTextColor(getResources().getColor(selected ? R.color.window_bg : R.color.text_primary, null));
     }
 
+    private void updateSliderLabels() {
+        strengthVal.setText(strengthBar.getProgress() + "%");
+        pitchVal.setText((pitchBar.getProgress() + 50) + "%");
+        int db = gainBar.getProgress() - 6;
+        gainVal.setText((db >= 0 ? "+" : "") + db + " dB");
+    }
+
     private boolean micGranted() {
         return checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
     }
@@ -269,14 +337,17 @@ public class MainActivity extends Activity {
             recorder.stop();
             recorder = null;
             main.removeCallbacks(timerTick);
-            recordBtn.setBackgroundResource(R.drawable.bg_record);
+            recordBtn.setBackgroundResource(R.drawable.bg_ring_record);
+            recordIcon.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.cyan, null)));
             recordStatus.setText(R.string.processing);
             return;
         }
-        stopPlayer();
+        player.stopNow();
         rawPcm = null;
+        studioWave.setPcm(null);
         recordStart = System.currentTimeMillis();
-        recordBtn.setBackgroundResource(R.drawable.bg_record_on);
+        recordBtn.setBackgroundResource(R.drawable.bg_ring_record_on);
+        recordIcon.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.pink, null)));
         recordStatus.setText(R.string.rec_running);
         recorder = RecorderEngine.forStudio(new RecorderEngine.Listener() {
             @Override
@@ -300,11 +371,12 @@ public class MainActivity extends Activity {
                     public void run() {
                         rawPcm = pcm;
                         rawSr = sampleRate;
+                        studioWave.setPcm(pcm);
+                        recordBtn.setBackgroundResource(R.drawable.bg_ring_record);
+                        recordIcon.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.cyan, null)));
                         recordStatus.setText(R.string.rec_idle);
                         recordTime.setText(String.format(java.util.Locale.US, "%.1f s", millis / 1000f));
-                        studioStatus.setText(pcm.length > 0
-                                ? "Take ready: " + VoicePreset.label(studioMode) + " preview available"
-                                : "No audio captured");
+                        studioStatus.setText(pcm.length > 0 ? "Take ready - filter and preview it below" : "No audio captured");
                     }
                 });
             }
@@ -314,12 +386,26 @@ public class MainActivity extends Activity {
     }
 
     private VoiceEngine.Params currentStudioParams() {
-        if (customParams != null) {
-            VoiceEngine.Params p = customParams.copy();
-            p.strength = studioStrength;
-            return p;
+        VoiceEngine.Params p = new VoiceEngine.Params();
+        p.strength = strengthBar.getProgress() / 100f;
+        p.pitch = (pitchBar.getProgress() + 50) / 100f;
+        p.gainDb = gainBar.getProgress() - 6;
+        p.gateDb = gateSwitch.isChecked() ? -50f : -95f;
+        p.echoMs = echoSwitch.isChecked() ? 180 : 0;
+        p.echoFb = 0.35f;
+        if (customShelves != null) {
+            p.lowShelfDb = customShelves[0];
+            p.lowShelfHz = customShelves[1];
+            p.highShelfDb = customShelves[2];
+            p.highShelfHz = customShelves[3];
+        } else {
+            VoiceEngine.Params base = VoicePreset.params(studioMode, 1f);
+            p.lowShelfDb = base.lowShelfDb;
+            p.lowShelfHz = base.lowShelfHz;
+            p.highShelfDb = base.highShelfDb;
+            p.highShelfHz = base.highShelfHz;
         }
-        return VoicePreset.params(studioMode, studioStrength);
+        return p;
     }
 
     private void previewOrSave(final boolean save) {
@@ -329,7 +415,8 @@ public class MainActivity extends Activity {
         }
         studioStatus.setText(R.string.processing);
         final VoiceEngine.Params params = currentStudioParams();
-        final String label = customName != null ? customName : VoicePreset.label(studioMode);
+        String name = customName != null ? customName : VoicePreset.label(studioMode);
+        final String label = name + (echoSwitch.isChecked() ? "_echo" : "");
         final int sr = rawSr;
         final short[] input = rawPcm;
         new Thread(new Runnable() {
@@ -340,8 +427,8 @@ public class MainActivity extends Activity {
                     @Override
                     public void run() {
                         if (!save) {
-                            playPcm(out, sr);
-                            studioStatus.setText("Playing " + label + " morph (" + Math.round(params.pitch * 100) + "% pitch)");
+                            player.play(out, sr, false, null);
+                            studioStatus.setText("Playing filtered preview (pitch " + (pitchBar.getProgress() + 50) + "%)");
                         } else {
                             try {
                                 ClipLibrary.save(MainActivity.this, out, sr, label);
@@ -355,54 +442,6 @@ public class MainActivity extends Activity {
                 });
             }
         }).start();
-    }
-
-    // ---------------------------------------------------------------- player
-
-    private void stopPlayer() {
-        playerStop = true;
-        if (playerThread != null) {
-            try {
-                playerThread.join(800);
-            } catch (InterruptedException ignored) {
-            }
-            playerThread = null;
-        }
-    }
-
-    private void playPcm(final short[] pcm, final int sr) {
-        stopPlayer();
-        playerStop = false;
-        playerThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                int minBuf = AudioTrack.getMinBufferSize(sr, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
-                if (minBuf <= 0) minBuf = 8192;
-                AudioTrack t = new AudioTrack(AudioManager.STREAM_MUSIC, sr, AudioFormat.CHANNEL_OUT_MONO,
-                        AudioFormat.ENCODING_PCM_16BIT, Math.max(minBuf * 2, 16384), AudioTrack.MODE_STREAM);
-                playerTrack = t;
-                if (t.getState() != AudioTrack.STATE_INITIALIZED) {
-                    t.release();
-                    return;
-                }
-                t.play();
-                int off = 0;
-                while (!playerStop && off < pcm.length) {
-                    int n = Math.min(4096, pcm.length - off);
-                    t.write(pcm, off, n);
-                    off += n;
-                }
-                if (!playerStop) {
-                    try {
-                        t.stop();
-                    } catch (IllegalStateException ignored) {
-                    }
-                }
-                t.release();
-                playerTrack = null;
-            }
-        }, "voicemorph-play");
-        playerThread.start();
     }
 
     // ---------------------------------------------------------------- live
@@ -433,7 +472,7 @@ public class MainActivity extends Activity {
                 main.post(new Runnable() {
                     @Override
                     public void run() {
-                        liveStatus.setText("morphing - block latency ~" + millis + " ms");
+                        liveStatus.setText("filtering live - block latency ~" + millis + " ms");
                     }
                 });
             }
@@ -442,7 +481,7 @@ public class MainActivity extends Activity {
         liveChanger.start();
         liveToggle.setText(R.string.live_stop);
         liveToggle.setBackgroundResource(R.drawable.bg_button_ghost);
-        liveToggle.setTextColor(getResources().getColor(R.color.accent, null));
+        liveToggle.setTextColor(getResources().getColor(R.color.pink, null));
     }
 
     private void stopLive() {
@@ -456,6 +495,37 @@ public class MainActivity extends Activity {
         liveStatus.setText("");
     }
 
+    // ---------------------------------------------------------------- hud
+
+    private void toggleHud() {
+        if (HudService.running()) {
+            HudService.stop(this);
+            refreshHudUi();
+            return;
+        }
+        if (!Settings.canDrawOverlays(this)) {
+            toast(getString(R.string.hud_need_perm));
+            Intent i = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + getPackageName()));
+            try {
+                startActivity(i);
+            } catch (Exception e) {
+                startActivity(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION));
+            }
+            return;
+        }
+        HudService.start(this);
+        refreshHudUi();
+    }
+
+    private void refreshHudUi() {
+        boolean on = HudService.running();
+        hudStatus.setText(on ? R.string.hud_on : R.string.hud_off);
+        hudStatus.setTextColor(getResources().getColor(on ? R.color.cyan : R.color.violet, null));
+        hudBtn.setText(on ? R.string.hud_disable : R.string.hud_enable);
+        gameHudBtn.setText(on ? R.string.hud_disable : R.string.hud_enable);
+    }
+
     // ---------------------------------------------------------------- game / clips
 
     private void refreshClipList() {
@@ -467,12 +537,17 @@ public class MainActivity extends Activity {
             View row = inflater.inflate(R.layout.item_clip, clipList, false);
             ((TextView) row.findViewById(R.id.clip_name)).setText(clip.name);
             ((TextView) row.findViewById(R.id.clip_meta)).setText(
-                    String.format(java.util.Locale.US, "%.1f s - tap play to broadcast into your game", clip.seconds));
+                    String.format(java.util.Locale.US, "%.1f s - broadcast into your game", clip.seconds));
             final ClipLibrary.Clip c = clip;
             row.findViewById(R.id.clip_play).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    broadcast(c);
+                    BroadcastPlayer.broadcast(MainActivity.this, c, new BroadcastPlayer.Status() {
+                        @Override
+                        public void onStatus(String text) {
+                            gameStatus.setText(text);
+                        }
+                    });
                 }
             });
             row.findViewById(R.id.clip_share).setOnClickListener(new View.OnClickListener() {
@@ -494,7 +569,7 @@ public class MainActivity extends Activity {
     }
 
     private void share(ClipLibrary.Clip clip) {
-        Uri uri = Uri.parse("content://com.voicemorph.app.clips/" + clip.file.getName());
+        Uri uri = Uri.parse("content://com.voicefilter.app.clips/" + clip.file.getName());
         Intent send = new Intent(Intent.ACTION_SEND);
         send.setType("audio/x-wav");
         send.putExtra(Intent.EXTRA_STREAM, uri);
@@ -502,78 +577,39 @@ public class MainActivity extends Activity {
         startActivity(Intent.createChooser(send, getString(R.string.share)));
     }
 
-    private void broadcast(final ClipLibrary.Clip clip) {
-        if (broadcastPlayer != null) {
-            broadcastPlayer.release();
-            broadcastPlayer = null;
-        }
-        if (countdownTick != null) main.removeCallbacks(countdownTick);
-        final int[] step = {3};
-        gameStatus.setText(getString(R.string.countdown, step[0]));
-        countdownTick = new Runnable() {
-            @Override
-            public void run() {
-                step[0]--;
-                if (step[0] > 0) {
-                    gameStatus.setText(getString(R.string.countdown, step[0]));
-                    main.postDelayed(this, 1000);
-                } else {
-                    countdownTick = null;
-                    startBroadcast(clip);
-                }
-            }
-        };
-        main.postDelayed(countdownTick, 1000);
-    }
-
-    private void startBroadcast(ClipLibrary.Clip clip) {
-        AudioManager am = (AudioManager) getSystemService(AUDIO_SERVICE);
-        int max = am.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-        am.setStreamVolume(AudioManager.STREAM_MUSIC, max, 0);
-        gameStatus.setText(R.string.broadcasting);
-        try {
-            MediaPlayer mp = new MediaPlayer();
-            broadcastPlayer = mp;
-            mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            mp.setDataSource(clip.file.getAbsolutePath());
-            mp.setVolume(1f, 1f);
-            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mp) {
-                    mp.release();
-                    broadcastPlayer = null;
-                    gameStatus.setText("");
-                }
-            });
-            mp.prepare();
-            mp.start();
-        } catch (Exception e) {
-            gameStatus.setText("Broadcast failed: " + e.getMessage());
-        }
-    }
-
     // ---------------------------------------------------------------- cloud presets
 
     private void showServerDialog() {
-        final EditText input = new EditText(this);
-        input.setHint("https://your-server.example");
-        input.setText(prefs.getString("server_url", ""));
-        input.setSingleLine(true);
+        final EditText urlInput = new EditText(this);
+        urlInput.setHint("https://your-server.example");
+        urlInput.setText(prefs.getString("server_url", ""));
+        urlInput.setSingleLine(true);
+        final EditText tokenInput = new EditText(this);
+        tokenInput.setHint(getString(R.string.api_token));
+        tokenInput.setText(prefs.getString("server_token", ""));
+        tokenInput.setSingleLine(true);
+        LinearLayout box = new LinearLayout(this);
+        box.setOrientation(LinearLayout.VERTICAL);
+        int pad = (int) (20 * getResources().getDisplayMetrics().density);
+        box.setPadding(pad, pad / 2, pad, 0);
+        box.addView(urlInput);
+        box.addView(tokenInput);
         new AlertDialog.Builder(this)
                 .setTitle(R.string.server_url)
-                .setView(input)
+                .setView(box)
                 .setPositiveButton("Load", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        final String url = input.getText().toString().trim();
-                        prefs.edit().putString("server_url", url).apply();
+                        final String url = urlInput.getText().toString().trim();
+                        final String token = tokenInput.getText().toString().trim();
+                        prefs.edit().putString("server_url", url).putString("server_token", token).apply();
                         if (url.isEmpty()) return;
                         studioStatus.setText("Contacting server...");
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
                                 try {
-                                    final List<PresetClient.CloudPreset> list = PresetClient.fetch(url);
+                                    final List<PresetClient.CloudPreset> list = PresetClient.fetch(url, token);
                                     main.post(new Runnable() {
                                         @Override
                                         public void run() {
@@ -612,8 +648,14 @@ public class MainActivity extends Activity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         PresetClient.CloudPreset p = list.get(which);
-                        customParams = p.params;
+                        VoiceEngine.Params pr = p.params;
+                        customShelves = new float[]{pr.lowShelfDb, pr.lowShelfHz, pr.highShelfDb, pr.highShelfHz};
                         customName = p.name;
+                        pitchBar.setProgress(Math.round(pr.pitch * 100) - 50);
+                        strengthBar.setProgress(Math.round(pr.strength * 100));
+                        gainBar.setProgress(Math.round(pr.gainDb) + 6);
+                        echoSwitch.setChecked(pr.echoMs > 0);
+                        updateSliderLabels();
                         studioStatus.setText("cloud preset active: " + p.name);
                     }
                 })
@@ -638,32 +680,15 @@ public class MainActivity extends Activity {
     protected void onPause() {
         super.onPause();
         stopLive();
-        stopPlayer();
+        player.stopNow();
+        BroadcastPlayer.cancel();
         if (recorder != null) {
             recorder.stop();
             recorder = null;
             main.removeCallbacks(timerTick);
-            recordBtn.setBackgroundResource(R.drawable.bg_record);
+            recordBtn.setBackgroundResource(R.drawable.bg_ring_record);
+            recordIcon.setImageTintList(ColorStateList.valueOf(getResources().getColor(R.color.cyan, null)));
             recordStatus.setText(R.string.rec_idle);
-        }
-        if (broadcastPlayer != null) {
-            broadcastPlayer.release();
-            broadcastPlayer = null;
-            gameStatus.setText("");
-        }
-    }
-
-    private abstract static class SimpleSeek implements SeekBar.OnSeekBarChangeListener {
-        @Override
-        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        }
-
-        @Override
-        public void onStartTrackingTouch(SeekBar seekBar) {
-        }
-
-        @Override
-        public void onStopTrackingTouch(SeekBar seekBar) {
         }
     }
 }

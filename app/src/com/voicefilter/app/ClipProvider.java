@@ -1,4 +1,4 @@
-package com.voicemorph.app;
+package com.voicefilter.app;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;

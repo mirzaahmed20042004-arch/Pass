@@ -3,77 +3,81 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>VoiceMorph - real male &amp; female voice changer for Android</title>
+<title>Voice Filter - male &amp; female voice changer with game HUD for Android</title>
 <style>
-  :root { --bg:#0A0E1A; --card:#151C2F; --line:#1B2440; --cyan:#22D3EE; --pink:#F472B6; --text:#E8ECF8; --dim:#9AA6C4; }
+  :root { --bg:#070B14; --card:#121A2C; --line:#243252; --cyan:#38BDF8; --violet:#8B5CF6; --pink:#F472B6; --text:#EDF1FB; --dim:#8E9AB8; }
   * { box-sizing: border-box; }
   body { margin:0; background:var(--bg); color:var(--text);
          font:16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
   .wrap { max-width: 960px; margin: 0 auto; padding: 24px; }
   header { text-align:center; padding: 40px 16px 8px; }
-  h1 { font-size: clamp(2rem, 6vw, 3.4rem); margin: 0 0 8px;
-       background: linear-gradient(90deg, var(--cyan), var(--pink));
+  h1 { font-size: clamp(2.2rem, 7vw, 3.8rem); margin: 0 0 8px; letter-spacing: .04em;
+       background: linear-gradient(90deg, var(--cyan), var(--violet), var(--pink));
        -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .tag { color: var(--dim); max-width: 640px; margin: 0 auto; }
-  .hero { width:100%; border-radius:18px; margin:28px 0; border:1px solid var(--line); }
+  .tag { color: var(--dim); max-width: 660px; margin: 0 auto; }
+  .hero { width:100%; border-radius:20px; margin:28px 0; border:1px solid var(--line); }
   .cta { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin: 18px 0 8px; }
-  a.btn { display:inline-block; padding: 14px 30px; border-radius: 999px; font-weight:700;
-          background: linear-gradient(90deg, var(--cyan), var(--pink)); color:#0A0E1A; text-decoration:none; }
-  a.btn.ghost { background: var(--line); color: var(--cyan); border:1px solid var(--cyan); }
+  a.btn { display:inline-block; padding: 15px 32px; border-radius: 999px; font-weight:700;
+          background: linear-gradient(90deg, var(--cyan), var(--violet), var(--pink)); color:#070B14; text-decoration:none; }
+  a.btn.ghost { background: #101828; color: var(--cyan); border:1px solid var(--violet); }
   .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:16px; margin: 28px 0; }
-  .card { background: var(--card); border:1px solid var(--line); border-radius:16px; padding:20px; }
+  .card { background: linear-gradient(180deg,#141C30,#0E1526); border:1px solid var(--line); border-radius:20px; padding:20px; }
   .card h3 { margin:0 0 8px; color: var(--cyan); }
   .card p { margin:0; color: var(--dim); font-size: 14.5px; }
   code { background: var(--line); padding: 2px 7px; border-radius: 6px; color: var(--pink); }
-  .note { border-left: 3px solid var(--pink); padding: 10px 16px; background: var(--card); border-radius: 0 12px 12px 0; color: var(--dim); font-size: 14.5px; }
+  .note { border-left: 3px solid var(--pink); padding: 12px 18px; background: var(--card); border-radius: 0 14px 14px 0; color: var(--dim); font-size: 14.5px; }
+  .note b { color: var(--text); }
   footer { color: var(--dim); text-align:center; padding: 28px 0 40px; font-size: 13px; }
   .server { font-size: 13px; color: var(--dim); text-align:center; margin-top: 6px; }
   .server b { color: var(--text); word-break: break-all; }
+  .pill { display:inline-block; padding:3px 12px; border-radius:999px; border:1px solid var(--violet); color:var(--violet); font-size:11px; letter-spacing:.14em; font-weight:700; }
 </style>
 </head>
 <body>
 <header>
-  <h1>VoiceMorph</h1>
-  <p class="tag">A real voice changer for Android with two built-in voices - <b>male</b> and <b>female</b> -
-  plus a live monitor and a game soundboard that works with PUBG Mobile, Free Fire, COD Mobile and friends.</p>
+  <span class="pill">V2.0 - GAME HUD</span>
+  <h1>Voice Filter</h1>
+  <p class="tag">Real male &amp; female voice changing with a floating game HUD, live monitor,
+  speaker broadcast for PUBG / Free Fire / COD Mobile, and a secured preset cloud.
+  No root. No injection. Free and unlimited.</p>
 </header>
 <div class="wrap">
-  <img class="hero" src="/hero.png" alt="VoiceMorph neon artwork">
+  <img class="hero" src="/hero.png" alt="Voice Filter neon artwork">
   <div class="cta">
-    <a class="btn" href="/download">Download APK (v1.0)</a>
+    <a class="btn" href="/download">Download APK (v2.0)</a>
     <a class="btn ghost" href="/api/presets">Preset API</a>
   </div>
-  <p class="server">In-app <b>Cloud presets</b> server URL (paste into Studio &rarr; Cloud presets):
+  <p class="server">In-app <b>Cloud presets</b> server URL (Studio &rarr; Cloud presets):
     <b><script>document.write(location.origin)</script></b></p>
 
   <div class="grid">
-    <div class="card"><h3>Studio</h3><p>Record a take, morph it to male or female with an adjustable strength
-      slider, preview instantly and save clips to your library. Real DSP: WSOLA pitch shifting plus
-      shelf-EQ timbre tilt - not a cartoon chipmunk filter.</p></div>
-    <div class="card"><h3>Live</h3><p>Real-time morphing with ~90 ms block latency: your mic is processed
-      chunk by chunk and played back as the other voice. Perfect for monitoring, prank calls to yourself
-      and speaker broadcast.</p></div>
-    <div class="card"><h3>Game mode</h3><p>A clip soundboard with a 3-second countdown and max-volume
-      speaker broadcast, so the microphone of the game you switched to picks up your morphed voice.</p></div>
-    <div class="card"><h3>Cloud presets</h3><p>This page is the backend: <code>GET /api/presets</code> and
-      <code>POST /api/presets</code> serve community voice recipes straight into the app.</p></div>
+    <div class="card"><h3>Studio</h3><p>Unlimited recording, neon waveform, male / female / original
+      voices with strength, pitch and mic-boost sliders, noise gate and echo toggles.
+      Real DSP: WSOLA pitch shifting + shelf-EQ timbre filtering.</p></div>
+    <div class="card"><h3>Live + HUD</h3><p>Real-time morphing (~90 ms blocks) and a floating HUD bubble
+      that stays on top of every game: <b style="color:var(--cyan)">blue = male</b>,
+      <b style="color:var(--pink)">pink = female</b>. Drag it, tap to monitor, long-press for the panel.</p></div>
+    <div class="card"><h3>Game broadcast</h3><p>3-second countdown then max-volume speaker output that the
+      game mic picks up - with <b>force-speaker routing</b> so it works even while headphones are plugged in.</p></div>
+    <div class="card"><h3>Secured backend</h3><p>Token-protected writes (<code>X-VoiceFilter-Token</code>),
+      per-IP rate limits, strict validation, security headers, HTTPS-ready.
+      <code>GET/POST /api/presets</code>, <code>/api/health</code>, <code>/download</code>.</p></div>
   </div>
 
   <div class="note">
-    <b>Honest note about "in-game" voice changing.</b> Android gives the microphone to exactly one app at a
-    time - the game in front - and Android has no virtual-microphone API. Without root, <i>no</i> app can
-    inject a changed voice into PUBG's voice chat in real time; apps claiming otherwise are fake or use the
-    speaker trick. VoiceMorph does the speaker trick properly: record &amp; morph in Studio, join voice chat,
-    then Broadcast the clip at max volume - the game mic hears your new voice. On rooted devices a system-level
-    audio hook would be required, which also risks game bans, so we deliberately do not do that.
+    <b>Honest note about in-game voice changing.</b> Android gives the microphone to exactly one app at a
+    time - the game in front - and has no virtual-microphone API, so without root <i>no</i> app can inject
+    audio into a game; Voice Filter never injects anything. It broadcasts your filtered clip out loud and the
+    game mic hears it (force-speaker makes this work with headphones too). The HUD overlay keeps controls on
+    top of your game, and live monitoring runs whenever Voice Filter is the foreground app.
   </div>
 
   <div class="card" style="margin-top:16px">
     <h3>Install</h3>
-    <p>Download the APK, allow "install unknown apps" for your browser or file manager, tap the file, done.
-    Android 7.0+ (API 24+), no account, no ads, ~250 KB.</p>
+    <p>Download the APK, allow "install unknown apps", tap the file, done. Android 7.0+ (API 24).
+    For the HUD, grant "display over other apps" when prompted. ~140 KB, no ads, no account.</p>
   </div>
 </div>
-<footer>VoiceMorph 1.0 - built from source with aapt2, javac, D8 and a hand-rolled APK v2 signer.</footer>
+<footer>Voice Filter 2.0 - built from source with aapt2, javac, D8 and a hand-rolled APK v2 signer.</footer>
 </body>
 </html>

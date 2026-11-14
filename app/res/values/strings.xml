@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">VoiceMorph</string>
+    <string name="app_name">Voice Filter</string>
+    <string name="tagline">morph - filter - broadcast</string>
 
     <string name="tab_studio">Studio</string>
     <string name="tab_live">Live</string>
@@ -11,6 +12,10 @@
     <string name="mode_female">Female</string>
 
     <string name="strength">Effect strength</string>
+    <string name="pitch">Pitch</string>
+    <string name="gain">Mic boost</string>
+    <string name="gate">Noise gate</string>
+    <string name="echo">Echo</string>
     <string name="record">Record</string>
     <string name="stop">Stop</string>
     <string name="preview">Preview</string>
@@ -20,28 +25,48 @@
     <string name="broadcast">Broadcast</string>
     <string name="cloud_presets">Cloud presets</string>
     <string name="server_url">Server URL</string>
+    <string name="api_token">API token (optional)</string>
 
-    <string name="studio_hint">Hold nothing back - tap Record, speak for a few seconds, then pick Male or Female and preview the result.</string>
-    <string name="rec_idle">Tap the mic to record</string>
-    <string name="rec_running">Recording&#8230; tap to stop</string>
-    <string name="processing">Processing voice&#8230;</string>
+    <string name="capture">Capture</string>
+    <string name="voice_filter">Voice filter</string>
+    <string name="studio_hint">Tap the ring, speak as long as you like - recording is unlimited - then shape your voice and preview it.</string>
+    <string name="rec_idle">Tap the ring to record</string>
+    <string name="rec_running">Recording - tap to stop</string>
+    <string name="processing">Filtering voice&#8230;</string>
     <string name="saved">Saved to library</string>
     <string name="nothing_recorded">Record something first</string>
 
-    <string name="live_title">Live voice changer</string>
-    <string name="live_desc">Your microphone is morphed in real time and played out of this device. Use headphones to avoid feedback, or let the speaker broadcast your changed voice to a nearby mic.</string>
+    <string name="live_title">Live voice filter</string>
+    <string name="live_desc">Your microphone is morphed in real time and played out of this device - speaker or headphones, the same app handles both automatically.</string>
     <string name="live_start">Start live</string>
     <string name="live_stop">Stop live</string>
-    <string name="live_note">Android gives the microphone to one app at a time. Live morphing therefore works while VoiceMorph is the app in front of you - background apps receive silence while you are here.</string>
+    <string name="live_note">Android hands the microphone to one app at a time. Live morphing runs while Voice Filter is in front; the floating HUD keeps controls and broadcast available on top of your game.</string>
+
+    <string name="hud_title">Game HUD overlay</string>
+    <string name="hud_desc">A tiny floating bubble that stays on top of PUBG, Free Fire, COD Mobile and every other app. Blue = male voice, pink = female voice. Drag it anywhere, tap to toggle live monitor, long-press for the quick panel.</string>
+    <string name="hud_enable">Enable floating HUD</string>
+    <string name="hud_disable">Disable HUD</string>
+    <string name="hud_monitor_on">Monitor: ON</string>
+    <string name="hud_monitor_off">Monitor: off</string>
+    <string name="hud_broadcast">Broadcast last clip</string>
+    <string name="hud_hide">hide panel</string>
+    <string name="hud_need_perm">Allow "display over other apps" for Voice Filter</string>
+    <string name="hud_on">HUD on</string>
+    <string name="hud_off">HUD off</string>
+    <string name="hud_channel">Voice Filter HUD</string>
+    <string name="hud_notif">HUD active - tap to open Voice Filter</string>
 
     <string name="game_title">Game mode - speaker broadcast</string>
-    <string name="game_explain">Android hands the microphone exclusively to the game that is on screen (PUBG, Free Fire, COD Mobile&#8230;), and Android has no virtual-microphone API, so no app can inject a changed voice into a game in real time without root. The method that genuinely works everywhere is acoustic broadcast: VoiceMorph plays your morphed clip out loud at max volume and the game microphone picks it up.</string>
-    <string name="game_steps">1. Record and morph your voice in Studio.\n2. Join voice chat in your game.\n3. Press Broadcast - a 3 second countdown gives you time to switch back to the game, then the clip plays at maximum volume.</string>
+    <string name="game_explain">Android gives the microphone exclusively to the game on screen and has no virtual-mic API, so without root no app can inject audio into a game - Voice Filter never injects anything. Instead it broadcasts your filtered clip out loud at max volume and the game microphone picks it up. Clean, safe, ban-proof.</string>
+    <string name="game_steps">1. Record and filter your line in Studio.\n2. Join voice chat in your game.\n3. Press Broadcast (here or on the HUD) - countdown, then max volume straight into the game mic.</string>
+    <string name="force_speaker">Force speaker (bypass headphones)</string>
+    <string name="force_speaker_sub">Routes broadcast to the loudspeaker even when a headset is plugged in, so teammates always hear you.</string>
     <string name="game_empty">No clips yet. Record and save one in the Studio tab first.</string>
-    <string name="broadcasting">Broadcasting&#8230; switch to your game!</string>
+    <string name="broadcasting">Broadcasting - switch to your game!</string>
     <string name="countdown">Get ready: %1$d</string>
 
-    <string name="need_mic">VoiceMorph needs microphone access to change your voice.</string>
+    <string name="need_mic">Voice Filter needs microphone access to change your voice.</string>
     <string name="presets_loaded">Cloud presets loaded</string>
     <string name="presets_failed">Could not reach server</string>
+    <string name="security_note">No root, no injection, no hidden permissions: microphone, overlay and network only. Clips never leave your device unless you share them.</string>
 </resources>

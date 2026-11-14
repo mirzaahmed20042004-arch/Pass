@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="window_bg">#0A0E1A</color>
-    <color name="card_bg">#151C2F</color>
-    <color name="card_bg2">#1B2440</color>
-    <color name="primary">#22D3EE</color>
-    <color name="primary_dark">#0A0E1A</color>
+    <color name="window_bg">#070B14</color>
+    <color name="card_bg">#121A2C</color>
+    <color name="card_bg2">#1A2440</color>
+    <color name="stroke">#243252</color>
+    <color name="blue">#3B82F6</color>
+    <color name="cyan">#38BDF8</color>
+    <color name="violet">#8B5CF6</color>
+    <color name="pink">#F472B6</color>
+    <color name="primary">#38BDF8</color>
+    <color name="primary_dark">#070B14</color>
     <color name="accent">#F472B6</color>
-    <color name="text_primary">#E8ECF8</color>
-    <color name="text_dim">#9AA6C4</color>
-    <color name="danger">#EF4444</color>
+    <color name="text_primary">#EDF1FB</color>
+    <color name="text_dim">#8E9AB8</color>
+    <color name="danger">#F43F5E</color>
     <color name="success">#34D399</color>
-    <color name="tab_idle">#8A93AD</color>
+    <color name="tab_idle">#5D6A8C</color>
 </resources>

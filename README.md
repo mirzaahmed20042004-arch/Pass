@@ -1,114 +1,92 @@
-# VoiceMorph — real male & female voice changer for Android (+ game soundboard)
+# Voice Filter — male & female voice changer with game HUD for Android
 
-A full-stack Android voice changer built **from source with no Android Studio and no
-Gradle**: `aapt2` → `javac` → `D8` → hand-rolled zip packaging → `jarsigner` (v1) →
-custom zipalign → custom **APK Signature Scheme v2** signer (verified with
-`apksigtool`). The signed APK lives in [`apk/VoiceMorph-v1.0.apk`](apk/VoiceMorph-v1.0.apk).
+Full-stack Android app built **from source with no Android Studio and no Gradle**:
+`aapt2` → `javac` → `D8` → hand-rolled zip packaging → `jarsigner` (v1) → custom
+zipalign → custom **APK Signature Scheme v2** signer (verified with `apksigtool`).
+Signed release: [`apk/VoiceFilter-v2.0.apk`](apk/VoiceFilter-v2.0.apk).
 
-* Package: `com.voicemorph.app` · minSdk 24 (Android 7.0) · targetSdk 29 · ~130 KB
-* Zero third-party runtime libraries — pure Android framework + pure-Java DSP.
+* Package `com.voicefilter.app` · minSdk 24 (Android 7.0) · targetSdk 29 · ~166 KB
+* Zero third-party runtime libraries — pure Android framework + pure-Java DSP
+* **No root, no injection, no hidden behaviour** — microphone, overlay and network only
 
-## Features
+## v2.0 features
 
-| Tab | What it does |
+| Area | What it does |
 |---|---|
-| **Studio** | Record a take (44.1 kHz PCM), morph it to **Male** or **Female** (or keep Original), adjustable effect strength, instant preview, save to library, share as WAV. Optional **cloud presets** fetched from the backend (`GET /api/presets`). |
-| **Live** | Real-time voice changer: mic → WSOLA pitch shift + shelf-EQ → low-latency `AudioTrack` monitor (~90 ms blocks). |
-| **Game** | Clip soundboard for PUBG Mobile / Free Fire / COD Mobile: 3-second countdown, then the morphed clip is broadcast through the speaker at max volume so the game microphone picks it up. |
+| **Studio** | Unlimited recording, neon waveform + level meter, **Male / Female / Original** voices, strength / pitch / mic-boost sliders, **noise gate** and **echo** toggles, instant preview, save, share WAV, cloud presets. |
+| **Live** | Real-time morphing (~90 ms blocks): mic → WSOLA pitch shift + shelf-EQ → low-latency monitor. Works on speaker *and* headphones automatically. |
+| **Game HUD** | Floating neon bubble on top of PUBG / Free Fire / COD Mobile and every app (`SYSTEM_ALERT_WINDOW` + foreground service). **Blue = male, pink = female.** Drag anywhere, tap = live monitor on/off, long-press = quick panel (voice switch, monitor, broadcast last clip). |
+| **Game broadcast** | Clip soundboard with 3-second countdown and max-volume speaker output the game mic picks up. **Force-speaker routing** bypasses headset routing so broadcasts work even with headphones plugged in. |
+| **Backend** | FastAPI landing page + secured preset API (token auth, per-IP rate limits, strict validation, security headers, HTTPS-ready). |
 
-### The DSP (`app/src/com/voicemorph/app/VoiceEngine.java`)
+### The DSP (`app/src/com/voicefilter/app/VoiceEngine.java`)
 
-1. **Linear resample** by the pitch factor (bends pitch *and* formants).
-2. **WSOLA** (waveform-similar overlap-add, 2048-sample Hann windows, ±128-sample
-   similarity search) restores the original duration while keeping the new pitch.
-3. **RBJ shelving EQ** tilts the timbre: male = +4.5 dB low shelf @180 Hz / −4 dB high
-   shelf @3.5 kHz, female = the mirror image.
-4. Peak normalisation to −1 dBFS.
-
-Unit-tested on the desktop JVM (`tools/run_dsp_test.sh`): a 160 Hz harmonic voice-like
-signal lands at 122 Hz for male (target 124.8) and 207 Hz for female (target 208),
-duration preserved within 0.1 %, ~20–60× faster than real time.
+noise gate → pre-gain → linear resample (pitch bend) → **WSOLA** time-scale (restore
+duration, keep new pitch) → RBJ shelving EQ (male/female timbre) → feedback echo →
+peak normalise. Desktop-JVM unit test (`tools/run_dsp_test.sh`): 160 Hz test voice →
+122 Hz male / 207 Hz female (targets 124.8 / 208), duration preserved, 20–60× real time.
 
 ## The truth about "voice changers that work in game"
 
-Android grants the microphone to **one app at a time** — the game in the foreground —
-and Android has **no virtual-microphone API**. Without root, *no* app can inject a
-changed voice into PUBG's voice chat in real time; store apps claiming that are fake or
-use the speaker trick. VoiceMorph does the speaker trick properly and tells you so
-in-app:
+Android grants the microphone to **one app at a time** — the game in front — and has
+**no virtual-microphone API**. Without root, *no* app can inject audio into PUBG's voice
+chat; apps claiming otherwise are fake. Voice Filter never injects anything. Instead:
 
-1. Record + morph your line in **Studio** and save it.
-2. Join voice chat in your game.
-3. Hit **Broadcast** — countdown, max volume, the game mic hears your new voice.
+1. the **HUD overlay** keeps controls on top of the game (this is what "runs in
+   background on PUBG" honestly means on non-rooted Android);
+2. **broadcast** plays your filtered clip at max volume into the game mic — with
+   force-speaker routing this works with or without headphones;
+3. **live monitoring** runs whenever Voice Filter is the foreground app.
 
-**Live** mode morphs in real time while VoiceMorph itself is the foreground app (Android
-silences background capture as soon as a game grabs the mic). Root-level audio hooks are
-deliberately *not* used: they break game anti-cheat rules and can get accounts banned.
+Root-level audio hooks are deliberately avoided: they trip anti-cheat and get bans.
 
-## Backend (full stack)
-
-`backend/` is a FastAPI service: landing page with the APK download button, and the
-preset API the app consumes.
+## Backend (secured)
 
 ```bash
 pip install -r backend/requirements.txt
-uvicorn main:app --host 0.0.0.0 --port 8000   # from backend/
+VOICEFILTER_TOKEN=s3cret uvicorn main:app --host 0.0.0.0 --port 8000   # from backend/
 ```
 
-* `GET /` – landing page · `GET /download` – the APK
-* `GET /api/presets`, `POST /api/presets` – community voice recipes
-  (`{name, author, pitch, strength, low_db, low_hz, high_db, high_hz}`)
-
-In the app: **Studio → Cloud presets**, paste this server's URL.
+* `GET /` landing · `GET /download` APK · `GET /api/health` · `GET /api/version`
+* `GET /api/presets` public · `POST /api/presets` requires `X-VoiceFilter-Token`
+  when `VOICEFILTER_TOKEN` is set (otherwise open but rate-limited to 5 writes/min/IP)
+* global 120 req/min/IP sliding window, pydantic + regex sanitising, bounded store,
+  `nosniff` / `DENY` / `no-referrer` / CSP headers on every response
+* in-app: **Studio → Cloud presets** — paste the server URL and (optionally) the token
 
 ## Building the APK yourself
 
-The toolchain is fetched from GitHub/PyPI mirrors only (no `dl.google.com` needed):
+Toolchain (GitHub/PyPI mirrors only, no `dl.google.com`):
 
 | Piece | Source |
 |---|---|
-| JDK 17 (`javac`, `jar`, `jarsigner`, `keytool`) | `msft-mirror-aosp/platform.prebuilts.jdk.jdk17` (git sparse clone) |
-| `android.jar` (API 34) | `msft-mirror-aosp/platform.prebuilts.sdk` (`34/public/android.jar`) |
-| D8/R8 dexer | `LineageOS/android_prebuilts_r8` (`r8-master.jar`) |
-| `aapt2` | npm package `aaptjs3` (prebuilt linux binary) |
-| v2 verification | PyPI `apksigtool` |
-
-Layout (put them under `$TOOLS_DIR`, default `/home/user/tools` or `../tools`):
-
-```
-tools/jdk17/linux-x86/   tools/android.jar   tools/r8-master.jar
-tools/aapt2              tools/venv/         (python venv: cryptography, apksigtool…)
-```
-
-Then:
+| JDK 17 | `msft-mirror-aosp/platform.prebuilts.jdk.jdk17` (git sparse clone) |
+| `android.jar` API 34 | `msft-mirror-aosp/platform.prebuilts.sdk` |
+| D8/R8 | `LineageOS/android_prebuilts_r8` (`r8-master.jar`) |
+| `aapt2` | npm `aaptjs3` |
+| v2 verify | PyPI `apksigtool` |
 
 ```bash
 bash tools/build_apk.sh        # compile → dex → pack → v1 sign → align → v2 sign
 bash tools/run_dsp_test.sh     # desktop DSP unit test
 ```
 
-Signing identity: `keys/` (RSA-2048, self-signed "VoiceMorph Demo Signer", PKCS#8 +
-PKCS#12). Replace with your own keystore for production releases.
+Signing identity in `keys/` (RSA-2048 self-signed demo). Verification performed on the
+shipped APK: `apksigtool verify` → v2 verified · `jarsigner -verify` → jar verified ·
+`aapt2 dump badging` + androguard parse manifest, resources and dex cleanly.
 
-### Verification performed on the shipped APK
-
-* `apksigtool verify` → **v2 verified**
-* `jarsigner -verify` → **jar verified** (v1)
-* `aapt2 dump badging` → package/permissions/labels as expected
-* `androguard` → manifest, resources and all 60 dex classes parse cleanly
-
-## Repository layout
+## Layout
 
 ```
-app/            Android app: manifest, resources, Java sources
-backend/        FastAPI landing page + preset API
-tools/          build scripts (pack/align/v2-sign/key-gen/icons) + DSP unit test
+app/            manifest, resources, Java sources (com.voicefilter.app)
+backend/        FastAPI landing + secured preset API
+tools/          build scripts (pack/align/v2-sign/key-gen/icons) + DSP test
 keys/           demo signing identity
 apk/            signed release artifact
-assets_src/     generated source artwork (icon, hero)
+assets_src/     generated source artwork (HD logo, hero)
 ```
 
 ## Disclaimer
 
-Use responsibly: broadcasting a changed voice is fine, but impersonating a real person
-or evading a game ban is not. VoiceMorph never touches game files or processes.
+Broadcasting a filtered voice is fine; impersonating a real person or evading a game
+ban is not. Voice Filter never touches game files or processes.
