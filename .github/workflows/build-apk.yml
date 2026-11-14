@@ -39,20 +39,28 @@ jobs:
           gradle-version: "8.9"
 
       - name: Restore or create release keystore
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mkdir -p keystore
-          ENC="${{ secrets.SG_KEYSTORE_B64 }}"
-          if [ -n "$ENC" ]; then
-            echo "$ENC" | base64 -d > keystore/safeguard-release.jks
-            echo "restored keystore from secret"
-          elif [ -f keystore/safeguard-release.jks ]; then
-            echo "using committed keystore"
+          # A stable signing key is essential: with a new key every run, Android
+          # refuses the update ("App not installed") and users stay on an old build.
+          set +e
+          gh api "repos/$GITHUB_REPOSITORY/contents/keystore/safeguard-release.jks?ref=$GITHUB_REF_NAME" --jq .content 2>/dev/null | tr -d '\n' | base64 -d > keystore/safeguard-release.jks
+          set -e
+          if [ -s keystore/safeguard-release.jks ]; then
+            echo "restored committed keystore"
           else
             keytool -genkeypair -v -keystore keystore/safeguard-release.jks \
               -alias safeguard -keyalg RSA -keysize 2048 -validity 10950 \
               -storepass safeguard -keypass safeguard \
               -dname "CN=Safe Guard, OU=SignalDisruptor Pro, O=SafeGuard, L=Karachi, C=PK"
-            echo "generated new keystore"
+            set +e
+            B64=$(base64 -w 0 keystore/safeguard-release.jks)
+            gh api -X PUT "repos/$GITHUB_REPOSITORY/contents/keystore/safeguard-release.jks" \
+              -f message="ci: persist signing keystore [skip ci]" \
+              -f content="$B64" -f branch="$GITHUB_REF_NAME" > /dev/null && echo "keystore persisted"
+            set -e
           fi
 
       - name: Build debug APK
@@ -90,8 +98,8 @@ jobs:
       - name: Collect artifacts
         run: |
           mkdir -p artifacts
-          cp app/build/outputs/apk/debug/app-debug.apk artifacts/SafeGuard-v1.2.0-debug.apk
-          cp app/build/outputs/apk/release/app-release.apk artifacts/SafeGuard-v1.2.0-release.apk
+          cp app/build/outputs/apk/debug/app-debug.apk artifacts/SafeGuard-v1.2.1-debug.apk
+          cp app/build/outputs/apk/release/app-release.apk artifacts/SafeGuard-v1.2.1-release.apk
           ls -lh artifacts
 
       - name: Upload build artifacts
@@ -105,12 +113,12 @@ jobs:
         if: github.ref == 'refs/heads/arena/481d206d-pass' || github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.2.0
-          name: Safe Guard v1.2.0 (SignalDisruptor Pro)
+          tag_name: v1.2.1
+          name: Safe Guard v1.2.1 (SignalDisruptor Pro)
           body: |
             **Safe Guard** — RF diagnostics & resilience testing build.
 
-            Install `SafeGuard-v1.2.0-release.apk` (signed) or the debug APK.
+            Install `SafeGuard-v1.2.1-release.apk` (signed) or the debug APK.
             Requires Android 8.0+ (API 26).
           files: artifacts/*.apk
           fail_on_unmatched_files: false
@@ -148,7 +156,7 @@ jobs:
           profile: pixel_5
           disable-animations: true
           script: |
-            adb install -r artifacts/SafeGuard-v1.2.0-release.apk
+            adb install -r artifacts/SafeGuard-v1.2.1-release.apk
             adb shell pm grant com.safeguard.app android.permission.ACCESS_FINE_LOCATION || true
             adb shell pm grant com.safeguard.app android.permission.POST_NOTIFICATIONS || true
             adb shell am start -n com.safeguard.app/.MainActivity
@@ -157,7 +165,7 @@ jobs:
             adb shell am start -n com.safeguard.app/.ui.RadioControlActivity || true
             sleep 5
             adb shell screencap -p /sdcard/controls.png
-            adb pull /sdcard/controls.png screenshot-radio-controls.png || true
+            adb pull /sdcard/controls.png "${GITHUB_WORKSPACE:-.}/screenshot-radio-controls.png" || true
             adb shell am start -n com.safeguard.app/.MainActivity
             sleep 4
             adb logcat -d | grep -iE "AndroidRuntime|FATAL|safeguard|VpnService|ShieldVpn" | tail -n 150 > ci-crashlog.txt || true
@@ -167,7 +175,7 @@ jobs:
             adb shell dumpsys activity activities | grep -i safeguard | head -5 >> ci-crashlog.txt || true
             cd "$GITHUB_WORKSPACE" 2>/dev/null || true
             adb shell screencap -p /sdcard/shot.png
-            adb pull /sdcard/shot.png screenshot-dashboard.png
+            adb pull /sdcard/shot.png "${GITHUB_WORKSPACE:-.}/screenshot-dashboard.png"
             adb shell dumpsys activity activities | grep -i "com.safeguard.app" | head -5
             adb logcat -d -s AndroidRuntime:E | tail -20
             adb shell pidof com.safeguard.app
