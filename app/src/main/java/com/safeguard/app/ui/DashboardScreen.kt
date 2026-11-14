@@ -73,7 +73,8 @@ fun DashboardScreen(
     onShield: (ShieldMode) -> Unit,
     onOpenRadioControls: () -> Unit,
     onActivate: () -> Unit,
-    onEmergencyRestore: () -> Unit
+    onEmergencyRestore: () -> Unit,
+    onOpenTools: () -> Unit
 ) {
     val jam = ui.jam
     val local = ui.local
@@ -100,6 +101,8 @@ fun DashboardScreen(
     ) {
         Spacer(Modifier.height(22.dp))
         Header(jam)
+        Spacer(Modifier.height(12.dp))
+        ToolsEntry(onOpenTools)
         Spacer(Modifier.height(18.dp))
 
         StatusStrip(jam, accent, local.privilege)
@@ -171,6 +174,32 @@ fun DashboardScreen(
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(Modifier.height(26.dp))
+    }
+}
+
+@Composable
+private fun ToolsEntry(onOpenTools: () -> Unit) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(14.dp))
+            .background(SgPalette.Card)
+            .border(1.dp, SgPalette.Teal.copy(alpha = 0.4f), RoundedCornerShape(14.dp))
+            .clickable(onClick = onOpenTools)
+            .padding(horizontal = 13.dp, vertical = 11.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text("🧰", fontSize = 15.sp)
+        Spacer(Modifier.width(10.dp))
+        Column(Modifier.weight(1f)) {
+            Text("TOOLS", color = SgPalette.Teal, fontSize = 11.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.2.sp)
+            Text(
+                "Who is on my Wi-Fi · Router access · Pause Wi-Fi · Bedtime · Channel checker",
+                color = SgPalette.TextSecondary,
+                fontSize = 9.sp
+            )
+        }
+        Text("›", color = SgPalette.Teal, fontSize = 17.sp)
     }
 }
 

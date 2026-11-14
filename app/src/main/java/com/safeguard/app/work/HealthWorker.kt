@@ -32,6 +32,21 @@ class HealthWorker(context: Context, params: WorkerParameters) : CoroutineWorker
             store.sessionActive = false
         }
 
+        // Bedtime rule: raise / drop the non-root data shield automatically.
+        runCatching {
+            val schedule = com.safeguard.app.core.ScheduleController(applicationContext)
+            val shieldUp = com.safeguard.app.service.ShieldGateway.isActive()
+            when {
+                schedule.shouldShieldNow() && !shieldUp ->
+                    com.safeguard.app.service.ShieldGateway.start(
+                        applicationContext,
+                        com.safeguard.app.core.ShieldMode.FULL
+                    )
+                !schedule.shouldShieldNow() && shieldUp && store.shieldEnabled.not() ->
+                    com.safeguard.app.service.ShieldGateway.stop(applicationContext)
+            }
+        }
+
         val online = monitor.isOnline()
         store.lastHeartbeat = if (online) System.currentTimeMillis() else store.lastHeartbeat
         return Result.success()

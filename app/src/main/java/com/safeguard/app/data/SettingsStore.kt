@@ -46,6 +46,18 @@ class SettingsStore(context: Context) {
         get() = prefs.getBoolean(KEY_SHIELD, false)
         set(value) = prefs.edit().putBoolean(KEY_SHIELD, value).apply()
 
+    var bedtimeEnabled: Boolean
+        get() = prefs.getBoolean(KEY_BEDTIME_ON, false)
+        set(value) = prefs.edit().putBoolean(KEY_BEDTIME_ON, value).apply()
+
+    var bedtimeStart: Int
+        get() = prefs.getInt(KEY_BEDTIME_START, 22)
+        set(value) = prefs.edit().putInt(KEY_BEDTIME_START, value).apply()
+
+    var bedtimeEnd: Int
+        get() = prefs.getInt(KEY_BEDTIME_END, 7)
+        set(value) = prefs.edit().putInt(KEY_BEDTIME_END, value).apply()
+
     var lastHeartbeat: Long
         get() = prefs.getLong(KEY_HEARTBEAT, 0L)
         set(value) = prefs.edit().putLong(KEY_HEARTBEAT, value).apply()
@@ -61,5 +73,8 @@ class SettingsStore(context: Context) {
         const val KEY_RELEASES = "release_count"
         const val KEY_HEARTBEAT = "heartbeat"
         const val KEY_SHIELD = "shield_enabled"
+        const val KEY_BEDTIME_ON = "bedtime_on"
+        const val KEY_BEDTIME_START = "bedtime_start"
+        const val KEY_BEDTIME_END = "bedtime_end"
     }
 }

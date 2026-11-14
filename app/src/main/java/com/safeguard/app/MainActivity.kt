@@ -12,6 +12,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -52,6 +55,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             SafeGuardTheme {
                 val ui by viewModel.ui.collectAsStateWithLifecycle()
+                val tools by viewModel.tools.collectAsStateWithLifecycle()
+                var showTools by rememberSaveable { mutableStateOf(false) }
 
                 LaunchedEffect(Unit) {
                     val missing = PermissionPlan.required(Build.VERSION.SDK_INT).filter {
@@ -62,6 +67,20 @@ class MainActivity : ComponentActivity() {
                 }
 
                 Surface(modifier = Modifier.fillMaxSize(), color = SgPalette.Deep) {
+                    if (showTools) {
+                        com.safeguard.app.ui.ToolsScreen(
+                            ui = tools,
+                            onBack = { showTools = false },
+                            onScan = { viewModel.scanNetwork() },
+                            onAnalyseWifi = { viewModel.analyseWifi() },
+                            onOpenRouter = { url -> runCatching { startActivity(viewModel.routerIntent(url)) } },
+                            onBedtimeToggle = { enabled -> viewModel.setBedtime(enabled) },
+                            onBedtimeHours = { start, end -> viewModel.setBedtime(tools.bedtime.enabled, start, end) },
+                            onOpenUsageAccess = { runCatching { startActivity(viewModel.usageAccessIntent()) } },
+                            onOpenWifiPanel = { runCatching { startActivity(viewModel.wifiSettingsIntent()) } },
+                            onDismissMessage = { viewModel.dismissToolsMessage() }
+                        )
+                    } else {
                     DashboardScreen(
                         ui = ui,
                         onEngage = { mode -> viewModel.engage(mode) },
@@ -91,8 +110,13 @@ class MainActivity : ComponentActivity() {
                             viewModel.engage(com.safeguard.app.core.JamMode.FULL_SPECTRUM)
                             requestShield(com.safeguard.app.core.ShieldMode.FULL)
                         },
-                        onEmergencyRestore = { viewModel.disengage() }
+                        onEmergencyRestore = { viewModel.disengage() },
+                        onOpenTools = {
+                            viewModel.refreshNetworkInfo()
+                            showTools = true
+                        }
                     )
+                    }
                 }
             }
         }

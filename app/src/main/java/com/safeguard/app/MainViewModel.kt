@@ -9,10 +9,14 @@ import com.safeguard.app.core.EngineMode
 import com.safeguard.app.core.JamMode
 import com.safeguard.app.core.JamState
 import com.safeguard.app.core.NetworkMonitor
+import com.safeguard.app.core.NetworkScanner
+import com.safeguard.app.core.ScheduleController
+import com.safeguard.app.core.WifiAnalyzer
 import com.safeguard.app.core.PermissionPlan
 import com.safeguard.app.core.Privilege
 import com.safeguard.app.core.ShieldMode
 import com.safeguard.app.service.ShieldGateway
+import com.safeguard.app.ui.ToolsUi
 import com.safeguard.app.core.RadioController
 import com.safeguard.app.core.ReleaseHandler
 import com.safeguard.app.data.CloudSpectrumClient
@@ -43,6 +47,81 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     private val radio = RadioController(app)
     private val monitor = NetworkMonitor(app)
     private val spectrum = CloudSpectrumClient()
+    private val scanner = NetworkScanner(app)
+    private val wifiAnalyzer = WifiAnalyzer(app)
+    private val schedule = ScheduleController(app)
+
+    private val _tools = MutableStateFlow(
+        ToolsUi(
+            network = scanner.describeNetwork(),
+            bedtime = schedule.bedtime()
+        )
+    )
+    val tools: StateFlow<ToolsUi> = _tools
+
+    fun refreshNetworkInfo() {
+        _tools.value = _tools.value.copy(network = scanner.describeNetwork())
+    }
+
+    fun scanNetwork() {
+        if (_tools.value.scanning) return
+        _tools.value = _tools.value.copy(scanning = true, scanError = null)
+        viewModelScope.launch {
+            runCatching {
+                val net = withContext(Dispatchers.IO) { scanner.describeNetwork() }
+                if (net.subnet == null) {
+                    _tools.value = _tools.value.copy(
+                        scanning = false,
+                        network = net,
+                        scanError = "Join a Wi-Fi network first — mobile data has no local subnet to scan."
+                    )
+                    return@launch
+                }
+                val devices = withContext(Dispatchers.IO) { scanner.scan() }
+                _tools.value = _tools.value.copy(
+                    scanning = false,
+                    network = net,
+                    devices = devices,
+                    scanError = if (devices.size <= 1) {
+                        "Only this phone answered. Many routers hide clients (AP isolation) — the list in your router page is authoritative."
+                    } else null
+                )
+            }.onFailure {
+                _tools.value = _tools.value.copy(scanning = false, scanError = "Scan failed: ${it.message}")
+            }
+        }
+    }
+
+    fun analyseWifi() {
+        if (_tools.value.analysing) return
+        _tools.value = _tools.value.copy(analysing = true)
+        viewModelScope.launch {
+            val report = wifiAnalyzer.analyse()
+            _tools.value = _tools.value.copy(analysing = false, wifi = report)
+        }
+    }
+
+    fun setBedtime(enabled: Boolean, start: Int = schedule.bedtime().startHour, end: Int = schedule.bedtime().endHour) {
+        schedule.setBedtime(enabled, start, end)
+        _tools.value = _tools.value.copy(bedtime = schedule.bedtime())
+        // Apply immediately instead of waiting for the 15-minute worker.
+        if (enabled && schedule.shouldShieldNow()) {
+            ShieldGateway.start(getApplication(), ShieldMode.FULL)
+            local.value = local.value.copy(shield = ShieldMode.FULL)
+        } else if (!enabled) {
+            _tools.value = _tools.value.copy(bedtime = schedule.bedtime())
+        }
+    }
+
+    fun dismissToolsMessage() {
+        _tools.value = _tools.value.copy(message = null)
+    }
+
+    fun routerIntent(url: String): Intent = com.safeguard.app.ui.ToolsIntents.browser(url)
+
+    fun usageAccessIntent(): Intent = com.safeguard.app.ui.ToolsIntents.usageAccess(getApplication<Application>().packageName)
+
+    fun wifiSettingsIntent(): Intent = com.safeguard.app.ui.ToolsIntents.wifiSettings()
 
     private val local = MutableStateFlow(
         LocalUi(
