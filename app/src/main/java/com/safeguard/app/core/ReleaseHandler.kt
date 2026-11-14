@@ -58,7 +58,7 @@ class ReleaseHandler(
         val t0 = System.currentTimeMillis()
 
         // 1. Kill every loop and socket owner before touching hardware.
-        runCatching { engine?.stopAll() }
+        runCatching { engine?.stopAllAndJoin() }
             .onSuccess { steps += "Coroutines + sockets cancelled" }
             .onFailure { steps += "Coroutine cancel failed: ${it.javaClass.simpleName}" }
 

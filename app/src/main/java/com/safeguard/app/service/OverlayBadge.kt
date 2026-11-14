@@ -37,7 +37,7 @@ class OverlayBadge(private val context: Context) {
         val density = context.resources.displayMetrics.density
 
         val dot = TextView(context).apply {
-            text = "●"
+            this.text = "●"
             setTextColor(Color.parseColor("#FFFF3B5C"))
             textSize = 11f
         }

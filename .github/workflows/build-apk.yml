@@ -61,13 +61,17 @@ jobs:
 
       - name: Publish build log on failure
         if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git config user.email "[email protected]"
-          git config user.name "CI"
-          grep -vE "^(Download|> Task|Checking the license)" build.log | tail -n 220 > ci-build-error.log || true
-          git add -f ci-build-error.log
-          git commit -m "ci: build diagnostics [skip ci]" || true
-          git push || true
+          BODY=$(grep -vE "^(Download|> Task|Checking the license)" build.log | tail -n 250)
+          printf '%s\n' "$BODY" > /tmp/body.md
+          ISSUE=$(gh issue list --repo "$GITHUB_REPOSITORY" --search "in:title CI build log" --json number --jq '.[0].number' 2>/dev/null)
+          if [ -n "$ISSUE" ]; then
+            gh issue comment "$ISSUE" --repo "$GITHUB_REPOSITORY" --body-file /tmp/body.md
+          else
+            gh issue create --repo "$GITHUB_REPOSITORY" --title "CI build log" --body-file /tmp/body.md
+          fi
 
       - name: Collect artifacts
         run: |

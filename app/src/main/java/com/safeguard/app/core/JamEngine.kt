@@ -10,6 +10,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -48,7 +49,7 @@ class JamEngine(
     val state: StateFlow<JamState> = _state.asStateFlow()
 
     private val jobs = mutableListOf<Job>()
-    private var original = radio.Snapshot(wifiEnabled = true, bluetoothEnabled = false, airplaneMode = false)
+    private var original = RadioController.Snapshot(wifiEnabled = true, bluetoothEnabled = false, airplaneMode = false)
     private var ratIndex = 0
     private var startedAt = 0L
     private val privileged = mutableSetOf<String>()
@@ -155,7 +156,9 @@ class JamEngine(
             stopAll()
             return
         }
-        stopAll()
+        // Reconfigure without a re-entrant suspend call from the service thread.
+        jobs.toList().forEach { it.cancel() }
+        jobs.clear()
 
         original = radio.snapshot()
         startedAt = System.currentTimeMillis()
@@ -181,15 +184,25 @@ class JamEngine(
 
     // ------------------------------------------------------------------- stop
 
-    /** Cancels every loop. Radio restoration lives in [ReleaseHandler]. */
-    suspend fun stopAll() {
+    /**
+     * Cancels every loop and socket owner immediately. Radio restoration lives
+     * in [ReleaseHandler.hardReset]; this stays synchronous so the Instant
+     * Release path can call it from anywhere (including onDestroy).
+     */
+    fun stopAll() {
+        val pending = jobs.toList()
+        jobs.clear()
+        pending.forEach { it.cancel() }
+        _state.value = _state.value.copy(mode = JamMode.OFF, chaos = 0f)
+    }
+
+    /** Suspending variant used by the ViewModel when ordering matters. */
+    suspend fun stopAllAndJoin() {
         val pending = jobs.toList()
         jobs.clear()
         pending.forEach { it.cancel() }
         pending.forEach { runCatching { it.cancelAndJoin() } }
-        if (jobs.isEmpty()) {
-            _state.value = _state.value.copy(mode = JamMode.OFF, chaos = 0f)
-        }
+        _state.value = _state.value.copy(mode = JamMode.OFF, chaos = 0f)
     }
 
     fun originalSnapshot(): RadioController.Snapshot = original
@@ -282,7 +295,7 @@ class JamEngine(
     }
 
     private suspend fun measurementLoop() {
-        while (scope.isActive) {
+        while (currentCoroutineContext().isActive) {
             if (_state.value.mode == JamMode.OFF) break
             val pulse = monitor.pulse(samples = 3, timeoutMs = 1200)
             val realDbm = monitor.realSignalDbm()
@@ -298,7 +311,7 @@ class JamEngine(
     }
 
     private suspend fun dnsLoop() {
-        while (scope.isActive) {
+        while (currentCoroutineContext().isActive) {
             if (_state.value.mode == JamMode.OFF) break
             val burst = if (_state.value.engineMode == EngineMode.ONLINE) 60 else 40
             val issued = monitor.dnsBurst(burst)
@@ -311,7 +324,7 @@ class JamEngine(
     }
 
     private suspend fun uplinkLoop() {
-        while (scope.isActive) {
+        while (currentCoroutineContext().isActive) {
             if (_state.value.mode == JamMode.OFF) break
             val bytes = monitor.uplinkBurst(payloadBytes = 512, packets = 6)
             _state.value = _state.value.copy(
@@ -323,7 +336,7 @@ class JamEngine(
     }
 
     private suspend fun contextLoop() {
-        while (scope.isActive) {
+        while (currentCoroutineContext().isActive) {
             if (_state.value.mode == JamMode.OFF) break
             val indoor = monitor.estimateIndoor()
             _state.value = _state.value.copy(
