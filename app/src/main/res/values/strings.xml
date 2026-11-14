@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Safe Guard</string>
+    <string name="app_codename">SignalDisruptor Pro</string>
+    <string name="service_description">Keeps the radio-stress engine running in the background with a persistent notification.</string>
+    <string name="channel_service_name">Active Engine</string>
+    <string name="channel_alerts_name">Alerts &amp; Recovery</string>
+</resources>

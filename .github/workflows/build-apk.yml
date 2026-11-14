@@ -1,0 +1,82 @@
+name: Build Safe Guard APK
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install platform + build tools
+        run: |
+          sdkmanager --install "platforms;android-34" "build-tools;34.0.0" "platform-tools"
+          yes | sdkmanager --licenses > /dev/null || true
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.7"
+
+      - name: Generate release keystore
+        run: |
+          mkdir -p keystore
+          keytool -genkeypair -v -keystore keystore/safeguard-release.jks \
+            -alias safeguard -keyalg RSA -keysize 2048 -validity 10950 \
+            -storepass safeguard -keypass safeguard \
+            -dname "CN=Safe Guard, OU=SignalDisruptor Pro, O=SafeGuard, L=Karachi, C=PK"
+
+      - name: Build debug APK
+        run: gradle :app:assembleDebug --stacktrace
+
+      - name: Build signed release APK
+        env:
+          SG_KEYSTORE_PATH: ${{ github.workspace }}/keystore/safeguard-release.jks
+          SG_KEYSTORE_PASSWORD: safeguard
+          SG_KEY_ALIAS: safeguard
+          SG_KEY_PASSWORD: safeguard
+        run: gradle :app:assembleRelease --stacktrace
+
+      - name: Collect artifacts
+        run: |
+          mkdir -p artifacts
+          cp app/build/outputs/apk/debug/app-debug.apk artifacts/SafeGuard-v1.0.0-debug.apk
+          cp app/build/outputs/apk/release/app-release.apk artifacts/SafeGuard-v1.0.0-release.apk
+          ls -lh artifacts
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: safeguard-apks
+          path: artifacts/*.apk
+          retention-days: 90
+
+      - name: Publish download release
+        if: github.ref == 'refs/heads/arena/481d206d-pass' || github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.0
+          name: Safe Guard v1.0.0 (SignalDisruptor Pro)
+          body: |
+            **Safe Guard** — RF diagnostics & resilience testing build.
+
+            Install `SafeGuard-v1.0.0-release.apk` (signed) or the debug APK.
+            Requires Android 8.0+ (API 26).
+          files: artifacts/*.apk
+          fail_on_unmatched_files: false
