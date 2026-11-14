@@ -1,5 +1,28 @@
 # Safe Guard — SignalDisruptor Pro
 
+> ## v1.2.0 — the strongest non-root build
+>
+> - **Signed release APK (1.0 MB)** → https://github.com/mirzaahmed20042004-arch/Pass/releases/download/v1.2.0/SafeGuard-v1.2.0-release.apk
+> - **Debug APK (16 MB)** → https://github.com/mirzaahmed20042004-arch/Pass/releases/download/v1.2.0/SafeGuard-v1.2.0-debug.apk
+> - Release page → https://github.com/mirzaahmed20042004-arch/Pass/releases/tag/v1.2.0
+>
+> ### What actually works on a stock, unrooted phone (Android 8 → 15)
+>
+> | Feature | Non-root status | How |
+> |---|---|---|
+> | **Data Blackout (kill-switch)** | ✅ WORKS | Local `VpnService` tunnel with no upstream — all app traffic dies instantly, restored in <1 s. One system consent dialog, then one tap. |
+> | **DNS Blackout** | ✅ WORKS | Tunnel that swallows only resolver traffic — new connections time out. |
+> | **Wi-Fi / Bluetooth / Airplane / Network-mode switches** | ⚠️ OS-owned | One tap opens the exact system panel that owns the switch (`INTERNET_CONNECTIVITY`, `WIFI`, `AIRPLANE_MODE`, network-operator picker). Direct API call is tried first and reported honestly. |
+> | **Data Saver / background restriction** | ✅ via panel | Deep link to the OS Data Saver panel. |
+> | **DNS saturation + uplink stress** | ✅ WORKS | Pure userspace. |
+> | **Carrier / geo targeting, live latency-loss gauges, chaos visualiser** | ✅ WORKS | Real probes. |
+> | **Instant release** | ✅ WORKS | Shield teardown → loops cancelled → radios restored → `resetNetwork()` → verified probe. |
+> | **Jamming a neighbour's phone / the tower** | ❌ IMPOSSIBLE without radio hardware | Not a permission problem — it needs a transmitter. Also illegal (PTA/PECA). |
+>
+> Everything in the *Radio Controls* screen (new in v1.2.0) runs unrooted: shield on/off,
+> Wi-Fi-off, Bluetooth-off, airplane panel, internet panel, Data Saver, network mode.
+
+
 > **v1.1.0 update** — verified radio toggles, privilege detection, service-lifecycle fixes.
 >
 > - Signed release APK (1.0 MB) → https://github.com/mirzaahmed20042004-arch/Pass/releases/download/v1.1.0/SafeGuard-v1.1.0-release.apk
