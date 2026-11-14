@@ -1,0 +1,61 @@
+11-14 20:13:10.572   288   288 D AndroidRuntime: >>>>>> START com.android.internal.os.ZygoteInit uid 0 <<<<<<
+11-14 20:13:10.620   288   288 I AndroidRuntime: Using default boot image
+11-14 20:13:10.620   288   288 I AndroidRuntime: Leaving lock profiling enabled
+11-14 20:13:10.740   289   289 D AndroidRuntime: >>>>>> START com.android.internal.os.ZygoteInit uid 0 <<<<<<
+11-14 20:13:10.821   289   289 I AndroidRuntime: Using default boot image
+11-14 20:13:10.821   289   289 I AndroidRuntime: Leaving lock profiling enabled
+11-14 20:13:17.590   842   842 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+11-14 20:13:17.611   848   848 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+11-14 20:13:20.087  1365  1365 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+11-14 20:13:20.103  1365  1365 I AndroidRuntime: Using default boot image
+11-14 20:13:20.103  1365  1365 I AndroidRuntime: Leaving lock profiling enabled
+11-14 20:13:20.521  1365  1365 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+11-14 20:13:25.865  1365  1365 D AndroidRuntime: Shutting down VM
+11-14 20:13:30.879   492   547 I PackageDexOptimizer: Running dexopt (dexoptNeeded=1) on: /data/app/~~M9UL9KdEuVivuEWGCahccw==/com.safeguard.app-ASqOJNVOnCCL9m3Pr9QKeA==/base.apk pkg=com.safeguard.app isa=x86_64 dexoptFlags=boot_complete,profile_guided,public,enable_hidden_api_checks targetFilter=speed-profile oatDir=/data/app/~~M9UL9KdEuVivuEWGCahccw==/com.safeguard.app-ASqOJNVOnCCL9m3Pr9QKeA==/oat classLoaderContext=PCL[]{}
+11-14 20:13:30.880   421   433 V installd: DexInv: --- BEGIN '/data/app/~~M9UL9KdEuVivuEWGCahccw==/com.safeguard.app-ASqOJNVOnCCL9m3Pr9QKeA==/base.apk' ---
+11-14 20:13:32.802  2964  2964 I dex2oat32: /apex/com.android.art/bin/dex2oat32 --input-vdex-fd=-1 --output-vdex-fd=9 --updatable-bcp-packages-file=/system/etc/updatable-bcp-packages.txt --resolve-startup-const-strings=true --max-image-block-size=524288 --compiler-filter=speed-profile --classpath-dir=/data/app/~~M9UL9KdEuVivuEWGCahccw==/com.safeguard.app-ASqOJNVOnCCL9m3Pr9QKeA== --class-loader-context=PCL[]{} --generate-mini-debug-info --compact-dex-level=none --compilation-reason=install
+11-14 20:13:36.712  2964  3279 W dex2oat32: Verification of java.lang.Object com.safeguard.app.core.JamEngine.uplinkLoop(D1.d) took 146.686ms (1690.68 bytecodes/s) (6400B approximate peak alloc)
+11-14 20:13:36.756  2964  2964 W dex2oat32: Verification of java.lang.String com.safeguard.app.core.ReleaseHandler$Report.summary() took 106.165ms (1488.24 bytecodes/s) (2376B approximate peak alloc)
+11-14 20:13:36.835  2964  3279 W dex2oat32: Verification of void com.safeguard.app.service.JamService.startJam(com.safeguard.app.core.JamMode, com.safeguard.app.core.EngineMode, boolean) took 121.794ms (1560.00 bytecodes/s) (3624B approximate peak alloc)
+11-14 20:13:40.215   421   433 V installd: DexInv: --- END '/data/app/~~M9UL9KdEuVivuEWGCahccw==/com.safeguard.app-ASqOJNVOnCCL9m3Pr9QKeA==/base.apk' (success) ---
+11-14 20:13:40.795  1410  1410 I MediaProvider: Invalidating LocalCallingIdentity cache for package com.safeguard.app. Reason: package android.intent.action.PACKAGE_ADDED
+11-14 20:13:40.805  1428  1428 I GsaVoiceInteractionSrv: O received Intent { act=android.intent.action.PACKAGE_ADDED dat=package:com.safeguard.app flg=0x4000010 (has extras) }
+11-14 20:13:40.809   682   682 D AvrcpMediaPlayerList: Name of package changed: com.safeguard.app
+11-14 20:13:41.083   682   682 D AvrcpMediaPlayerList: Name of package changed: com.safeguard.app
+11-14 20:13:41.088   492  2030 I ActivityTaskManager: START u0 {flg=0x10000000 cmp=com.safeguard.app/.MainActivity} from uid 2000
+11-14 20:13:41.302  3910  3910 W m.safeguard.ap: Unexpected CPU variant for X86 using defaults: x86_64
+11-14 20:13:41.318   492   532 I ActivityManager: Start proc 3910:com.safeguard.app/u0a167 for pre-top-activity {com.safeguard.app/com.safeguard.app.MainActivity}
+11-14 20:13:41.354  3910  3910 I TetheringManager: registerTetheringEventCallback:com.safeguard.app
+11-14 20:13:41.547   492  2041 E JobScheduler.Background: App com.safeguard.app became active but still in NEVER bucket
+11-14 20:13:42.254  1135  2322 W GCM     : Unexpected forwarded intent: Intent { act=android.intent.action.PACKAGE_ADDED dat=package:com.safeguard.app flg=0x4000010 cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) }
+11-14 20:13:42.259  1135  2320 W GCM     : Unexpected forwarded intent: Intent { act=android.intent.action.PACKAGE_ADDED dat=package:com.safeguard.app flg=0x4000010 cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) }
+11-14 20:13:42.279  1135  3006 I Fitness : OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package:com.safeguard.app flg=0x5000010 cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
+11-14 20:13:42.379  1743  2535 I ChromeSync: [Sync,SyncIntentOperation] Handling the intent: Intent { act=android.intent.action.PACKAGE_ADDED dat=package:com.safeguard.app flg=0x4000010 cmp=com.google.android.gms/.chimera.GmsIntentOperationService (has extras) }.
+11-14 20:13:42.379  1743  3879 I FontsPackageChangeOp: Package com.safeguard.app has no metadata
+11-14 20:13:42.407  1743  2535 I ChromeSync: [Persistence,AffiliationManager] One of affiliation or grouping data for android://2xzmmPIlWqIlKu0arwMXCDPKBWFAu-JUW7se3TqWTpJtzu5WBvtQIBTJ9RKZx5-qXfu1aj4vqE-GoXnRKITigA==@com.safeguard.app/ was not found. Marking affiliation data as stale...
+11-14 20:13:43.487  3910  3922 I m.safeguard.ap: Background young concurrent copying GC freed 39140(2281KB) AllocSpace objects, 1(24KB) LOS objects, 87% free, 3394KB/27MB, paused 54us total 184.707ms
+11-14 20:13:43.988   492   530 D ArtManagerInternalImpl: /data/misc/iorapd/com.safeguard.app/4/com.safeguard.app.MainActivity/compiled_traces/compiled_trace.pb doesn't exist
+11-14 20:13:43.989   492   530 I ActivityTaskManager: Displayed com.safeguard.app/.MainActivity: +2s67ms
+11-14 20:13:46.861  3910  4499 D ProfileInstaller: Installing profile for com.safeguard.app
+11-14 20:13:49.095   492  1503 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:com.safeguard.app flg=0x4000010 (has extras) } to com.google.android.packageinstaller/com.android.packageinstaller.PackageInstalledReceiver
+11-14 20:13:49.095   492   531 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:com.safeguard.app flg=0x4000010 (has extras) } to com.google.android.gms/.games.chimera.GamesSystemBroadcastReceiverProxy
+11-14 20:13:49.096   492   531 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:com.safeguard.app flg=0x4000010 (has extras) } to com.google.android.gms/.gass.chimera.PackageChangeBroadcastReceiver
+11-14 20:13:49.096   492   531 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:com.safeguard.app flg=0x4000010 (has extras) } to com.google.android.gms/.chimera.GmsIntentOperationService$PersistentTrustedReceiver
+11-14 20:13:49.096   492   531 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:com.safeguard.app flg=0x4000010 (has extras) } to com.google.android.googlequicksearchbox/com.google.android.apps.gsa.googlequicksearchbox.GelStubAppWatcher
+11-14 20:13:49.096   492   531 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:com.safeguard.app flg=0x4000010 (has extras) } to com.google.android.ims/.receivers.RcsAutoStartReceiver
+11-14 20:13:50.245  1135  3006 I Fitness : OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package:com.safeguard.app flg=0x5000010 cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
+11-14 20:13:51.397   682   682 D AvrcpMediaPlayerList: Name of package changed: com.safeguard.app
+11-14 20:13:51.469  1135  2322 I Fitness : OnPackageChangedOperation got intent: Intent { act=android.intent.action.PACKAGE_CHANGED dat=package:com.safeguard.app flg=0x45000010 cmp=com.google.android.gms/.chimera.PersistentIntentOperationService (has extras) } [CONTEXT service_id=17 ]
+11-14 20:13:53.236   492  2021 I ActivityTaskManager: START u0 {flg=0x10000000 cmp=com.safeguard.app/.ui.RadioControlActivity} from uid 2000
+11-14 20:13:53.245   492  2021 W ActivityTaskManager: Permission Denial: starting Intent { flg=0x10000000 cmp=com.safeguard.app/.ui.RadioControlActivity } from null (pid=5256, uid=2000) not exported from uid 10167
+11-14 20:13:59.071   492  1120 I ActivityTaskManager: START u0 {flg=0x10000000 cmp=com.safeguard.app/.MainActivity} from uid 2000
+
+--- pid ---
+3910
+
+--- foreground activity ---
+    mResumedActivity: ActivityRecord{a53ffb0 u0 com.safeguard.app/.MainActivity t9}
+    * Task{25f710b #9 visible=true type=standard mode=fullscreen translucent=false A=10167:com.safeguard.app U=0 StackId=9 sz=1}
+      affinity=10167:com.safeguard.app
+      intent={flg=0x10000000 cmp=com.safeguard.app/.MainActivity}
+      mActivityComponent=com.safeguard.app/.MainActivity
