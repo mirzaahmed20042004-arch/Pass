@@ -227,7 +227,6 @@ class ShieldVpnService : VpnService() {
 
         @Volatile
         var active: ShieldMode = ShieldMode.OFF
-            private set
     }
 }
 

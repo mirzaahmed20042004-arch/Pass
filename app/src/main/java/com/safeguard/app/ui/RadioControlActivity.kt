@@ -81,7 +81,7 @@ class RadioControlActivity : ComponentActivity() {
                     },
                     onWifiOff = ::requestWifiOff,
                     onBtOff = ::requestBluetoothOff,
-                    onAirplane = ::openPanelWith(OsPanelTarget.AIRPLANE),
+                    onAirplane = { openPanel(OsPanelTarget.AIRPLANE) },
                     onFinish = { finish() }
                 )
             }
@@ -145,7 +145,7 @@ class RadioControlActivity : ComponentActivity() {
             )
             OsPanelTarget.DATA_SAVER -> listOf(
                 Intent(ACTION_DATA_SAVER),
-                Intent(Settings.ACTION_DATA_SAVER_SETTINGS)
+                Intent(Settings.ACTION_DATA_USAGE_SETTINGS)
             )
             OsPanelTarget.NETWORK_MODE -> listOf(
                 Intent(ACTION_NETWORK_MODE_PANEL).putExtra("android.provider.extra.SUB_ID", defaultSubId()),
