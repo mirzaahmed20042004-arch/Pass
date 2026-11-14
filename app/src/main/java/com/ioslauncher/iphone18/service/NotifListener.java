@@ -24,6 +24,7 @@ public class NotifListener extends NotificationListenerService {
         public String title;
         public String text;
         public long time;
+        public android.app.PendingIntent tap;
     }
 
     public interface Listener {
