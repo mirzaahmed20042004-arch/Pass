@@ -24,7 +24,7 @@ A GitHub Actions workflow builds a debug APK on pushes to the App Fly branch and
 
 **[Download App Fly APK](https://github.com/mirzaahmed20042004-arch/Pass/releases/latest/download/app-fly.apk)**
 
-The GitHub build installs the native Android project with JDK 17 and the Android SDK, and does not need a separately deployed FastAPI server. The native app queries Wikipedia and Open Library directly, and calls the public LibreTranslate endpoint; all require network access. To build locally, install Android Studio, Android SDK (API 23+), and JDK 17+, then run:
+The GitHub build installs the native Android project with JDK 21 and the Android SDK, and does not need a separately deployed FastAPI server. The native app queries Wikipedia and Open Library directly, and calls the public LibreTranslate endpoint; all require network access. To build locally, install Android Studio, Android SDK (API 23+), and JDK 21+, then run:
 
 ```sh
 npm ci
