@@ -1,0 +1,62 @@
+name: Build App Fly Android APK
+
+on:
+  push:
+    branches:
+      - arena/a0b6a18b-pass
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-apk:
+    name: Build and publish installable APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out App Fly
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Set up Java for Android
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install web dependencies
+        run: npm ci
+
+      - name: Build App Fly web assets
+        run: npm run build
+
+      - name: Sync Capacitor Android app
+        run: npx cap sync android
+
+      - name: Build debug APK
+        run: cd android && ./gradlew --no-daemon assembleDebug
+
+      - name: Name the installable package
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk app-fly.apk
+
+      - name: Publish public APK download
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: app-fly-${{ github.run_number }}
+          target_commitish: ${{ github.sha }}
+          name: App Fly Android build ${{ github.run_number }}
+          body: |
+            Installable free debug APK for App Fly.
+
+            Download `app-fly.apk`, allow installation from your browser/files app if Android asks, and install it. This build uses the public Wikipedia, Open Library, and LibreTranslate services; network access is required for lookup and translation.
+          files: app-fly.apk
+          make_latest: true
+          fail_on_unmatched_files: true

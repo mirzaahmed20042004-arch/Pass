@@ -1,0 +1,6 @@
+{
+  "appId": "com.appfly.knowledge",
+  "appName": "App Fly",
+  "webDir": "dist",
+  "server": { "androidScheme": "https" }
+}

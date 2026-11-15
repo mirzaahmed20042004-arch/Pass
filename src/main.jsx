@@ -1,0 +1,80 @@
+import React, { useEffect, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+import { Capacitor } from '@capacitor/core';
+import { ArrowDownUp, ArrowRight, BookOpen, Check, ChevronDown, Compass, Globe2, Headphones, Languages, LoaderCircle, Menu, Mic2, Search, Sparkles, Volume2, X } from 'lucide-react';
+import './style.css';
+
+const LANGS = [{id:'en',label:'English'},{id:'ur',label:'اردو'},{id:'es',label:'Español'},{id:'fr',label:'Français'},{id:'de',label:'Deutsch'},{id:'ar',label:'العربية'},{id:'hi',label:'हिन्दी'},{id:'ja',label:'日本語'},{id:'zh',label:'中文'},{id:'pt',label:'Português'},{id:'ru',label:'Русский'}];
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
+const popular = ['Black holes','The art of calligraphy','Climate change','Ocean life'];
+
+async function searchSources(q) {
+ if (!Capacitor.isNativePlatform() || API_BASE) {
+  const r=await fetch(`${API_BASE}/api/search?q=${encodeURIComponent(q)}&lang=en`);
+  const data=await r.json(); if(!r.ok) throw new Error(data.detail||'Search failed'); return data;
+ }
+ const wikiUrl=new URL('https://en.wikipedia.org/w/api.php');
+ Object.entries({action:'query',generator:'search',gsrsearch:q,gsrnamespace:'0',gsrlimit:'6',prop:'pageimages|extracts|info',inprop:'url',exintro:'1',explaintext:'1',exsentences:'5',piprop:'thumbnail',pithumbsize:'1000',format:'json',origin:'*'}).forEach(([k,v])=>wikiUrl.searchParams.set(k,v));
+ const booksUrl=new URL('https://openlibrary.org/search.json');
+ Object.entries({q,limit:'8',fields:'key,title,author_name,first_publish_year,cover_i,edition_count,subject'}).forEach(([k,v])=>booksUrl.searchParams.set(k,v));
+ const [wikiResponse,bookResponse]=await Promise.allSettled([fetch(wikiUrl),fetch(booksUrl)]);
+ let wikipedia=[],books=[];
+ if(wikiResponse.status==='fulfilled'&&wikiResponse.value.ok){const data=await wikiResponse.value.json();wikipedia=Object.values(data.query?.pages||{}).map(p=>({title:p.title||'',extract:p.extract||'',image:p.thumbnail?.source||null,url:p.fullurl||`https://en.wikipedia.org/wiki/${encodeURIComponent((p.title||'').replaceAll(' ','_'))}`}));}
+ if(bookResponse.status==='fulfilled'&&bookResponse.value.ok){const data=await bookResponse.value.json();books=(data.docs||[]).map(b=>({title:b.title||'Untitled',authors:(b.author_name||[]).slice(0,3),year:b.first_publish_year,editions:b.edition_count||0,cover:b.cover_i?`https://covers.openlibrary.org/b/id/${b.cover_i}-L.jpg`:null,url:`https://openlibrary.org${b.key||''}`}));}
+ if(!wikipedia.length&&!books.length) throw new Error('Could not reach Wikipedia or Open Library. Check your connection and try again.');
+ return {query:q,wikipedia,books,notice:'Results are fetched from Wikipedia and Open Library. Open full pages only when you choose a source link.'};
+}
+
+async function translateText(text,source,target) {
+ if (!Capacitor.isNativePlatform() || API_BASE) {
+  const r=await fetch(`${API_BASE}/api/translate?q=${encodeURIComponent(text)}&source=${source}&target=${target}`);
+  const data=await r.json();if(!r.ok)throw new Error(data.detail||'Translation failed');return data.translatedText;
+ }
+ const endpoint=import.meta.env.VITE_LIBRETRANSLATE_URL||'https://translate.argosopentech.com/translate';
+ const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({q:text,source,target,format:'text'})});
+ const data=await r.json().catch(()=>({}));if(!r.ok)throw new Error(data.error||'LibreTranslate is temporarily unavailable. Try again later.');return data.translatedText||'';
+}
+function App(){
+ const [tab,setTab]=useState('Discover'),[query,setQuery]=useState(''),[result,setResult]=useState(null),[loading,setLoading]=useState(false),[error,setError]=useState(''),[activeWiki,setActiveWiki]=useState(0),[mobile,setMobile]=useState(false),[notice,setNotice]=useState('');
+ const [text,setText]=useState(''),[translated,setTranslated]=useState(''),[from,setFrom]=useState('auto'),[to,setTo]=useState('ur'),[transLoading,setTransLoading]=useState(false);
+ const [voiceText,setVoiceText]=useState('The world is a book, and those who do not travel read only one page.'),[voiceLang,setVoiceLang]=useState('en-US'),[speaking,setSpeaking]=useState(false),[voices,setVoices]=useState([]);
+ useEffect(()=>{const load=()=>setVoices(window.speechSynthesis?.getVoices?.()||[]);load();window.speechSynthesis?.addEventListener?.('voiceschanged',load);return()=>window.speechSynthesis?.removeEventListener?.('voiceschanged',load)},[]);
+ async function search(q=query){if(!q.trim())return;setTab('Discover');setMobile(false);setQuery(q);setLoading(true);setError('');try{const data=await searchSources(q);setResult(data);setActiveWiki(0)}catch(e){setError(e.message||'Something went wrong. Try again.')}finally{setLoading(false)}}
+ async function translate(){if(!text.trim())return;setTransLoading(true);setNotice('');try{const translatedText=await translateText(text,from,to);setTranslated(translatedText);setNotice('Translated with LibreTranslate')}catch(e){setNotice(e.message)}finally{setTransLoading(false)}}
+ function speak(){if(!voiceText.trim()||!window.speechSynthesis)return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(voiceText);u.lang=voiceLang;const chosen=voices.find(v=>v.lang.toLowerCase().startsWith(voiceLang.toLowerCase().slice(0,2)));if(chosen)u.voice=chosen;u.onstart=()=>setSpeaking(true);u.onend=()=>setSpeaking(false);u.onerror=()=>setSpeaking(false);window.speechSynthesis.speak(u)}
+ function stop(){window.speechSynthesis?.cancel();setSpeaking(false)}
+ const active=result?.wikipedia?.[activeWiki];
+ return <div className="app-shell">
+  <aside className={`sidebar ${mobile?'mobile-open':''}`}>
+   <div className="brand"><img src="/app-fly-logo.png"/><span>app<span className="brand-accent">fly</span></span><button className="mobile-close" onClick={()=>setMobile(false)}><X size={18}/></button></div>
+   <div className="side-label">YOUR WORKSPACE</div>
+   <nav>{[['Discover',Compass],['Translator',Languages],['Voice studio',Headphones]].map(([name,Icon])=><button key={name} className={`nav-item ${tab===name?'selected':''}`} onClick={()=>{setTab(name);setMobile(false)}}><Icon size={18}/><span>{name}</span>{name==='Discover'&&<span className="nav-pill">01</span>}</button>)}</nav>
+   <div className="side-note"><span className="note-icon"><Sparkles size={16}/></span><b>A little more curious?</b><p>Find a topic, uncover a story, or meet your next favourite book.</p><button onClick={()=>search('The hidden life of trees')}>Surprise me <ArrowRight size={14}/></button></div>
+   <div className="sidebar-bottom"><div className="status-dot"/>Open knowledge, always<div className="version">APP FLY · 1.0</div></div>
+  </aside>
+  <main className="main-area">
+   <header className="topbar"><button className="hamburger" onClick={()=>setMobile(true)}><Menu/></button><div className="breadcrumb">Workspace <span>/</span> <strong>{tab}</strong></div><div className="top-actions"><span className="privacy"><span/>Private by design</span><div className="avatar">A</div></div></header>
+   <div className="page-content">
+    {tab==='Discover'&&<>
+     <section className="hero"><div className="hero-copy"><div className="eyebrow"><span/> YOUR CURIOSITY, SET FREE</div><h1>Knowledge takes<br/>you <em>places.</em></h1><p>One question. Many worlds. Explore trusted knowledge, discover books, and follow the thread wherever it leads.</p></div><div className="hero-art"><div className="orbit orbit-one"/><div className="orbit orbit-two"/><span className="art-star star-a">✳</span><span className="art-star star-b">✦</span><div className="art-orb"><img src="/app-fly-logo.png"/></div><span className="art-caption">WONDER, WITHOUT LIMITS</span></div></section>
+     <form className="search-box" onSubmit={e=>{e.preventDefault();search()}}><Search size={21}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Ask a question or search any topic…" aria-label="Search knowledge"/><button className="search-submit" disabled={loading}>{loading?<LoaderCircle className="spin" size={18}/>:<>Explore <ArrowRight size={16}/></>}</button></form>
+     <div className="search-meta"><div><span className="live-dot"/> SEARCH ACROSS <b>WIKIPEDIA</b><span className="meta-plus">+</span><b>OPEN LIBRARY</b></div><span>Free · Open sources · No account</span></div>
+     {!result&&!loading&&!error&&<div className="starter"><div className="section-kicker">A FEW PLACES TO BEGIN</div><div className="topic-row">{popular.map((p,i)=><button key={p} onClick={()=>search(p)}><span className={`topic-symbol t${i}`}>{['◉','✳','⌁','◌'][i]}</span>{p}<ArrowRight size={14}/></button>)}</div><div className="feature-strip"><div className="feature-icon"><Globe2/></div><div><b>Not just search. A starting point.</b><p>Clear summaries and relevant book discoveries, gathered side by side.</p></div><div className="source-chips"><span><i/> Wikipedia</span><span><i/> Open Library</span></div></div></div>}
+     {error&&<div className="error-card"><div><b>We couldn't reach the sources</b><p>{error}</p></div><button onClick={()=>search()}>Try again</button></div>}
+     {loading&&<div className="loading-panel"><div className="load-spark"><LoaderCircle className="spin"/></div><b>Following the thread…</b><span>Gathering open knowledge and book discoveries</span></div>}
+     {result&&!loading&&<div className="results-wrap"><div className="results-heading"><div><div className="section-kicker">YOUR DISCOVERIES</div><h2>Exploring <em>“{result.query}”</em></h2></div><button className="clear-button" onClick={()=>{setResult(null);setQuery('')}}>Clear results <X size={15}/></button></div><div className="result-grid"><section className="wiki-panel"><div className="panel-head"><span className="source-mark wiki-mark">W</span><div><b>Wikipedia</b><small>Knowledge, freely shared</small></div><span className="count">{result.wikipedia.length} ARTICLES</span></div>
+       {active?<><div className="wiki-feature">{active.image&&<img className="wiki-image" src={active.image} alt="" onError={e=>e.currentTarget.style.display='none'}/>}<div className="wiki-content"><h3>{active.title}</h3><p>{active.extract||'Explore this topic in more detail with Wikipedia.'}</p><a href={active.url} target="_blank" rel="noreferrer">Read on Wikipedia <ArrowRight size={14}/></a></div></div><div className="wiki-list">{result.wikipedia.map((w,i)=><button className={i===activeWiki?'current':''} key={i} onClick={()=>setActiveWiki(i)}><span>{w.title}</span><ArrowRight size={14}/></button>)}</div></>:<div className="empty-source">No Wikipedia articles found for this search.</div>}
+      </section><section className="books-panel"><div className="panel-head"><span className="source-mark book-mark"><BookOpen size={17}/></span><div><b>Open Library</b><small>Find your next read</small></div><span className="count">{result.books.length} BOOKS</span></div>
+       {result.books.length?<div className="book-list">{result.books.slice(0,6).map((book,i)=><a className="book-row" href={book.url} target="_blank" rel="noreferrer" key={book.url}><div className={`book-cover cover-${i}`}>{book.cover?<img src={book.cover} alt="" loading="lazy" onError={e=>e.currentTarget.style.display='none'}/>:<BookOpen size={23}/>}</div><div className="book-info"><b>{book.title}</b><span>{book.authors.join(', ')||'Unknown author'}</span><small>{book.year||'Date unknown'}{book.editions?` · ${book.editions} editions`:''}</small></div><ArrowRight className="book-arrow" size={15}/></a>)}</div>:<div className="empty-source">No matching book editions were found.</div>}
+      </section></div><div className="source-footer"><span><Check size={14}/>{result.notice}</span><span>Results stay in your app until you choose to follow a source.</span></div></div>}
+    </>}
+    {tab==='Translator'&&<section className="tool-page"><div className="tool-heading"><div className="eyebrow"><span/> WORDS TRAVEL</div><h1>Say it in <em>another language.</em></h1><p>Translate between languages with LibreTranslate, an open-source translation engine.</p></div><div className="translate-card"><div className="lang-bar"><label><span>FROM</span><select value={from} onChange={e=>setFrom(e.target.value)}><option value="auto">Detect language</option>{LANGS.map(l=><option value={l.id} key={l.id}>{l.label}</option>)}</select></label><button className="swap-button" onClick={()=>{setFrom(to);setTo(from==='auto'?'en':from)}} aria-label="Swap languages"><ArrowDownUp size={17}/></button><label><span>TO</span><select value={to} onChange={e=>setTo(e.target.value)}>{LANGS.map(l=><option value={l.id} key={l.id}>{l.label}</option>)}</select></label></div><div className="translation-columns"><div><textarea placeholder="Type or paste something to translate…" value={text} maxLength={5000} onChange={e=>setText(e.target.value)}/><span className="char-count">{text.length} / 5,000</span></div><div className="translated-output">{translated||<span className="placeholder-output">Your translation will appear here.</span>}{translated&&<button className="copy-button" onClick={()=>navigator.clipboard?.writeText(translated).then(()=>setNotice('Copied to clipboard'))}>Copy</button>}</div></div><div className="translate-footer"><span>{notice||'Your text is sent to your configured LibreTranslate service.'}</span><button className="primary-button" disabled={transLoading||!text.trim()} onClick={translate}>{transLoading?<LoaderCircle className="spin" size={16}/>:<><Languages size={16}/> Translate</>}</button></div></div><div className="tool-footnote"><span className="status-dot"/>Open-source engine <span>·</span> Supports language pairs available on your LibreTranslate server</div></section>}
+    {tab==='Voice studio'&&<section className="tool-page voice-page"><div className="tool-heading"><div className="eyebrow"><span/> A VOICE FOR YOUR WORDS</div><h1>Let your words <em>take flight.</em></h1><p>Listen to your writing in English, Urdu, Roman Urdu, and more—with voices available on your device.</p></div><div className="voice-card"><div className="voice-toolbar"><div className="voice-title"><span><Mic2 size={18}/></span><div><b>Voice studio</b><small>TEXT TO SPEECH</small></div></div><label className="voice-select"><span>LANGUAGE / VOICE</span><select value={voiceLang} onChange={e=>setVoiceLang(e.target.value)}><option value="en-US">English (US)</option><option value="en-GB">English (UK)</option><option value="ur-PK">Urdu (Pakistan)</option><option value="hi-IN">Hindi (Roman Urdu-friendly)</option></select><ChevronDown size={14}/></label></div><textarea className="voice-text" value={voiceText} onChange={e=>setVoiceText(e.target.value)} placeholder="Write something you'd like to hear…"/><div className="voice-footer"><span>{voices.length?`${voices.length} device voices available`:'Voices are provided by your device'} · {voiceText.length} characters</span><div>{speaking&&<button className="stop-button" onClick={stop}><span/> Stop</button>}<button className="primary-button" onClick={speaking?stop:speak} disabled={!voiceText.trim()}>{speaking?<><Volume2 size={17}/> Speaking…</>:<><Volume2 size={17}/> Listen</>}</button></div></div></div><div className="voice-note"><span className="note-icon"><Headphones size={17}/></span><p><b>A note about Urdu & Roman Urdu</b><br/>Roman Urdu is spoken phonetically using the English voice. Urdu speech requires an Urdu voice installed on your device; voice availability varies by Android version and text-to-speech engine.</p></div><div className="tool-footnote"><span className="status-dot"/>Playback uses your device’s speech engine <span>·</span> Audio is not uploaded</div></section>}
+    <footer className="page-footer"><span>© 2025 APP FLY</span><span>Made for the endlessly curious <span className="footer-star">✳</span></span><span>Powered by open knowledge</span></footer>
+   </div>
+  </main>
+  {mobile&&<button className="scrim" onClick={()=>setMobile(false)} aria-label="Close menu"/>}
+ </div>
+}
+
+createRoot(document.getElementById('root')).render(<App/>);
