@@ -49,7 +49,7 @@ jobs:
           ./gradlew --no-daemon assembleDebug --stacktrace > /tmp/app-fly-gradle.log 2>&1
           result=$?
           if [ "$result" -ne 0 ]; then
-            grep -E 'FAILURE:|What went wrong:|Exception is:|Execution failed for task|^> |^Caused by:|BUILD FAILED|Could not .*|Error:' /tmp/app-fly-gradle.log | head -n 25 | while IFS= read -r line; do echo "::error::$line"; done
+            grep -E '^(FAILURE:|[*] What went wrong:|Execution failed for task|> (A |Could not|No |Process |Execution |Failed|Unable|The |There |Minimum supported|Unsupported)|Caused by:|BUILD FAILED|e: |error:)' /tmp/app-fly-gradle.log | tail -n 20 | while IFS= read -r line; do echo "::error::$line"; done
             exit "$result"
           fi
 
