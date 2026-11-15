@@ -42,7 +42,16 @@ jobs:
         run: npx cap sync android
 
       - name: Build debug APK
-        run: cd android && ./gradlew --no-daemon assembleDebug
+        shell: bash
+        run: |
+          set +e
+          cd android
+          ./gradlew --no-daemon assembleDebug --stacktrace > /tmp/app-fly-gradle.log 2>&1
+          result=$?
+          if [ "$result" -ne 0 ]; then
+            tail -n 60 /tmp/app-fly-gradle.log | while IFS= read -r line; do echo "::error::$line"; done
+            exit "$result"
+          fi
 
       - name: Name the installable package
         run: cp android/app/build/outputs/apk/debug/app-debug.apk app-fly.apk
